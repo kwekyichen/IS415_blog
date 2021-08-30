@@ -1,7 +1,7 @@
 ---
-title: "in-class-exercise-3"
+title: "In-class Exercise 3"
 description: |
-  A short description of the post.
+  In this hands-on exercise, I learn about percentile, box, rate and relative risk map.
 author:
   - name: Kwek Yi Chen
     url: https://example.com/kwekyichen
@@ -39,8 +39,19 @@ mpsz_pop2020 <- read_rds("../../../IS415/Hands-on_Ex/Hands-on_Ex03/data/rds/mpsz
 knitr::kable(head(mpsz_pop2020))
 ```
 
+- Boxplot
+```{r echo=TRUE}
+ggplot(data=mpsz_pop2020, 
+       aes(x = "", 
+           y = AGED)) +
+  geom_boxplot()
+```
 
-- Exclude records with NA
+## Visualization
+
+- Percentile Map
+
+Exclude records with NA
 ```{r echo=TRUE}
 mpsz_pop2020a <- mpsz_pop2020 %>%
   drop_na()
@@ -48,6 +59,219 @@ mpsz_pop2020a <- mpsz_pop2020 %>%
 knitr::kable(head(mpsz_pop2020a))
 ```
 
+Percentile
+```{r echo=TRUE}
+percent <- c(0,.01,.1,.5,.9,.99,1)
+var <- mpsz_pop2020a["DEPENDENCY"] %>%
+  st_set_geometry(NULL)
+quantile(var[,1], percent)
+```
+
+Creating get variable function
+```{r echo=TRUE}
+get.var <- function(vname,df) {
+  v <- df[vname] %>%
+    st_set_geometry(NULL)
+  v <- unname(v[,1])
+  return(v)
+}
+```
+
+Plotting percentile map with tmap functions (hardcode)
+```{r echo=TRUE}
+percent <- c(0,.01,.1,.5,.9,.99,1)
+var = get.var("DEPENDENCY", mpsz_pop2020a)
+bperc <- quantile(var,percent)
+tm_shape(mpsz_pop2020) + 
+  tm_polygons() +
+tm_shape(mpsz_pop2020a) +
+  tm_fill("DEPENDENCY",
+          title="DEPENDENCY",
+          breaks=bperc,
+          palette="Blues",
+          labels=c("< 1%", "1% - 10%",
+                   "10% - 50%",
+                   "50% - 90%",
+                   "90% - 99%",
+                   "> 99%")) + 
+  tm_borders() +
+  tm_layout(title = "Percentile Map", title.position = c("right", "bottom"))
+```
+
+Plotting percentile map with Percentile Mapping Function
+```{r echo=TRUE}
+percentmap <- function(vnam, df, legtitle=NA, mtitle="Percentile Map"){
+  percent <- c(0,.01,.1,.5,.9,.99,1)
+  var = get.var(vnam, df)
+  bperc <- quantile(var,percent)
+  tm_shape(df) + 
+  tm_polygons() +
+  tm_shape(df) +
+    tm_fill(vnam,
+            title=legtitle,
+            breaks=bperc,
+            palette="Blues",
+            labels=c("< 1%", "1% - 10%",
+                     "10% - 50%",
+                     "50% - 90%",
+                     "90% - 99%",
+                     "> 99%")) + 
+    tm_borders() +
+    tm_layout(title = mtitle, title.position = c("right", "bottom"))
+}
+```
+
+Testing Percentile Mapping Function (young)
+```{r echo=TRUE}
+youngmap <- percentmap("YOUNG", mpsz_pop2020a)
+youngmap
+```
+
+Testing Percentile Mapping Function (aged)
+```{r echo=TRUE}
+agedmap <- percentmap("YOUNG", mpsz_pop2020a)
+agedmap
+```
+
+- Boxmap
+
+Boxbreaks Function
+```{r echo=TRUE}
+boxbreaks <- function(v,mult=1.5) {
+  qv <- unname(quantile(v))
+  iqr <- qv[4] - qv[2]
+  upfence <- qv[4] + mult * iqr
+  lofence <- qv[2] - mult * iqr
+  # initialize break points vector
+  bb <- vector(mode="numeric",length=7)
+  # logic for lower and upper fences
+  if (lofence < qv[1]) {# no lower outliers
+    bb[1] <- lofence
+    bb[2] <- floor(qv[1])
+  } else {
+    bb[2] <- lofence
+    bb[1] <- qv[1]
+  }
+  if (upfence > qv[5]) {# no upper outliers
+    bb[7] <- upfence
+    bb[6] <- ceiling(qv[5])
+  } else {
+    bb[6] <- upfence
+    bb[7] <- qv[5]
+  }
+  bb[3:5] <- qv[2:4]
+  return(bb)
+}
+```
 
 
+Creating get variable function
+```{r echo=TRUE}
+get.var <- function(vname,df) {
+  v <- df[vname] %>%
+    st_set_geometry(NULL)
+  v <- unname(v[,1])
+  return(v)
+}
+```
 
+Testing the Boxbreaks Function on AGED using mpsz_pop2020 will result in error.
+
+Since missing values and NaN's are not allowed, we will exclude AGED = NA
+
+```{r echo=TRUE}
+mpsz_pop2020b <- mpsz_pop2020 %>%
+  filter(AGED>=0)
+var <- get.var("AGED", mpsz_pop2020b)
+boxbreaks(var)
+```
+
+Boxmap Function
+```{r echo=TRUE}
+boxmap <- function(vnam, df, 
+                   legtitle=NA,
+                   mtitle="Box Map",
+                   mult=1.5){
+  var <- get.var(vnam,df)
+  bb <- boxbreaks(var)
+  tm_shape(df) +
+     tm_fill(vnam,title=legtitle,
+             breaks=bb,
+             palette="Blues",
+          labels = c("lower outlier", 
+                     "< 25%", 
+                     "25% - 50%", 
+                     "50% - 75%",
+                     "> 75%", 
+                     "upper outlier"))  +
+  tm_borders() +
+  tm_layout(title = mtitle, 
+            title.position = c("right",
+                               "bottom"))
+}
+```
+
+Testing Boxmap function (AGED)
+
+```{r echo=TRUE}
+boxmap("AGED", mpsz_pop2020b)
+```
+
+Boxmap Function (Missing Area Fix)
+```{r echo=TRUE}
+boxmap <- function(vnam, df, 
+                   legtitle=NA,
+                   mtitle="Box Map",
+                   mult=1.5){
+  var <- get.var(vnam,df)
+  bb <- boxbreaks(var)
+  tm_shape(mpsz_pop2020) +
+  tm_polygons() +
+  tm_shape(df) +
+     tm_fill(vnam,title=legtitle,
+             breaks=bb,
+             palette="Blues",
+          labels = c("lower outlier", 
+                     "< 25%", 
+                     "25% - 50%", 
+                     "50% - 75%",
+                     "> 75%", 
+                     "upper outlier"))  +
+  tm_borders() +
+  tm_layout(title = mtitle, 
+            title.position = c("right",
+                               "bottom"))
+}
+```
+
+Testing Boxmap function (AGED)
+
+```{r echo=TRUE}
+boxmap("AGED", mpsz_pop2020b)
+```
+
+- Raw Rate Map
+
+Compute raw rate
+```{r echo=TRUE}
+mpsz_pop2020c <- mpsz_pop2020 %>%
+  mutate(`AGED%` = (`AGED`/`TOTAL`)*100) %>%
+  filter(`AGED%` >= 0)
+```
+
+Plot Raw rate map using Boxmap function 
+```{r echo=TRUE}
+var <- get.var("AGED%", mpsz_pop2020c)
+boxbreaks(var)
+boxmap("AGED%",mpsz_pop2020c)
+```
+
+- Relative Risk Map
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
