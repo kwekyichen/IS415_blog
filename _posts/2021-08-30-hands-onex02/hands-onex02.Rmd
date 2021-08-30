@@ -218,11 +218,9 @@ ggplot(data=mpsz3414,
       y = "Frequency")
 ```
 
-ggplot2 (histogram)
+ggplot2 (scatterplot)
 
 ```{r echo=TRUE}
-
-
 ggplot(data=mpsz3414, aes(x= as.numeric(`PreSch Density`), y= `PreSch Count`))+ geom_point() + labs(x = "Pre-school density (per km sq)", y = "Pre-school count")
 ```
 
