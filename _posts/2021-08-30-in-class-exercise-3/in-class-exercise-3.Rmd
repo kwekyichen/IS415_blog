@@ -19,9 +19,10 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Getting Started
 
-- This code chunk create a list of R packages needed and install them if they are not installed.
+This code chunk create a list of R packages needed and install them if they are not installed.
+
 ```{r echo=TRUE}
-packages = c('sf', 'tmap', 'tidyverse')
+packages = c('sf', 'tmap', 'tidyverse', 'knitr', "kableExtra")
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
@@ -30,16 +31,16 @@ for (p in packages){
 }
 ```
 
-## Cleaning RDS file
+## Reading RDS file
 
-- This coded chuck reads the RDS file from the path and display the data.
+This coded chuck reads the RDS file from the path and display the data.
+
 ```{r echo=TRUE}
 mpsz_pop2020 <- read_rds("../../../IS415/Hands-on_Ex/Hands-on_Ex03/data/rds/mpszpop2020.rds")
-
-knitr::kable(head(mpsz_pop2020))
 ```
 
-- Boxplot
+- Boxplot using mpsz_pop2020
+
 ```{r echo=TRUE}
 ggplot(data=mpsz_pop2020, 
        aes(x = "", 
@@ -47,19 +48,21 @@ ggplot(data=mpsz_pop2020,
   geom_boxplot()
 ```
 
+## Cleaning the data by removing NA 
+
+Exclude records with NA
+
+```{r echo=TRUE}
+mpsz_pop2020a <- mpsz_pop2020 %>%
+  drop_na()
+```
+
 ## Visualization
 
 - Percentile Map
 
-Exclude records with NA
-```{r echo=TRUE}
-mpsz_pop2020a <- mpsz_pop2020 %>%
-  drop_na()
-
-knitr::kable(head(mpsz_pop2020a))
-```
-
 Percentile
+
 ```{r echo=TRUE}
 percent <- c(0,.01,.1,.5,.9,.99,1)
 var <- mpsz_pop2020a["DEPENDENCY"] %>%
@@ -68,6 +71,7 @@ quantile(var[,1], percent)
 ```
 
 Creating get variable function
+
 ```{r echo=TRUE}
 get.var <- function(vname,df) {
   v <- df[vname] %>%
@@ -78,6 +82,7 @@ get.var <- function(vname,df) {
 ```
 
 Plotting percentile map with tmap functions (hardcode)
+
 ```{r echo=TRUE}
 percent <- c(0,.01,.1,.5,.9,.99,1)
 var = get.var("DEPENDENCY", mpsz_pop2020a)
@@ -99,6 +104,7 @@ tm_shape(mpsz_pop2020a) +
 ```
 
 Plotting percentile map with Percentile Mapping Function
+
 ```{r echo=TRUE}
 percentmap <- function(vnam, df, legtitle=NA, mtitle="Percentile Map"){
   percent <- c(0,.01,.1,.5,.9,.99,1)
@@ -122,20 +128,23 @@ percentmap <- function(vnam, df, legtitle=NA, mtitle="Percentile Map"){
 ```
 
 Testing Percentile Mapping Function (young)
+
 ```{r echo=TRUE}
 youngmap <- percentmap("YOUNG", mpsz_pop2020a)
 youngmap
 ```
 
 Testing Percentile Mapping Function (aged)
+
 ```{r echo=TRUE}
-agedmap <- percentmap("YOUNG", mpsz_pop2020a)
+agedmap <- percentmap("AGED", mpsz_pop2020a)
 agedmap
 ```
 
 - Boxmap
 
 Boxbreaks Function
+
 ```{r echo=TRUE}
 boxbreaks <- function(v,mult=1.5) {
   qv <- unname(quantile(v))
@@ -166,6 +175,7 @@ boxbreaks <- function(v,mult=1.5) {
 
 
 Creating get variable function
+
 ```{r echo=TRUE}
 get.var <- function(vname,df) {
   v <- df[vname] %>%
@@ -187,6 +197,7 @@ boxbreaks(var)
 ```
 
 Boxmap Function
+
 ```{r echo=TRUE}
 boxmap <- function(vnam, df, 
                    legtitle=NA,
@@ -218,6 +229,7 @@ boxmap("AGED", mpsz_pop2020b)
 ```
 
 Boxmap Function (Missing Area Fix)
+
 ```{r echo=TRUE}
 boxmap <- function(vnam, df, 
                    legtitle=NA,
@@ -253,6 +265,7 @@ boxmap("AGED", mpsz_pop2020b)
 - Raw Rate Map
 
 Compute raw rate
+
 ```{r echo=TRUE}
 mpsz_pop2020c <- mpsz_pop2020 %>%
   mutate(`AGED%` = (`AGED`/`TOTAL`)*100) %>%
@@ -260,6 +273,7 @@ mpsz_pop2020c <- mpsz_pop2020 %>%
 ```
 
 Plot Raw rate map using Boxmap function 
+
 ```{r echo=TRUE}
 var <- get.var("AGED%", mpsz_pop2020c)
 boxbreaks(var)

@@ -2119,457 +2119,54 @@ In-class Exercise
 
 <div class="d-article">
 <h2 id="getting-started">Getting Started</h2>
-<ul>
-<li>This code chunk create a list of R packages needed and install them if they are not installed.
+<p>This code chunk create a list of R packages needed and install them if they are not installed.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'sf'</span>, <span class='st'>'tmap'</span>, <span class='st'>'tidyverse'</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'sf'</span>, <span class='st'>'tmap'</span>, <span class='st'>'tidyverse'</span>, <span class='st'>'knitr'</span>, <span class='st'>"kableExtra"</span><span class='op'>)</span>
 <span class='kw'>for</span> <span class='op'>(</span><span class='va'>p</span> <span class='kw'>in</span> <span class='va'>packages</span><span class='op'>)</span><span class='op'>{</span>
-<span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>p</span>, character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
-<span class='op'>}</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>p</span>,character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span>
+  <span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>p</span>, character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
+    <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
+  <span class='op'>}</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>p</span>,character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span>
 <span class='op'>}</span>
 </code></pre>
-</div></li>
-</ul>
 </div>
-<h2 id="cleaning-rds-file">Cleaning RDS file</h2>
-<ul>
-<li>This coded chuck reads the RDS file from the path and display the data.
+</div>
+<h2 id="reading-rds-file">Reading RDS file</h2>
+<p>This coded chuck reads the RDS file from the path and display the data.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r">
-<code class="sourceCode r"><span class="va">mpsz_pop2020</span> <span class="op">&lt;-</span> <span class="fu">read_rds</span><span class="op">(</span><span class="st">“../../../IS415/Hands-on_Ex/Hands-on_Ex03/data/rds/mpszpop2020.rds”</span><span class="op">)</span></li>
-</ul>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class="op">(</span><span class="fu"><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class="op">(</span><span class="va">mpsz_pop2020</span><span class="op">)</span><span class="op">)</span> </code>
-</pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz_pop2020</span> <span class='op'>&lt;-</span> <span class='fu'>read_rds</span><span class='op'>(</span><span class='st'>"../../../IS415/Hands-on_Ex/Hands-on_Ex03/data/rds/mpszpop2020.rds"</span><span class='op'>)</span>
+</code></pre>
 </div>
-<table>
-<colgroup>
-<col style="width: 3%" />
-<col style="width: 4%" />
-<col style="width: 5%" />
-<col style="width: 3%" />
-<col style="width: 2%" />
-<col style="width: 6%" />
-<col style="width: 4%" />
-<col style="width: 5%" />
-<col style="width: 3%" />
-<col style="width: 6%" />
-<col style="width: 4%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 4%" />
-<col style="width: 4%" />
-<col style="width: 6%" />
-<col style="width: 2%" />
-<col style="width: 5%" />
-<col style="width: 1%" />
-<col style="width: 2%" />
-<col style="width: 4%" />
-<col style="width: 11%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">OBJECTID</th>
-<th style="text-align: right;">SUBZONE_NO</th>
-<th style="text-align: left;">SUBZONE_N</th>
-<th style="text-align: left;">SUBZONE_C</th>
-<th style="text-align: left;">CA_IND</th>
-<th style="text-align: left;">PLN_AREA_N</th>
-<th style="text-align: left;">PLN_AREA_C</th>
-<th style="text-align: left;">REGION_N</th>
-<th style="text-align: left;">REGION_C</th>
-<th style="text-align: left;">INC_CRC</th>
-<th style="text-align: left;">FMEL_UPD_D</th>
-<th style="text-align: right;">X_ADDR</th>
-<th style="text-align: right;">Y_ADDR</th>
-<th style="text-align: right;">SHAPE_Leng</th>
-<th style="text-align: right;">SHAPE_Area</th>
-<th style="text-align: left;">PA</th>
-<th style="text-align: right;">YOUNG</th>
-<th style="text-align: right;">ECONOMY ACTIVE</th>
-<th style="text-align: right;">AGED</th>
-<th style="text-align: right;">TOTAL</th>
-<th style="text-align: right;">DEPENDENCY</th>
-<th style="text-align: left;">geometry</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">MARINA SOUTH</td>
-<td style="text-align: left;">MSSZ01</td>
-<td style="text-align: left;">Y</td>
-<td style="text-align: left;">MARINA SOUTH</td>
-<td style="text-align: left;">MS</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">5ED7EB253F99252E</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">31595.84</td>
-<td style="text-align: right;">29220.19</td>
-<td style="text-align: right;">5267.381</td>
-<td style="text-align: right;">1630379.3</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: left;">MULTIPOLYGON (((31495.56 30…</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">PEARL’S HILL</td>
-<td style="text-align: left;">OTSZ01</td>
-<td style="text-align: left;">Y</td>
-<td style="text-align: left;">OUTRAM</td>
-<td style="text-align: left;">OT</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">8C7149B9EB32EEFC</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">28679.06</td>
-<td style="text-align: right;">29782.05</td>
-<td style="text-align: right;">3506.107</td>
-<td style="text-align: right;">559816.2</td>
-<td style="text-align: left;">OUTRAM</td>
-<td style="text-align: right;">930</td>
-<td style="text-align: right;">3130</td>
-<td style="text-align: right;">2120</td>
-<td style="text-align: right;">6180</td>
-<td style="text-align: right;">0.9744409</td>
-<td style="text-align: left;">MULTIPOLYGON (((29092.28 30…</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">BOAT QUAY</td>
-<td style="text-align: left;">SRSZ03</td>
-<td style="text-align: left;">Y</td>
-<td style="text-align: left;">SINGAPORE RIVER</td>
-<td style="text-align: left;">SR</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">C35FEFF02B13E0E5</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">29654.96</td>
-<td style="text-align: right;">29974.66</td>
-<td style="text-align: right;">1740.926</td>
-<td style="text-align: right;">160807.5</td>
-<td style="text-align: left;">SINGAPORE RIVER</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">50</td>
-<td style="text-align: right;">0.2500000</td>
-<td style="text-align: left;">MULTIPOLYGON (((29932.33 29…</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">HENDERSON HILL</td>
-<td style="text-align: left;">BMSZ08</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: left;">BM</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">3775D82C5DDBEFBD</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">26782.83</td>
-<td style="text-align: right;">29933.77</td>
-<td style="text-align: right;">3313.625</td>
-<td style="text-align: right;">595428.9</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: right;">2600</td>
-<td style="text-align: right;">7450</td>
-<td style="text-align: right;">3320</td>
-<td style="text-align: right;">13370</td>
-<td style="text-align: right;">0.7946309</td>
-<td style="text-align: left;">MULTIPOLYGON (((27131.28 30…</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">REDHILL</td>
-<td style="text-align: left;">BMSZ03</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: left;">BM</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">85D9ABEF0A40678F</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">26201.96</td>
-<td style="text-align: right;">30005.70</td>
-<td style="text-align: right;">2825.594</td>
-<td style="text-align: right;">387429.4</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: right;">2760</td>
-<td style="text-align: right;">6160</td>
-<td style="text-align: right;">1740</td>
-<td style="text-align: right;">10660</td>
-<td style="text-align: right;">0.7305195</td>
-<td style="text-align: left;">MULTIPOLYGON (((26451.03 30…</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">ALEXANDRA HILL</td>
-<td style="text-align: left;">BMSZ07</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: left;">BM</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">9D286521EF5E3B59</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">25358.82</td>
-<td style="text-align: right;">29991.38</td>
-<td style="text-align: right;">4428.913</td>
-<td style="text-align: right;">1030378.8</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: right;">2800</td>
-<td style="text-align: right;">7340</td>
-<td style="text-align: right;">3420</td>
-<td style="text-align: right;">13560</td>
-<td style="text-align: right;">0.8474114</td>
-<td style="text-align: left;">MULTIPOLYGON (((25899.7 297…</td>
-</tr>
-</tbody>
-</table>
 </div>
 <ul>
-<li>Boxplot
+<li>Boxplot using mpsz_pop2020</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>mpsz_pop2020</span>, 
-     <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>""</span>, 
-         y <span class='op'>=</span> <span class='va'>AGED</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
-<span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span>
+       <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>""</span>, 
+           y <span class='op'>=</span> <span class='va'>AGED</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<img src="in-class-exercise-3_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></li>
-</ul>
+<p><img src="in-class-exercise-3_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></p>
+</div>
+<h2 id="cleaning-the-data-by-removing-na">Cleaning the data by removing NA</h2>
+<p>Exclude records with NA</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz_pop2020a</span> <span class='op'>&lt;-</span> <span class='va'>mpsz_pop2020</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <h2 id="visualization">Visualization</h2>
 <ul>
 <li>Percentile Map</li>
 </ul>
-Exclude records with NA
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz_pop2020a</span> <span class='op'>&lt;-</span> <span class='va'>mpsz_pop2020</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>drop_na</span><span class='op'>(</span><span class='op'>)</span>
-
-<span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>mpsz_pop2020a</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre>
-</div>
-<table>
-<colgroup>
-<col style="width: 3%" />
-<col style="width: 4%" />
-<col style="width: 5%" />
-<col style="width: 3%" />
-<col style="width: 2%" />
-<col style="width: 6%" />
-<col style="width: 4%" />
-<col style="width: 5%" />
-<col style="width: 3%" />
-<col style="width: 6%" />
-<col style="width: 4%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 4%" />
-<col style="width: 4%" />
-<col style="width: 6%" />
-<col style="width: 2%" />
-<col style="width: 5%" />
-<col style="width: 1%" />
-<col style="width: 2%" />
-<col style="width: 4%" />
-<col style="width: 11%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">OBJECTID</th>
-<th style="text-align: right;">SUBZONE_NO</th>
-<th style="text-align: left;">SUBZONE_N</th>
-<th style="text-align: left;">SUBZONE_C</th>
-<th style="text-align: left;">CA_IND</th>
-<th style="text-align: left;">PLN_AREA_N</th>
-<th style="text-align: left;">PLN_AREA_C</th>
-<th style="text-align: left;">REGION_N</th>
-<th style="text-align: left;">REGION_C</th>
-<th style="text-align: left;">INC_CRC</th>
-<th style="text-align: left;">FMEL_UPD_D</th>
-<th style="text-align: right;">X_ADDR</th>
-<th style="text-align: right;">Y_ADDR</th>
-<th style="text-align: right;">SHAPE_Leng</th>
-<th style="text-align: right;">SHAPE_Area</th>
-<th style="text-align: left;">PA</th>
-<th style="text-align: right;">YOUNG</th>
-<th style="text-align: right;">ECONOMY ACTIVE</th>
-<th style="text-align: right;">AGED</th>
-<th style="text-align: right;">TOTAL</th>
-<th style="text-align: right;">DEPENDENCY</th>
-<th style="text-align: left;">geometry</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">PEARL’S HILL</td>
-<td style="text-align: left;">OTSZ01</td>
-<td style="text-align: left;">Y</td>
-<td style="text-align: left;">OUTRAM</td>
-<td style="text-align: left;">OT</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">8C7149B9EB32EEFC</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">28679.06</td>
-<td style="text-align: right;">29782.05</td>
-<td style="text-align: right;">3506.107</td>
-<td style="text-align: right;">559816.2</td>
-<td style="text-align: left;">OUTRAM</td>
-<td style="text-align: right;">930</td>
-<td style="text-align: right;">3130</td>
-<td style="text-align: right;">2120</td>
-<td style="text-align: right;">6180</td>
-<td style="text-align: right;">0.9744409</td>
-<td style="text-align: left;">MULTIPOLYGON (((29092.28 30…</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">BOAT QUAY</td>
-<td style="text-align: left;">SRSZ03</td>
-<td style="text-align: left;">Y</td>
-<td style="text-align: left;">SINGAPORE RIVER</td>
-<td style="text-align: left;">SR</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">C35FEFF02B13E0E5</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">29654.96</td>
-<td style="text-align: right;">29974.66</td>
-<td style="text-align: right;">1740.926</td>
-<td style="text-align: right;">160807.5</td>
-<td style="text-align: left;">SINGAPORE RIVER</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">50</td>
-<td style="text-align: right;">0.2500000</td>
-<td style="text-align: left;">MULTIPOLYGON (((29932.33 29…</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">HENDERSON HILL</td>
-<td style="text-align: left;">BMSZ08</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: left;">BM</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">3775D82C5DDBEFBD</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">26782.83</td>
-<td style="text-align: right;">29933.77</td>
-<td style="text-align: right;">3313.625</td>
-<td style="text-align: right;">595428.9</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: right;">2600</td>
-<td style="text-align: right;">7450</td>
-<td style="text-align: right;">3320</td>
-<td style="text-align: right;">13370</td>
-<td style="text-align: right;">0.7946309</td>
-<td style="text-align: left;">MULTIPOLYGON (((27131.28 30…</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">REDHILL</td>
-<td style="text-align: left;">BMSZ03</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: left;">BM</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">85D9ABEF0A40678F</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">26201.96</td>
-<td style="text-align: right;">30005.70</td>
-<td style="text-align: right;">2825.594</td>
-<td style="text-align: right;">387429.4</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: right;">2760</td>
-<td style="text-align: right;">6160</td>
-<td style="text-align: right;">1740</td>
-<td style="text-align: right;">10660</td>
-<td style="text-align: right;">0.7305195</td>
-<td style="text-align: left;">MULTIPOLYGON (((26451.03 30…</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">ALEXANDRA HILL</td>
-<td style="text-align: left;">BMSZ07</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: left;">BM</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">9D286521EF5E3B59</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">25358.82</td>
-<td style="text-align: right;">29991.38</td>
-<td style="text-align: right;">4428.913</td>
-<td style="text-align: right;">1030378.8</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: right;">2800</td>
-<td style="text-align: right;">7340</td>
-<td style="text-align: right;">3420</td>
-<td style="text-align: right;">13560</td>
-<td style="text-align: right;">0.8474114</td>
-<td style="text-align: left;">MULTIPOLYGON (((25899.7 297…</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: left;">BUKIT HO SWEE</td>
-<td style="text-align: left;">BMSZ09</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: left;">BM</td>
-<td style="text-align: left;">CENTRAL REGION</td>
-<td style="text-align: left;">CR</td>
-<td style="text-align: left;">7839A8577144EFE2</td>
-<td style="text-align: left;">2014-12-05</td>
-<td style="text-align: right;">27680.06</td>
-<td style="text-align: right;">30230.86</td>
-<td style="text-align: right;">3275.312</td>
-<td style="text-align: right;">551732.0</td>
-<td style="text-align: left;">BUKIT MERAH</td>
-<td style="text-align: right;">2750</td>
-<td style="text-align: right;">8080</td>
-<td style="text-align: right;">3610</td>
-<td style="text-align: right;">14440</td>
-<td style="text-align: right;">0.7871287</td>
-<td style="text-align: left;">MULTIPOLYGON (((27746.95 30…</td>
-</tr>
-</tbody>
-</table>
-</div>
-Percentile
+<p>Percentile</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>percent</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>.01</span>,<span class='fl'>.1</span>,<span class='fl'>.5</span>,<span class='fl'>.9</span>,<span class='fl'>.99</span>,<span class='fl'>1</span><span class='op'>)</span>
@@ -2583,7 +2180,7 @@ Percentile
       100% 
 19.0000000 </code></pre>
 </div>
-Creating get variable function
+<p>Creating get variable function</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>get.var</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>vname</span>,<span class='va'>df</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2595,7 +2192,7 @@ Creating get variable function
 </code></pre>
 </div>
 </div>
-Plotting percentile map with tmap functions (hardcode)
+<p>Plotting percentile map with tmap functions (hardcode)</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>percent</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>.01</span>,<span class='fl'>.1</span>,<span class='fl'>.5</span>,<span class='fl'>.9</span>,<span class='fl'>.99</span>,<span class='fl'>1</span><span class='op'>)</span>
@@ -2619,7 +2216,7 @@ Plotting percentile map with tmap functions (hardcode)
 </div>
 <p><img src="in-class-exercise-3_files/figure-html5/unnamed-chunk-7-1.png" width="624" /></p>
 </div>
-Plotting percentile map with Percentile Mapping Function
+<p>Plotting percentile map with Percentile Mapping Function</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>percentmap</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>vnam</span>, <span class='va'>df</span>, <span class='va'>legtitle</span><span class='op'>=</span><span class='cn'>NA</span>, <span class='va'>mtitle</span><span class='op'>=</span><span class='st'>"Percentile Map"</span><span class='op'>)</span><span class='op'>{</span>
@@ -2644,7 +2241,7 @@ Plotting percentile map with Percentile Mapping Function
 </code></pre>
 </div>
 </div>
-Testing Percentile Mapping Function (young)
+<p>Testing Percentile Mapping Function (young)</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>youngmap</span> <span class='op'>&lt;-</span> <span class='fu'>percentmap</span><span class='op'>(</span><span class='st'>"YOUNG"</span>, <span class='va'>mpsz_pop2020a</span><span class='op'>)</span>
@@ -2653,10 +2250,10 @@ Testing Percentile Mapping Function (young)
 </div>
 <p><img src="in-class-exercise-3_files/figure-html5/unnamed-chunk-9-1.png" width="624" /></p>
 </div>
-Testing Percentile Mapping Function (aged)
+<p>Testing Percentile Mapping Function (aged)</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>agedmap</span> <span class='op'>&lt;-</span> <span class='fu'>percentmap</span><span class='op'>(</span><span class='st'>"YOUNG"</span>, <span class='va'>mpsz_pop2020a</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>agedmap</span> <span class='op'>&lt;-</span> <span class='fu'>percentmap</span><span class='op'>(</span><span class='st'>"AGED"</span>, <span class='va'>mpsz_pop2020a</span><span class='op'>)</span>
 <span class='va'>agedmap</span>
 </code></pre>
 </div>
@@ -2665,7 +2262,7 @@ Testing Percentile Mapping Function (aged)
 <ul>
 <li>Boxmap</li>
 </ul>
-Boxbreaks Function
+<p>Boxbreaks Function</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>boxbreaks</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>v</span>,<span class='va'>mult</span><span class='op'>=</span><span class='fl'>1.5</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2696,7 +2293,7 @@ Boxbreaks Function
 </code></pre>
 </div>
 </div>
-Creating get variable function
+<p>Creating get variable function</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>get.var</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>vname</span>,<span class='va'>df</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2720,7 +2317,7 @@ Creating get variable function
 </div>
 <pre><code>[1] -4330     0   515  2080  3745  8590 20240</code></pre>
 </div>
-Boxmap Function
+<p>Boxmap Function</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>boxmap</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>vnam</span>, <span class='va'>df</span>, 
@@ -2755,7 +2352,7 @@ Boxmap Function
 </div>
 <p><img src="in-class-exercise-3_files/figure-html5/unnamed-chunk-15-1.png" width="624" /></p>
 </div>
-Boxmap Function (Missing Area Fix)
+<p>Boxmap Function (Missing Area Fix)</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>boxmap</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>vnam</span>, <span class='va'>df</span>, 
@@ -2795,7 +2392,7 @@ Boxmap Function (Missing Area Fix)
 <ul>
 <li>Raw Rate Map</li>
 </ul>
-Compute raw rate
+<p>Compute raw rate</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz_pop2020c</span> <span class='op'>&lt;-</span> <span class='va'>mpsz_pop2020</span> <span class='op'>%&gt;%</span>
@@ -2804,7 +2401,7 @@ Compute raw rate
 </code></pre>
 </div>
 </div>
-Plot Raw rate map using Boxmap function
+<p>Plot Raw rate map using Boxmap function</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>var</span> <span class='op'>&lt;-</span> <span class='fu'>get.var</span><span class='op'>(</span><span class='st'>"AGED%"</span>, <span class='va'>mpsz_pop2020c</span><span class='op'>)</span>
