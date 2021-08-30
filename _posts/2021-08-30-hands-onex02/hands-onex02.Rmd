@@ -219,6 +219,7 @@ ggplot(data=mpsz3414,
 ```
 
 ggplot2 (histogram)
+
 ```{r echo=TRUE}
 
 
