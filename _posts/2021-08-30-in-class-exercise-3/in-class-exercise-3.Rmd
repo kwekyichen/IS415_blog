@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = FALSE)
 This code chunk create a list of R packages needed and install them if they are not installed.
 
 ```{r echo=TRUE}
-packages = c('sf', 'tmap', 'tidyverse', 'knitr', "kableExtra")
+packages = c('sf', 'tmap', 'tidyverse')
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
@@ -37,6 +37,8 @@ This coded chuck reads the RDS file from the path and display the data.
 
 ```{r echo=TRUE}
 mpsz_pop2020 <- read_rds("../../../IS415/Hands-on_Ex/Hands-on_Ex03/data/rds/mpszpop2020.rds")
+
+head(mpsz_pop2020, n=5) 
 ```
 
 - Boxplot using mpsz_pop2020
@@ -55,6 +57,8 @@ Exclude records with NA
 ```{r echo=TRUE}
 mpsz_pop2020a <- mpsz_pop2020 %>%
   drop_na()
+
+head(mpsz_pop2020a, n=5) 
 ```
 
 ## Visualization

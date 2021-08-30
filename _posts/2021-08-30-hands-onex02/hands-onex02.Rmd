@@ -1,0 +1,228 @@
+---
+title: "Hands-on_Ex02"
+description: |
+  I learn about importing, converting and projecting geospatial and aspatial data. 
+author:
+  - name: Kwek Yi Chen
+    url: https://example.com/kwekyichen
+date: 08-30-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Getting Started
+
+```{r echo=TRUE}
+packages = c('sf', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+Importing polygon feature data in shapefile format
+
+```{r echo=TRUE}
+mpsz = st_read(dsn = "../../../IS415/Hands-on_Ex/Hands-on_Ex02/data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+```
+
+Importing polyline feature data in shapefile form
+
+```{r echo=TRUE}
+cyclingpath = st_read(dsn = "../../../IS415/Hands-on_Ex/Hands-on_Ex02/data/geospatial", layer = "CyclingPath")
+```
+Importing GIS data in kml format
+
+```{r echo=TRUE}
+preschool = st_read("../../../IS415/Hands-on_Ex/Hands-on_Ex02/data/geospatial/pre-schools-location-kml.kml")
+```
+
+Working with st_geometry()
+
+```{r echo=TRUE}
+st_geometry(mpsz)
+```
+
+Working with glimpse()
+
+```{r echo=TRUE}
+glimpse(mpsz)
+```
+
+Working with head()
+
+```{r echo=TRUE}
+head(mpsz, n=5) 
+```
+
+Plotting the Geospatial Data
+
+```{r echo=TRUE}
+plot(mpsz)
+```
+
+Plotting the Geospatial Data only Geometry
+
+```{r echo=TRUE}
+plot(st_geometry(mpsz))
+```
+
+Plotting the Geospatial Data by using a specific attribute
+
+```{r echo=TRUE}
+plot(mpsz["PLN_AREA_N"])
+```
+
+Assigning EPSG code to a simple feature data frame (Coordinates Missing,  EPSG code for svy21 should be 3414)
+
+```{r echo=TRUE}
+st_crs(mpsz)
+```
+
+Assign the correct EPSG code to mpsz data frame
+
+```{r echo=TRUE}
+mpsz3414 <- st_set_crs(mpsz, 3414)
+```
+
+check the CSR again (ESPG is 3414 now)
+
+```{r echo=TRUE}
+st_crs(mpsz3414)
+```
+
+Check geomtery of preschool
+
+```{r echo=TRUE}
+st_geometry(preschool)
+```
+
+Transforming the projection of preschool from wgs84 to svy21
+
+```{r echo=TRUE}
+preschool3414 <- st_transform(preschool, crs = 3414)
+```
+
+Check geometry of preschool3414
+
+```{r echo=TRUE}
+st_geometry(preschool3414)
+```
+
+Importing and Converting An Aspatial Data
+
+```{r echo=TRUE}
+listings <- read_csv("../../../IS415/Hands-on_Ex/Hands-on_Ex02/data/aspatial/listings.csv")
+```
+
+Glimpse listings data
+
+```{r echo=TRUE}
+glimpse(listings) 
+```
+
+Creating a simple feature data frame from an aspatial data frame
+
+```{r echo=TRUE}
+listings_sf <- st_as_sf(listings, coords = c("longitude", "latitude"), crs=4326) %>% st_transform(crs = 3414)
+```
+
+glimpse listings_sf
+
+```{r echo=TRUE}
+glimpse(listings_sf)
+```
+
+Geoprocessing with sf package (Buffering)
+
+1. Compute the 5-meter buffers around cycling paths
+
+```{r echo=TRUE}
+buffer_cycling <- st_buffer(cyclingpath, dist=5, nQuadSegs = 30)
+```
+
+2. Calculating the area of the buffers
+
+```{r echo=TRUE}
+buffer_cycling$AREA <- st_area(buffer_cycling)
+```
+
+3. sum() of Base R will be used to derive the total land involved
+
+```{r echo=TRUE}
+sum(buffer_cycling$AREA)
+```
+
+Geoprocessing with sf package (Point-in-polygon count)
+
+1. identify pre-schools located inside each Planning Subzone by using st_intersects()
+2. length() of Base R is used to calculate numbers of pre-schools that fall inside each planning subzone.
+
+```{r echo=TRUE}
+mpsz3414$`PreSch Count`<- lengths(st_intersects(mpsz3414, preschool3414))
+```
+
+summary statistics of the newly derived PreSch Count field by using summary() 
+
+```{r echo=TRUE}
+summary(mpsz3414$`PreSch Count`)
+```
+
+list the planning subzone with the most number of pre-school
+
+```{r echo=TRUE}
+top_n(mpsz3414, 1, `PreSch Count`)
+```
+
+Calculate the density of pre-school by planning subzone.
+
+Uses st_area() of sf package to derive the area of each planning subzone.
+
+```{r echo=TRUE}
+mpsz3414$AREA <- st_area(mpsz3414)
+```
+
+Mutate() of dplyr package is used to compute the density
+
+```{r echo=TRUE}
+mpsz3414 <- mpsz3414 %>% mutate(`PreSch Density` = `PreSch Count`/`AREA` * 1000000)
+```
+
+Explorotary Data Analysis (EDA)
+
+Histogram to reveal the distribution of PreSch Density
+
+```{r echo=TRUE}
+hist(mpsz3414$`PreSch Density`)
+```
+
+ggplot2 (histogram)
+
+```{r echo=TRUE}
+ggplot(data=mpsz3414, 
+       aes(x= as.numeric(`PreSch Density`)))+
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue") +
+  labs(title = "Are pre-school even distributed in Singapore?",
+       subtitle= "There are many planning sub-zones with a single pre-school, on the other hand, \nthere are two planning sub-zones with at least 20 pre-schools",
+      x = "Pre-school density (per km sq)",
+      y = "Frequency")
+```
+
+ggplot2 (histogram)
+```{r echo=TRUE}
+
+
+ggplot(data=mpsz3414, aes(x= as.numeric(`PreSch Density`), y= `PreSch Count`))+ geom_point() + labs(x = "Pre-school density (per km sq)", y = "Pre-school count")
+```
+
+
