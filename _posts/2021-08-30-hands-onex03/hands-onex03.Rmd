@@ -1,0 +1,394 @@
+---
+title: "Hands-on_Ex03"
+description: |
+  I learn about Choropleth Mapping using tmap package.
+author:
+  - name: Kwek Yi Chen
+    url: https://example.com/kwekyichen
+date: 08-30-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Getting Started
+
+```{r echo=TRUE}
+packages = c('sf', 'tmap', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+Importing Geospatial Data into R
+
+```{r echo=TRUE}
+mpsz <- st_read(dsn = "../../../IS415/Hands-on_Ex/Hands-on_Ex03/data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+```
+```{r echo=TRUE}
+mpsz
+```
+
+Importing Attribute Data into R
+
+```{r echo=TRUE}
+popdata <- read_csv("../../../IS415/Hands-on_Ex/Hands-on_Ex03/data/aspatial/respopagesextod2011to2020.csv")
+```
+
+## Data Preparation
+
+Data Wrangling
+
+```{r echo=TRUE}
+popdata2020 <- popdata %>%
+  filter(Time == 2020) %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup()%>%
+  pivot_wider(names_from=AG, 
+              values_from=POP) %>%
+  mutate(YOUNG = rowSums(.[3:6])
+         +rowSums(.[12])) %>%
+mutate(`ECONOMY ACTIVE` = rowSums(.[7:11])+rowSums(.[13:15]))%>%
+mutate(`AGED`=rowSums(.[16:21])) %>%
+mutate(`TOTAL`=rowSums(.[3:21])) %>%  
+mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)/`ECONOMY ACTIVE`) %>%
+  select(`PA`, `SZ`, `YOUNG`, `ECONOMY ACTIVE`, `AGED`, `TOTAL`, `DEPENDENCY`)
+```
+
+## JOINING THE ATTRIBUTE DATA AND GEOSPATIAL DATA
+
+convert the values in PA and SZ fields to uppercase
+
+```{r echo=TRUE}
+popdata2020 <- popdata2020 %>%
+  mutate_at(.vars = vars(PA, SZ), 
+            .funs = funs(toupper)) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+```
+
+Left join
+
+```{r echo=TRUE}
+mpsz_pop2020 <- left_join(mpsz, popdata2020, by = c("SUBZONE_N" = "SZ"))
+```
+
+Write as R data
+
+```{r echo=TRUE}
+write_rds(mpsz_pop2020, "../../../IS415/Hands-on_Ex/Hands-on_Ex03/data/rds/mpszpop2020.rds")
+```
+
+
+
+## Choropleth Mapping
+
+Plotting a choropleth map quickly by using qtm()
+
+```{r echo=TRUE} 
+tmap_mode("plot")
+qtm(mpsz_pop2020, 
+    fill = "DEPENDENCY")
+```
+
+Creating a choropleth map by using tmap
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha =0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
+             position = c("left", "bottom"))
+```
+
+Basic building block of tmap: tm_shape()
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020) +
+  tm_polygons()
+```
+
+DRAWING A CHOROPLETH MAP USING TM_POLYGONS()
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_polygons("DEPENDENCY")
+```
+
+DRAWING A CHOROPLETH MAP USING TM_FILL() AND TM_BORDER()
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY")
+```
+
+To add border
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY") +
+  tm_borders(lwd = 0.1,  alpha = 1)
+```
+
+Data classification methods of tmap
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "jenks") +
+  tm_borders(alpha = 0.5)
+```
+
+"Equal" data classification method
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "equal") +
+  tm_borders(alpha = 0.5)
+```
+
+DIY.... "Quantile"
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "quantile") +
+  tm_borders(alpha = 0.5)
+```
+
+DIY.... "Quantile" with 2 class
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 2,
+          style = "quantile") +
+  tm_borders(alpha = 0.5)
+```
+
+DIY.... "Quantile" with 6 class
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 6,
+          style = "quantile") +
+  tm_borders(alpha = 0.5)
+```
+
+DIY.... "Quantile" with 10 class
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 10,
+          style = "quantile") +
+  tm_borders(alpha = 0.5)
+```
+
+DIY.... "Quantile" with 20 class
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 20,
+          style = "quantile") +
+  tm_borders(alpha = 0.5)
+```
+
+PLOTTING CHOROPLETH MAP WITH CUSTOME BREAK
+
+```{r echo=TRUE}
+summary(mpsz_pop2020$DEPENDENCY)
+```
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00)) +
+  tm_borders(alpha = 0.5)
+```
+
+## Colour Scheme
+
+COLOURBREWER PALETTE
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          n = 6,
+          style = "quantile",
+          palette = "Blues") +
+  tm_borders(alpha = 0.5)
+```
+
+Reverse color shading with "-"
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5)
+```
+
+## Map Layouts
+
+legend option
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "jenks", 
+          palette = "Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 0.1) +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone \n(Jenks classification)",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+```
+
+layout settings changes using tmap_style
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("classic")
+```
+
+CARTOGRAPHIC FURNITURE (Compass, scale bar, grid lines)
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "No. of persons") +
+  tm_layout(main.title = "Distribution of Dependency Ratio \nby planning subzone",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
+             position = c("left", "bottom"))
+```
+
+Reset to default
+
+```{r echo=TRUE}
+tmap_style("white")
+```
+
+## Small Multiple Choropleth Maps (facet maps)
+
+ncols and tm_fill
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+
+  tm_fill(c("YOUNG", "AGED"),
+          style = "equal", 
+          palette = "Blues") +
+  tm_layout(legend.position = c("right", "bottom")) +
+  tm_borders(alpha = 0.5) +
+  tmap_style("white")
+```
+
+assigning multiple values to at least one of the aesthetic arguments
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020)+ 
+  tm_polygons(c("DEPENDENCY","AGED"),
+          style = c("equal", "quantile"), 
+          palette = list("Blues","Greens")) +
+  tm_layout(legend.position = c("right", "bottom"))
+```
+
+tm_facets() method
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "Blues",
+          thres.poly = 0) + 
+  tm_facets(by="REGION_N", 
+            free.coords=TRUE, 
+            drop.shapes=TRUE) +
+  tm_layout(legend.show = FALSE,
+            title.position = c("center", "center"), 
+            title.size = 20) +
+  tm_borders(alpha = 0.5)
+```
+
+Creating multiple stand-alone maps with tmap_arrange()
+
+```{r echo=TRUE}
+youngmap <- tm_shape(mpsz_pop2020)+ 
+  tm_polygons("YOUNG", 
+              style = "quantile", 
+              palette = "Blues")
+
+agedmap <- tm_shape(mpsz_pop2020)+ 
+  tm_polygons("AGED", 
+              style = "quantile", 
+              palette = "Blues")
+
+tmap_arrange(youngmap, agedmap, asp=1, ncol=2)
+```
+
+Mapping Spatial Object Meeting a Selection Criterion
+
+```{r echo=TRUE}
+tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N=="CENTRAL REGION", ])+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 0.1) +
+  tm_layout(legend.outside = TRUE,
+            legend.height = 0.45, 
+            legend.width = 5.0,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
