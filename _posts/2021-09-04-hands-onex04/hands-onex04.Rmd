@@ -1,5 +1,5 @@
 ---
-title: "Hands-on_Ex04"
+title: "Hands-on_Ex02"
 description: |
   I learn about the functions of spatstat package to perform spatial point patterns analysis.
 author:
