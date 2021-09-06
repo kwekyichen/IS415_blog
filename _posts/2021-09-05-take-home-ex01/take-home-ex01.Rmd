@@ -1,0 +1,19 @@
+---
+title: "Take-Home Ex1"
+description: |
+  A short description of the post.
+author:
+  - name: Kwek Yi Chen
+    url: https://example.com/kwekyichen
+date: 09-05-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+

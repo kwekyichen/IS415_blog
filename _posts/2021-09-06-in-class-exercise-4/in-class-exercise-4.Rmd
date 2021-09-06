@@ -1,0 +1,145 @@
+---
+title: "In-class Exercise 4"
+description: |
+  A short description of the post.
+author:
+  - name: Kwek Yi Chen
+    url: https://example.com/kwekyichen
+date: 09-06-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Installing and Loading the R packages
+
+- sf is mainly used for importing geospatial data
+- tidyverse to read text file and data manupulation
+- tmap to do mapping
+- spatstat to perform spatial point method analysis
+- maptools to convert spatial data from spatial object class into ppp format
+- raster to handle raster-based geospatial data
+
+```{r echo=TRUE}
+packages <- c('maptools', 'sf', 'raster', 'spatstat', 'tmap', 'tidyverse')
+for(p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p, character.only = T)
+}
+```
+
+## Importing Geospatial Data
+
+```{r echo=TRUE}
+sg_sf <- st_read(dsn = "../../../IS415/In-class_Ex/In-class_Ex04/data/shapefile", layer="CostalOutline")
+mpsz_sf <- st_read(dsn = "../../../IS415/In-class_Ex/In-class_Ex04/data/shapefile", layer="MP14_SUBZONE_WEB_PL")
+```
+
+## Importing Aspatial Data
+
+```{r echo=TRUE}
+childcare <- read_rds("../../../IS415/In-class_Ex/In-class_Ex04/data/rds/childcare.rds")
+CHAS <- read_rds("../../../IS415/In-class_Ex/In-class_Ex04/data/rds/CHAS.rds")
+```
+
+### Converting from aspatial to geospatial
+
+```{r echo=TRUE}
+CHAS_sf <- st_as_sf(CHAS,
+                    coords = c("X_COORDINATE","Y_COORDINATE"),
+                      crs=3414)
+```
+
+note that childcare data lat lng is decimal.
+Hence need to st_as_sf to crs 4326 before transforming to crs 3414
+
+```{r echo=TRUE}
+childcare$Lat <- as.numeric(childcare$Lat)
+childcare$Lng <- as.numeric(childcare$Lng)
+childcare_sf <- st_as_sf(childcare,
+                    coords = c("Lng","Lat"),
+                      crs=4326) %>%
+  st_transform(crs=3414)
+```
+
+## Geospatial Data Wrangling
+
+### Converting from sf to Spatial* classes
+
+Notice that data will be loss along the way...
+
+```{r echo=TRUE}
+childcare <- as_Spatial(childcare_sf)
+CHAS <- as_Spatial(CHAS_sf)
+mpsz <- as_Spatial(mpsz_sf)
+sg <- as_Spatial(sg_sf)
+```
+
+### Converting Spatial* classes to sp format
+```{r echo=TRUE}
+childcare_sp <- as(childcare, "SpatialPoints")
+CHAS_sp <- as(CHAS, "SpatialPoints")
+sg_sp <- as(sg, "SpatialPolygons")
+```
+
+### Converting from sf to Spatial* classes
+
+```{r echo=TRUE}
+chilcare_ppp <- as(childcare_sp, "ppp")
+CHAS_ppp <- as(CHAS_sp, "ppp")
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
+
+```{r echo=TRUE}
+
+```
