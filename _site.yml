@@ -6,7 +6,7 @@ output_dir: "_site"
 navbar:
   right:
     - text: "Take-Home Exercise"
-      menu:
+      menu: "https://kwekyichen-is415.netlify.app/posts/2021-09-06-takehome-ex01/"
       - text: "Take-home Exercise 1"
         href: 
     - text: "In-class Exercise"

@@ -1,0 +1,392 @@
+---
+title: "Take Home Exercise 01"
+description: |
+  Analysing and Visualising Spatio-temporal Patterns of COVID-19 in DKI Jakarta, Indonesia
+author:
+  - name: Kwek Yi Chen
+    url: https://example.com/kwekyichen
+date: 09-06-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+# Introduction
+
+```{r}
+```
+
+# Data
+
+```{r}
+
+```
+
+# Getting Started
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+packages = c('sf', 'tidyverse', 'readxl', 'tmap')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+# Data Extraction, Wrangling and Integration
+
+## Aspatial Data
+
+Exploration of data
+
+```{r}
+mar20 <- read_xlsx("data/aspatial/Standar Kelurahan Data Corona (31 March 2020 Pukul 08.00).xlsx")
+glimpse(mar20)
+```
+
+From the variable above, We realised that there are 2 "ID_KEL" in this dataset (ID_KEL...1 and ID_KEL...2) and read_xlsx will auto rename them by adding "...n" so that there will not be two column with same name.
+
+```{r}
+jul20 <- read_xlsx("data/aspatial/Standar Kelurahan Data Corona (31 July 2020 Pukul 09.00).xlsx")
+glimpse(jul20)
+```
+
+From the data above, We realised that there are 2 "Meninggal" in this dataset (Meninggal...21 and Meninggal...26), and read_xlsx will auto rename them by adding "...n" so that there will not be two column with same name.
+
+```{r}
+jul21 <- read_xlsx("data/aspatial/Standar Kelurahan Data Corona (31 July 2021 Pukul 10.00).xlsx")
+glimpse(jul21)
+```
+
+From the data above, We realised that there are 2 "Meninggal" in jul21 data, just like the previous jul20 data. However, this time the column name are different. They are Meninggal...26 and Meninggal...31 respectively. This means that the read_xlsx will auto rename them by adding "...n", and n can be affected by the number of variables in the dataset. In the case, the number of column differ in different dataset. 
+
+Loading datasets with function
+
+get var function
+
+```{r}
+get.var <- function(vname,df) {
+  v <- df[vname] %>% st_set_geometry(NULL)
+  v <- unname(v[,1])
+  return(v)
+}
+```
+
+Function to load Excel dataset with duplicated ID_KEL column
+
+1) This code chuck is a function that reads xlsx dataset, and extract data from "data" sheet. 
+
+1) .name_repair = "minimal" will retain the name of column if there are duplicated column name 
+
+2) make.unique changes the name of the second column if there are any duplicated column name by adding ".1" behind, and one of the duplicated column will retain it's name.
+
+3) mutate adds "Month" and "Year" column function, and they are substr and str_sub of the dataset name
+
+4) We will then select the first "ID_KEL" column that retained it's name while the second "ID_KEL" column with the name "ID_KEL.1" will be dropped. The respective variables will also be selected. Rows with N/A value will also be dropped with drop_na()
+
+5) The function will return the extracted_data
+
+```{r}
+unique_column_data_idkel <- function(data) {
+  thedata <- read_xlsx(data, sheet = "data", .name_repair = "minimal")
+
+  names(thedata) <- make.unique(names(thedata))
+  
+  data_withmonyear <- thedata %>%
+    mutate(thedata, Month = substr(data, 54, 56)) %>%
+    mutate(thedata, Year = str_sub(data, -22, -19))
+  
+  extracted_data <- select(data_withmonyear, `ID_KEL`, `Nama_provinsi`, `nama_kota`, `nama_kecamatan`, `nama_kelurahan`, `POSITIF`, `Meninggal`, `Month`, `Year`) %>%
+    drop_na()
+  
+  return(extracted_data)
+}
+```
+
+Loading all dataset with duplicated ID_KEL column (Mar 2020 - Jul 2021)
+
+```{r}
+mar20 <- unique_column_data_idkel("data/aspatial/Standar Kelurahan Data Corona (31 March 2020 Pukul 08.00).xlsx")
+apr20 <- unique_column_data_idkel("data/aspatial/Standar Kelurahan Data Corona (30 April 2020 Pukul 09.00).xlsx")
+may20 <- unique_column_data_idkel("data/aspatial/Standar Kelurahan Data Corona (31 May 2020 Pukul 09.00).xlsx")
+jun20 <- unique_column_data_idkel("data/aspatial/Standar Kelurahan Data Corona (30 June 2020 Pukul 09.00).xlsx")
+```
+
+Showing a sample dataset
+
+```{r}
+glimpse(mar20)
+```
+
+Function to load Excel dataset with duplicated Meninggal column
+
+1) This code chuck is a function that reads xlsx dataset, and extract data from "data" sheet. 
+
+1) .name_repair = "minimal" will retain the name of column if there are duplicated column name 
+
+2) make.unique changes the name of the second column if there are any duplicated column name by adding ".1" behind, and one of the duplicated column will retain it's name. This helps to solve the issue of the different number of columns in every dataset that affects the renaming convention of read_xlsx. 
+
+3) mutate adds "Month" and "Year" column function, and they are substr and str_sub of the dataset name
+
+4) We will then select the second "Meninggal" column with the name "Meninggal.1" as it contains non N/A value. It will then be rename as "Meninggal". The other respective variables will also be selected. Rows with N/A value will also be dropped with drop_na()
+
+5) The function will return the extracted_data
+
+```{r}
+unique_column_data_meninggal <- function(data) {
+  thedata <- read_xlsx(data, sheet = "data", .name_repair = "minimal")
+
+  names(thedata) <- make.unique(names(thedata))
+  
+  data_withmonyear <- thedata %>%
+    mutate(thedata, Month = substr(data, 54, 56)) %>%
+    mutate(thedata, Year = str_sub(data, -22, -19))
+  
+  extracted_data <- select(data_withmonyear, `ID_KEL`, `Nama_provinsi`, `nama_kota`, `nama_kecamatan`, `nama_kelurahan`, `POSITIF`, `Meninggal.1`, `Month`, `Year`) %>%
+    rename(`Meninggal` = `Meninggal.1`) %>%
+    drop_na()
+    
+  return(extracted_data)
+}
+```
+
+Loading all dataset with duplicated ID_KEL column (Jul 2020 - Aug 2021)
+
+```{r}
+jul20 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 July 2020 Pukul 09.00).xlsx")
+aug20 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 August 2020 Pukul 10.00).xlsx")
+sep20 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (30 September 2020 Pukul 10.00).xlsx")
+oct20 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 October 2020 Pukul 10.00).xlsx")
+nov20 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (30 November 2020 Pukul 10.00).xlsx")
+dec20 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 December 2020 Pukul 10.00).xlsx")
+jan21 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (30 January 2021 Pukul 10.00).xlsx")
+feb21 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (28 February 2021 Pukul 10.00).xlsx")
+mar21 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 March 2021 Pukul 10.00).xlsx")
+apr21 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (30 April 2021 Pukul 10.00).xlsx")
+may21 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 May 2021 Pukul 10.00).xlsx")
+jun21 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (30 June 2021 Pukul 10.00).xlsx")
+jul21 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 July 2021 Pukul 10.00).xlsx")
+aug21 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 August 2021 Pukul 10.00).xlsx")
+```
+
+Showing a sample dataset
+
+```{r}
+glimpse(jul20)
+```
+
+Integrate daily data into a data frame by month
+
+The following code chunk uses rbind to integrates all aspatial files into one data frame
+
+```{r}
+covid_all <- do.call("rbind", list(apr20, may20, jun20, jul20, aug20, sep20, oct20, nov20, dec20, jan21, feb21, mar21, apr21, may21, jun21, jul21, aug21))
+
+glimpse(covid_all)
+
+```
+
+We group the data by ID_KEL and Month, and sum "POSITIF" and "Meninggal".
+
+We left join the covid_all data to covid_all_bymonth with "ID_KEL" as the matching key to get the other columns back since we only have ID_KEL in mar20_to_aug21_bymonth.
+
+```{r}
+covid_all_bymonth <- covid_all %>%
+  group_by(ID_KEL, Month) %>%
+  summarise(`POSITIF` = sum(`POSITIF`), `Meninggal` = sum(`Meninggal`))
+
+covid_bymonth <- covid_all_bymonth %>%
+                  left_join(select(covid_all, `ID_KEL`, `Nama_provinsi`, `nama_kota`, `nama_kecamatan`, `nama_kelurahan`), by = c("ID_KEL" = "ID_KEL"))
+glimpse(covid_bymonth)
+```
+
+From the above, we can see that are be duplicated rows after the left join. We will use unique to drop duplicated rows
+
+```{r}
+covid_clean <- unique(covid_bymonth)
+
+glimpse(covid_clean)
+```
+
+After integrating the daily data into a data frame by month, we can see that there are 3233 rows with 8 columns.
+
+We will re-order the column to make the data clearer.
+
+```{r}
+col_order <- c("ID_KEL", "Nama_provinsi", "nama_kota", "nama_kecamatan", "nama_kelurahan", "POSITIF", "Meninggal", 
+               "Month")
+covid_clean <- covid_clean[, col_order]
+covid_clean
+```
+
+## Geospatial data
+
+Importing polygon feature data in shapefile format
+
+This code chunk read import BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA shapefile into R as a simple feature data frame called dkijkt_sf
+
+```{r}
+dkijkt_sf = st_read(dsn = "data/geospatial", layer = "BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA")
+```
+
+From above, We can see that dkijkt_sf is in wgs84 coordinate system.
+
+Checking the Content of A Simple Feature Data Frame
+
+```{r}
+glimpse(dkijkt_sf)
+```
+
+Check CRS
+
+```{r}
+st_crs(dkijkt_sf)
+```
+
+The above indicates that the data is in wgs84 coordinate system and ESPG is 4326. The correct ESPG FOR DGN95 / Indonesia TM-3 zone 54.1) is 23845.
+
+Projection Transformation
+
+This code chunk will transform the projection of dkijkt_sf from WGS84 to EPSG:23845
+
+```{r}
+dkijkt_sf23845 <- st_transform(dkijkt_sf, crs = 23845)
+```
+
+Check CRS again
+
+```{r}
+st_crs(dkijkt_sf23845)
+```
+
+Check for invalid Geometry
+
+This code chunk checks for invalid geometry
+
+```{r}
+length(which(st_is_valid(dkijkt_sf23845) == FALSE))
+```
+
+There is no invalid geometry in dkijkt_sf23845.
+
+Exclude all outer islands from DKI Jarkarta sf data frame
+
+First, we take a look at KAB_KOTA which means Regency/City.
+
+Check unique value of KAB_KOTA column
+
+This code chunk checks the unique value of KAB_KOTA column using unique function.
+
+```{r}
+unique(dkijkt_sf23845$"KAB_KOTA")
+```
+
+Plot iteractive map of KAB+KOTA
+This code chunk will plot an interactive map of KAB_KOTA using tmap_mode "view".
+
+```{r}
+tmap_mode("view")
+tm_shape(dkijkt_sf23845) + 
+  tm_polygons("KAB_KOTA")
+```
+
+From the interactive map, We can see that the mainland contains five colours, and all of value begins with "JAKARTA". We can also determine from the above that "KEPULAUAN SERIBU" are be the outer islands.
+
+Plot "KEPULAUAN SERIBU" to confirm if it contains only outer islands
+
+This code chunk plot "KEPULAUAN SERIBU" using plot function.
+
+```{r}
+plot(dkijkt_sf23845[dkijkt_sf23845$KAB_KOTA == "KEPULAUAN SERIBU", "KAB_KOTA"])
+```
+
+From the map above, we can confirm that rows with "KEPULAUAN SERIBU" are the outer islands.
+
+Remove "KEPULAUAN SERIBU" data using the filter function.
+
+This code chunk remove rows of data with KAB_KOTA = KEPULAUAN SERIBU"
+
+```{r}
+dkijkt_sf23845_filtered <- filter(dkijkt_sf23845, KAB_KOTA != "KEPULAUAN SERIBU")
+```
+
+This code chunk checks if the filtered simple feature contains only the mainland of DKI Jarkarta
+
+```{r}
+plot(dkijkt_sf23845_filtered["KAB_KOTA"])
+```
+
+Retaining first nine fields in DKI Jarkarta sf data frame
+
+This code chuck will retain the first nine fields from the filtered dataset.
+
+```{r}
+dkijkt_sf23845_first9 <- dkijkt_sf23845_filtered[1:9]
+dkijkt_sf23845_first9
+```
+
+## Geospatial data integration
+
+Combine the geospatial and aspatial data frame into simple feature data frame
+
+This code chunk combines the geospatial and aspatial data frame using left_join() function into dkijkt_covid simple feature data frame
+
+```{r}
+dkijkt_covid <- left_join(dkijkt_sf23845_first9, covid_clean, by = c("KODE_DESA" = "ID_KEL"))
+dkijkt_covid
+```
+Calculate the cumulative confirmed cases rate (i.e. cases per 10000 population) and the cumulative death rate by month
+
+POSITIF: cumulative confirmed cases
+Meninggal: cumulative death cases
+JUMLAH_PEN: Total Population
+
+Cumulative confirmed cases rate = POSITIF/JUMLAH_PEN
+Cumulative confirmed death rate = Meninggal/JUMLAH_PEN
+
+```{r}
+dkijkt_covid_cal <- dkijkt_covid %>% 
+                      mutate(`Cumulative confirmed cases rate` = `POSITIF`/`JUMLAH_PEN` * 10000) %>%
+                      mutate(`Cumulative confirmed death rate` = `Meninggal`/`JUMLAH_PEN` * 10000)
+
+dkijkt_covid_cal
+```
+
+# Thematic Mapping
+
+## Choropleth 
+
+```{r}
+tmap_mode("plot")
+qtm(dkijkt_covid_cal, 
+    fill = "Cumulative confirmed cases rate")
+```
+
+```{r}
+tmap_mode("plot")
+qtm(dkijkt_covid_cal, 
+    fill = "Cumulative confirmed death rate")
+```
+
+
+```{r}
+tm_shape(dkijkt_covid_cal)+ 
+  tm_polygons(c("Cumulative confirmed cases rate","Cumulative confirmed death rate"),
+          style = c("equal", "quantile"), 
+          palette = list("Blues","Greens")) +
+  tm_layout(legend.position = c("right", "bottom"))
+```
+
+
+
+
+# Analytical Mapping (INCLASS EXERCISE)
+
+```{r}
+
+```
