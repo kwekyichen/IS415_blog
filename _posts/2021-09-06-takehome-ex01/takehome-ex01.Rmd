@@ -18,21 +18,32 @@ output:
 
 # 1 Introduction
 
-The cumulative confirmed cases in DKI Jakarta were not evenly distributed even though the country is compact. Hence, we are interested to find out which sub-districts have relatively higher number of confirmed cases and how they changed over time.
+The cumulative confirmed cases in DKI Jakarta were not evenly distributed even though the country is compact. Hence, we are interested to find out which sub-districts have relatively higher number of confirmed cases and how they changed over time. This analysis aims to reveal the spatio-temporal patterns of monthly cumulative confirmed COVID-19 rate and death rate at sub-district (kelurahan).
 
-This analysis aims to reveal the spatio-temporal patterns of monthly cumulative confirmed COVID-19 rate and death rate at sub-district (kelurahan).
+This analysis contains three parts:
+
+1. Cumulative confirmed cases rate
+2. Cumulative death rate
+3. Relationship between cumulative confirmed cases rate and cumulative death rate
 
 # 2 Data
 
-
-Open Data Covid-19 Provinsi DKI Jakarta from https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/. The format is excel. The data contains of COVID-19 measures at sub-district level. We will be working with 18 data files work with, from March 2020 to August 2021. We are using the last day of each month. The data for 31st January 2021 is not available and hence we will be using 30th January 2021 data instead.
+Open Data Covid-19 Provinsi DKI Jakarta from https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/. The format is excel. The data contain COVID-19 measures at sub-district level. We will working with 18 data files, from March 2020 to August 2021 and We are using the last day data of each month. The data for 31st January 2021 is not available and hence we will be using 30th January 2021 data instead.
 
 Batas Desa Provinsi DKI Jakarta from https://www.indonesia-geospasial.com/. The format is Shapefile (SHP). This is a geospatial data of DKI Jarkarta.
 
 # 3 Setting Up Environment
 
+The following code chunk install the following packages:
+
+- sf to handle geospatial data 
+- tidyverse to perform importing, wrangling and visualising of data
+- readxl to import excel
+- tmap to create choropleth maps
+- knitr for dynamic report
+
 ```{r}
-packages = c('sf', 'tidyverse', 'readxl', 'tmap')
+packages = c('sf', 'tidyverse', 'readxl', 'tmap', 'knitr')
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
@@ -47,7 +58,7 @@ for (p in packages){
 
 ### 4.1.1 Exploration of data
 
-This code chunk explores March 2020 data by reading the excel file with read_xlsx function of readxl package and looking at the column of mar20 using glimpse function. 
+The following code chunk explores March 2020 data by reading the excel file with read_xlsx function of readxl package and looking at the column of mar20 using glimpse function. 
 
 ```{r}
 mar20 <- read_xlsx("data/aspatial/Standar Kelurahan Data Corona (31 March 2020 Pukul 08.00).xlsx")
@@ -58,33 +69,34 @@ From the variable above, we realised that there are 2 "ID_KEL" in this dataset (
 
 Next, we continue to explore other month's data to see if there are other variation.
 
-This code chunk explores July 2020 data by reading the excel file with read_xlsx function of readxl package and looking at the column of jul20 using glimpse function. 
+The following code chunk explores July 2020 data by reading the excel file with read_xlsx function of readxl package and looking at the column of jul20 using glimpse function. 
 
 ```{r}
 jul20 <- read_xlsx("data/aspatial/Standar Kelurahan Data Corona (31 July 2020 Pukul 09.00).xlsx")
 glimpse(jul20)
 ```
 
-From the data above, We realised that there are 2 "Meninggal" in this dataset (Meninggal...21 and Meninggal...26) in July 2020 data, and read_xlsx will auto rename them by adding "...n" so that there will not be two column with same name.
+From the data above, We realised that there are 2 "Meninggal" (Meninggal...21 and Meninggal...26) in July 2020 data, and read_xlsx will auto rename them by adding "...n" so that there will not be two column with same name.
 
 Next, we continue to explore other month's data to see if there are other variation.
 
-This code chunk explores July 2021 data by reading the excel file with read_xlsx function of readxl package and looking at the column of jul21 using glimpse function. 
+The following code chunk explores July 2021 data by reading the excel file with read_xlsx function of readxl package and looking at the column of jul21 using glimpse function. 
 
 ```{r}
 jul21 <- read_xlsx("data/aspatial/Standar Kelurahan Data Corona (31 July 2021 Pukul 10.00).xlsx")
 glimpse(jul21)
 ```
 
-From the data above, We realised that there are 2 "Meninggal" in jul21 data, just like the previous jul20 data. However, this time the column name are different. They are Meninggal...26 and Meninggal...31 respectively. The read_xlsx will auto rename them by adding "...n", and n can be affected by the number of variables in the dataset. In this case, the number of column are different in different dataset. We have confirmed that data from July 2020 to August 2021 have duplicated Meninggal column with non-fixed position of Meninggal column.
+From the data above, we realised that there are 2 "Meninggal" in July 2021 data, just like the previous July 2020 data. However, this time the column name are different. They are Meninggal...26 and Meninggal...31 respectively. The read_xlsx will auto rename them by adding "...n", and n can be affected by the number of variables in the dataset. In this case, the number of column are different in different month's dataset. We have confirmed that data from July 2020 to August 2021 have duplicated Meninggal column with different number of column.
 
 ### 4.1.2 Loading aspatial data with function
 
 #### 4.1.2.1 get var function
 
-This code chunk is an R function to extract a variable as a vector out of an sf data frame.
+The following code chunk is an R function to extract a variable as a vector out of an sf data frame.
 
 vname refers to variable name
+
 df refers to data frame
 
 It will then return v.
@@ -99,15 +111,15 @@ get.var <- function(vname,df) {
 
 #### 4.1.2.2 Function to load Excel dataset with duplicated ID_KEL column
 
-1) This code chuck is a function that reads xlsx dataset using read_xlsx function, and extract data from "data" sheet. 
+1) The following code chuck is a function that reads xlsx dataset using read_xlsx function, and extract data from "data" sheet. 
 
 2) .name_repair is set to "minimal" to retain the name of column if there are duplicated column name 
 
 3) make.unique then changes the name of the second column if there are any duplicated column name by adding ".1" to the column name, and the first duplicated column will retain it's name.
 
-4) mutate function adds "Month", "Year" and "Month_Year" column function. They are obtain from the data file_name with str_sub function of stringr package. paste function concatenate the Month and Year with "_" as seperator.
+4) mutate function of dplyr adds "Month", "Year" and "Month_Year" column. They are obtain from the data file_name with str_sub function of stringr package. paste function concatenate the Month and Year with "_" as separator.
 
-5) We will then select the first "ID_KEL" column that retained it's name while the second "ID_KEL" column with the name "ID_KEL.1" will be dropped. The respective variables will also be selected. Rows with N/A value will also be dropped with drop_na()
+5) We will then select the first "ID_KEL" column that retained it's name while the second "ID_KEL" column with the name "ID_KEL.1" will be dropped. The respective variables required will also be selected. Rows with N/A value will also be dropped with drop_na() function
 
 6) The function will return the extracted_data
 
@@ -131,7 +143,7 @@ unique_column_data_idkel <- function(data) {
 
 #### 4.1.2.3 Loading all dataset with duplicated ID_KEL column (Mar 2020 - Jun 2020)
 
-This code chunk loads dataset with duplicated ID_KEL column using unique_column_data_idkel function.
+The following code chunk loads dataset with duplicated ID_KEL column using unique_column_data_idkel function.
 
 ```{r}
 mar20 <- unique_column_data_idkel("data/aspatial/Standar Kelurahan Data Corona (31 March 2020 Pukul 08.00).xlsx")
@@ -148,13 +160,13 @@ glimpse(mar20)
 
 #### 4.1.2.4 Function to load Excel dataset with duplicated Meninggal column
 
-1) This code chuck is a function that reads xlsx dataset using read_xlsx function, and extract data from "data" sheet. 
+1) The following code chuck is a function that reads xlsx dataset using read_xlsx function, and extract data from "data" sheet. 
 
 2) .name_repair is set to "minimal" to retain the name of column if there are duplicated column name.
 
-3) make.unique then changes the name of the second column if there are any duplicated column name by adding ".1" to the column name, and the first duplicated column will retain it's name. This helps to solve the issue of the different number of columns in every dataset that affects the renaming convention of Meninggal column in different dataset.
+3) make.unique then changes the name of the second column if there are any duplicated column name by adding ".1" to the column name, and the first duplicated column will retain it's name. This helps to solve the issue of the different number of columns in every dataset that affects the renaming convention for Meninggal column in different dataset.
 
-4) mutate function adds "Month", "Year" and "Month_Year" column function. They are obtain from the data file_name with str_sub function of stringr package. paste function concatenate the Month and Year with "_" as seperator.
+4) mutate function adds "Month", "Year" and "Month_Year" column. They are obtain from the data file_name with str_sub function of stringr package. paste function concatenate the Month and Year with "_" as seperator.
 
 5) We will then select the second "Meninggal" column with the name "Meninggal.1" as it contains non N/A value. It will then be rename as "Meninggal". The other respective variables will also be selected. Rows with N/A value will also be dropped with drop_na().
 
@@ -181,7 +193,7 @@ unique_column_data_meninggal <- function(data) {
 
 #### 4.1.2.5 Loading all dataset with duplicated Meninggal column (Jul 2020 - Aug 2021)
 
-This code chunk loads dataset with duplicated Meninggal column using unique_column_data_meninggal function.
+The following code chunk loads dataset with duplicated Meninggal column using unique_column_data_meninggal function.
 
 ```{r}
 jul20 <- unique_column_data_meninggal("data/aspatial/Standar Kelurahan Data Corona (31 July 2020 Pukul 09.00).xlsx")
@@ -217,13 +229,13 @@ glimpse(covid_all)
 
 ```
 
-After integrating the daily data into a data frame by month, we can see that there are 4842 rows with 10 columns.
+After integrating the daily data into a data frame by month year, we can see that there are 4842 rows with 10 columns.
 
 ## 4.2 Geospatial data
 
 ### 4.2.1 Importing polygon feature data in shapefile format
 
-This code chunk read import BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA shapefile into R as a simple feature data frame called dkijkt_sf.
+The following code chunk read import BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA shapefile into R as a simple feature data frame called dkijkt_sf using st_read of sf package.
 
 ```{r}
 dkijkt_sf = st_read(dsn = "data/geospatial", layer = "BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA")
@@ -235,7 +247,7 @@ From above, We can see that dkijkt_sf is in wgs84 coordinate system.
 
 #### 4.2.2.1 Check CRS
 
-This code chunk retrieve coordinate reference system from sf object using st_crs function of sf package.
+The following code chunk retrieve coordinate reference system from sf object using st_crs function of sf package.
 
 ```{r}
 st_crs(dkijkt_sf)
@@ -245,7 +257,7 @@ The above indicates that the data is in wgs84 coordinate system and ESPG is 4326
 
 #### 4.2.2.2 Transformation of projection
 
-This code chunk will transform the projection of dkijkt_sf from WGS84 to EPSG:23845 using st_transform function of sf package and assign to dkijkt_sf23845.
+The following code chunk will transform the projection of dkijkt_sf from WGS84 to EPSG:23845 using st_transform function of sf package and assign to dkijkt_sf23845.
 
 ```{r}
 dkijkt_sf23845 <- st_transform(dkijkt_sf, crs = 23845)
@@ -263,7 +275,7 @@ We can see that the projection transformation is successful.
 
 #### 4.2.3.1 Check for invalid geometry
 
-This code chunk checks for invalid geometry using st_is_valid function of sf package.
+The following code chunk checks for invalid geometry using st_is_valid function of sf package.
 
 ```{r}
 length(which(st_is_valid(dkijkt_sf23845) == FALSE))
@@ -272,7 +284,7 @@ From above result, there is no invalid geometry in dkijkt_sf23845.
 
 #### 4.2.3.2 Plot current geometry
 
-This code chunk plot the current geometry of dkijkt_sf23845.
+The following code chunk plot the current geometry of dkijkt_sf23845.
 
 ```{r}
 plot(dkijkt_sf23845$geometry)
@@ -285,15 +297,15 @@ First, we take a look at KAB_KOTA which means Regency/City.
 
 ##### 4.2.3.3.1 Check unique value of KAB_KOTA column
 
-This code chunk checks the unique value of KAB_KOTA column using unique function.
+The following code chunk checks the unique value of KAB_KOTA column using unique function.
 
 ```{r}
 unique(dkijkt_sf23845$"KAB_KOTA")
 ```
 
-##### 4.2.3.3.2 Plot iteractive map of KAB+KOTA
+##### 4.2.3.3.2 Plot iteractive map of KAB_KOTA
 
-This code chunk will plot an interactive map of KAB_KOTA using tmap_mode "view".
+The following code chunk will plot an interactive map of KAB_KOTA using tmap_mode "view".
 
 ```{r}
 tmap_mode("view")
@@ -301,54 +313,57 @@ tm_shape(dkijkt_sf23845) +
   tm_polygons("KAB_KOTA")
 ```
 
-From the interactive map, We can see that the mainland contains five colours, and all of value begins with "JAKARTA". We can also determine from the above that "KEPULAUAN SERIBU" are be the outer islands.
+From the interactive map, We can see that the mainland contains five colours, and all of value begins with "JAKARTA". We can also determine from the above that "KEPULAUAN SERIBU" are the outer islands.
 
 ##### 4.2.3.3.3 Plot "KEPULAUAN SERIBU" to confirm if it contains only outer islands
 
-This code chunk plot "KEPULAUAN SERIBU" using plot function.
+The following code chunk plot "KEPULAUAN SERIBU" using plot function.
 
 ```{r}
 plot(dkijkt_sf23845[dkijkt_sf23845$KAB_KOTA == "KEPULAUAN SERIBU", "KAB_KOTA"])
 ```
 
-From the map above, we can confirm that rows with "KEPULAUAN SERIBU" are the outer islands.
+From the map above, we can confirm that rows with KAB_KOTA = "KEPULAUAN SERIBU" are the outer islands.
 
-##### 4.2.3.3.4 Remove "KEPULAUAN SERIBU" data 
+##### 4.2.3.3.4 Remove rows with KAB_KOTA = "KEPULAUAN SERIBU"
 
-This code chunk remove rows of data with KAB_KOTA = KEPULAUAN SERIBU" using filter function
+The following code chunk remove rows of data with KAB_KOTA = KEPULAUAN SERIBU" using filter function
 
 ```{r}
 dkijkt_sf23845_main1 <- filter(dkijkt_sf23845, KAB_KOTA != "KEPULAUAN SERIBU")
 ```
 
-This code chunk checks if the filtered simple feature contains only the mainland of DKI Jarkarta
+The following code chunk checks if the filtered simple feature contains only the mainland of DKI Jarkarta
 
 ```{r}
 plot(dkijkt_sf23845_main1["KAB_KOTA"])
 ```
 
-### 4.2.4 Retaining first nine fields in DKI Jarkarta sf data frame
+We have successfully removed the outer islands.
 
-This code chuck will retain the first nine fields from the filtered dataset.
+### 4.2.4 Retaining required fields in DKI Jarkarta sf data frame
+
+The following code chuck will retain the first nine fields from the filtered dataset.
 
 ```{r}
 dkijkt_sf23845_main <- dkijkt_sf23845_main1[1:9]
 dkijkt_sf23845_main
 ```
 
-We have successfully clean and filtered the geospatial data. dkijkt_sf23845_main have 261 features and 9 fields.
+We have successfully cleaned and filtered the geospatial data. dkijkt_sf23845_main have 261 features and 9 fields.
 
 ## 4.3 Geospatial data integration
 
 ### 4.3.1 Combine the geospatial and aspatial data frame into simple feature data frame
 
-This code chunk combines the geospatial and aspatial data frame using left_join() function of dplyr package with matching key "KODE_DESA" = "ID_KEL" into dkijkt_covid simple feature data frame
+The following code chunk combines the geospatial and aspatial data frame using left_join() function of dplyr package with matching key "KODE_DESA" = "ID_KEL" into dkijkt_covid simple feature data frame
 
 We then filter out columns we want to retain using select function because the following columns are the same.
-PROVINSI = Nama_provinsi
-KAB_KOTA = nama_kota
-KECAMATAN = nama_kecamatan
-DESA_KELUR = nama_kelurahan
+
+- PROVINSI = Nama_provinsi
+- KAB_KOTA = nama_kota
+- KECAMATAN = nama_kecamatan
+- DESA_KELUR = nama_kelurahan
 
 ```{r}
 dkijkt_covid <- left_join(dkijkt_sf23845_main, covid_all, by = c("KODE_DESA" = "ID_KEL"))
@@ -362,13 +377,16 @@ There are 4698 features and 14 fields after we left_join and filter.
 ### 4.3.2 Calculate the cumulative confirmed cases rate  (i.e. cases per 10000 population) and the cumulative death rate by month
 
 POSITIF: Cumulative confirmed cases
+
 Meninggal: Cumulative death cases
+
 JUMLAH_PEN: Total Population
 
-Cumulative confirmed cases rate = POSITIF/JUMLAH_PEN * (10000/100)
-Cumulative confirmed death rate = Meninggal/JUMLAH_PEN * (10000/100)
+Cumulative confirmed cases rate (cc_cases_rate) = POSITIF/JUMLAH_PEN * (10000/100)
 
-This following code chunks creates a new calculated column of Cumulative confirmed cases rate and Cumulative confirmed death rate using mutate function of dplyr package.
+Cumulative death rate (cc_death_rate) = Meninggal/JUMLAH_PEN * (10000/100)
+
+The following code chunk creates a new calculated column of Cumulative confirmed cases rate and Cumulative death rate using mutate function of dplyr package.
 
 ```{r}
 dkijkt_covid_rate <- dkijkt_covid_s %>% 
@@ -382,7 +400,7 @@ The final integrated data is dkijkt_covid_rate, with 4698 features and 16 fields
 
 ### 4.3.3 Write as R data
 
-This code chunk writes dkijkt_covid_rate as R data to backup the file.
+The following code chunk writes dkijkt_covid_rate as R data to backup the file.
 
 ```{r}
 write_rds(dkijkt_covid_rate, "data/rds/dkijkt_covid_rate.rds")
@@ -396,7 +414,9 @@ write_rds(dkijkt_covid_rate, "data/rds/dkijkt_covid_rate.rds")
 
 #### 5.1.1.1 Histogram 
 
-This code chunk uses ggplot function of ggplot2 package to plot a histogram of the cumulative confirmed cases rate  (in %) per 10000 population from March 2020 to August 2021 in DKI Jarkata mainland.
+1. The following code chunk uses ggplot function of ggplot2 package to plot a histogram of the cumulative confirmed cases rate  (in %) per 10000 population from March 2020 to August 2021 in DKI Jarkata mainland.
+
+2. The histogram contains 20 bins.
 
 ```{r}
 ggplot(data=dkijkt_covid_rate, 
@@ -416,7 +436,7 @@ Histogram analysis:
 
 #### 5.1.1.2 Summary statistic 
 
-This code chunk create a summary statistic of Cumulative confirmed cases rate from March 2020 to August 2021 in DKI Jarkata mainland using summary function.
+The following code chunk create a summary statistic of cumulative confirmed cases rate from March 2020 to August 2021 in DKI Jarkata mainland using summary function.
 
 ```{r}
 summary(dkijkt_covid_rate$`cc_cases_rate`)
@@ -430,7 +450,9 @@ Summary statistic analysis:
 
 #### 5.1.1.3 Boxplot 
 
-This code chunk plots a boxplot of Cumulative confirmed cases rate from March 2020 to August 2021 in DKI Jarkata mainland using ggplot function of ggplot2 package. 
+1. The following code chunk plots a boxplot of Cumulative confirmed cases rate from March 2020 to August 2021 in DKI Jarkata mainland using ggplot function of ggplot2 package. 
+
+2. The y axis is the Cumulative confirmed cases rate.
 
 ```{r}
 ggplot(data=dkijkt_covid_rate, 
@@ -443,26 +465,26 @@ Boxplot analysis:
 
 - The boxplot shows that there are many upper outliers with cumulative confirmed cases rate above 8%.
 
-Overall, the histogram, summary statistics and boxplot shows that the data ranges from 0 to 39.4% and have multiple outliers. However, we have not take sub-districts into consideration at this point.
+Overall, the histogram, summary statistic and boxplot shows that the data ranges from 0% to 39.4% and have multiple outliers. However, we have not take sub-districts into consideration at this point.
 
 
 #### 5.1.1.4 Choropleth map 
 
-This code chunk plots a Choropleth map of the average cumulative confirmed cases rate (per 10000 population) from March 2020 to August 2021 in DKI Jarkata mainland by subdistricts.
+1. The following code chunk plots a Choropleth map of the average cumulative confirmed cases rate (per 10000 population) from March 2020 to August 2021 in DKI Jarkata mainland by subdistricts.
 
-We compute the mean of cc_cases_rate for each sub-district (`DESA_KELUR`) using group_by and summarize function
+2. The mean of cc_cases_rate for each sub-district (`DESA_KELUR`) are computed using group_by and summarize function
 
-tmap functions is used to plot the choropleth map.
+3. tmap functions is used to plot the choropleth map.
 
-tmap_mode is used to set the mode. In this case, we will be using "plot" mode.
+4. tmap_mode is used to set the mode. In this case, we will be using "plot" mode.
 
-tm_shape specifies the shape of the map, and we will be using dkijkt_covid_rate_avg data.
+5. tm_shape specifies the shape of the map, and we will be using dkijkt_covid_rate_avg data we have computed.
 
-tm_fill fills the shape with "cc_cases_rate" data in 6 different colour tone set with variable n. Each tone represents a range. The style used is "jenks" for natural groupings. 
+6. tm_fill fills the shape with "cc_cases_rate" data in 6 different colour tone set with variable n. Each tone represents a range. The style used is "jenks" for natural groupings. 
 
-tm_borders sets the border's transparency to 0.5.
+7. tm_borders sets the border's transparency to 0.5.
 
-tm_layout set the title's name, size and position
+8. tm_layout set the title's name, size and position
 
 ```{r}
 dkijkt_covid_rate_avg <- dkijkt_covid_rate %>%
@@ -478,6 +500,8 @@ tm_shape(dkijkt_covid_rate_avg)+
   tm_layout(main.title = "Average cumulative confirmed cases rate (per 10000 population) by Sub-Districts",
             main.title.position = 'center',
             main.title.size = 0.7, 
+            legend.title.size = 0.7,
+            legend.text.size = 0.7,
             frame = FALSE)
 ```
 Choropleth map analysis:
@@ -485,19 +509,20 @@ Choropleth map analysis:
 - From the choropleth map above, a lighter colour tone means that the subdistrict has a lower average cumulative confirmed cases rate, and a darker colour tone means the subdistrict has a higher average cumulative confirmed cases rate.
 - The sub district at the center of DKI JAKARTA with the darkest red colour tone has a high average cumulative confirmed cases rate of 12.54%. The rate of this sub-district probably belongs to the upper outlier as shown in the boxplot previously.
 - It can be seen that most of the sub district near the center area have a darker colour tone, whereas, sub district at outer area have a lighter colour tone. 
-- We can imply that there may be a spread effect, that a sub-district beside another sub-district with high confirmed case rate is likely to have a higher confirmed case rate as well. 
+- We can imply that there may be a spread effect, that a sub-district beside another sub-district with high average cumulative confirmed case rate is likely to have a high average cumulative confirmed case rate as well. 
 
 
 Next, We are interested to find out which sub-district has a relatively higher cumulative confirmed cases rate. We will find out the top 3 sub-district with the highest number of cumulative confirmed cases rate. 
 
 #### 5.1.1.5 Top 3 Sub-districts
 
-This code chunks plots a horizontal bar chart of the top 3 sub districts with highest cumulative confirmed cases rate 
-We sum up cc_cases_rate of each sub-district (`DESA_KELUR`) using group_by and summarize functions, and create a new sf called dkijkt_covid_rate_sum. 
+1. The following code chunks plots a horizontal bar chart of the top 3 sub districts with highest cumulative confirmed cases rate 
 
-top_n function of dplyr package is used to find out the top 3 sub districts, with n value set as 3.
+2. We sum up cc_cases_rate of each sub-district (`DESA_KELUR`) using group_by and summarize functions, and create a new sf called dkijkt_covid_rate_sum. 
 
-ggplot function of ggplot2 package is used to plot the top 3 sub districts in horizontal bar chart format.
+3. top_n function of dplyr package is used to find out the top 3 sub districts, with n value set as 3.
+
+4. ggplot function of ggplot2 package is used to plot the top 3 sub districts in horizontal bar chart format.
 
 ```{r}
 dkijkt_covid_rate_sum <- dkijkt_covid_rate %>%
@@ -510,27 +535,33 @@ ggplot(top3_cc_cases_rate, aes(x=cc_cases_rate, y=reorder(DESA_KELUR, cc_cases_r
   labs(title='Top 3 subdistricts with highest cumulative confirmed cases rate',
        x='cc_cases_rate',
        y='Subdistrict') + 
-  geom_text(colour='black', size=3.5)
+  geom_text(colour='black', size=4, position = position_stack(vjust = 0.5))
 ```
 Top 3 sub districts analysis:
 
 The top 3 sub districts with highest cumulative confirmed cases rate are GAMBIR, SENAYAN and KUNINGAN TIMUR with sum cases rate of 225.78%, 153.26% and 104.35% respectively.
 
-### 5.1.2 Analytical mapping
+### 5.1.2 Analytical Mapping
 
-In EDA and thematic mapping, we only focus on the cumulative confirmed cases rate as a whole, not taking Month into consideration. We will next focus on the month_year variable. To avoid over plotting of map since we have 18 different month_year data, we will use data with time interval of 6 months. Hence, it will be March 2020, September 2020, March 2021 and August 2021 since we do not have September 2021 data. 
+In EDA and thematic mapping, we only focus on the cumulative confirmed cases rate as a whole, not taking Month into consideration. We will next focus on the month_year variable. To avoid over plotting of map since we have 18 different month_year data, we will use data with time interval of 6 months. Hence, we will include March 2020, September 2020, March 2021 and August 2021 in this analysis since we do not have September 2021 data. 
 
 #### 5.1.2.1 Percentile Map
 
+- We are using percentile map to visualise extreme values at the lower and upper end of the scale.
+
+- Percentile Map is a type of quantile map with six specific categories: 0-1%, 1-10%, 10-50%, 50-90%, 90-99% and 99-100%.
+
+- We are able to know which sub-district have a higher/lower cumulative confirmed cases rate in each month.
+
 ##### 5.1.2.1.1 Cumulative confirmed cases rate by Month for all Sub-Districts
 
-This code chunk is an R function to extract a variable as a vector out of an sf data frame.
+1. The following code chunk is an R function to extract a variable as a vector out of an sf data frame.
 
-vname refers to variable name
+2. vname refers to variable name
 
-df refers to data frame
+3. df refers to data frame
 
-The function will then return v.
+4. The function will then return v.
 
 ```{r}
 get.var <- function(vname,df) {
@@ -540,33 +571,33 @@ get.var <- function(vname,df) {
 }
 ```
 
-This code chunk creates a function, monthlypercentmap. 
+1. The following code chunk creates a function, monthlypercentmap. 
 
-This function takes in vnam, df and monthyear variables.
+2. This function takes in vnam, df and monthyear variables.
 
-df is filtered by Month_Year, and filtered_df is created.
+3. df is filtered by monthyear variable, and filtered_df is created.
 
-The respective percentile is then assigned. 
+4. The respective percentile is then assigned. 
 
-var is get.var function which takes in vname and the filtered_df variables.
+5. var is from get.var function which takes in vname and the filtered_df variables.
 
-bperc is the quantile of var and percent variable.
+6. bperc is the quantile of var and percent variables.
 
-tm_shape function of tmap package creates the shape of df.
+7. tm_shape function of tmap package creates the shape of df.
 
-tm_polygons function of tmap package draws an empty polygon
+8. tm_polygons function of tmap package draws an empty polygon
 
-tm_shape with variable filtered_df creates the shape of filtered_df
+9. tm_shape with variable filtered_df creates the shape of filtered_df
 
-tm_fill fills the polygon with vname (cc_cases_rate) in greens and includes the percentile label.
+10. tm_fill fills the polygon with vname (cc_cases_rate) in greens and include the percentile label.
 
-tm_borders creates the border
+11. tm_borders creates the border
 
-tm_layout includes the monthyear at the bottom right of the map.
+12. tm_layout includes the monthyear at the bottom right of the map and changes the overall look of the map.
 
-Percentile maps of Mar_2020, Sep_2020, Mar_2021 and Aug_2021 are created using the monthlypercentmap function
+13. Percentile maps of Mar_2020, Sep_2020, Mar_2021 and Aug_2021 are created using the monthlypercentmap function
 
-tmap_arrange arrange the 4 created maps in 2x2 format
+14. tmap_arrange arrange the 4 created maps in 2x2 format
 
 ```{r}
 monthlypercentmap <- function(vname, df, monthyear, legtitle=NA, mtitle="Percentile Map"){
@@ -589,6 +620,8 @@ monthlypercentmap <- function(vname, df, monthyear, legtitle=NA, mtitle="Percent
             main.title.size = 0.7,
             title = monthyear, 
             title.size = 1.0,
+            legend.title.size = 0.7,
+            legend.text.size = 0.7,
             title.position = c("right","bottom"))
 }
 
@@ -602,16 +635,16 @@ tmap_arrange(mar20map, sep20map, mar21map, aug21map, asp=2, ncol=2)
 Percentile Map analysis:
 
 - The percentile is respective to the month's data. Hence, We can see which sub-district has a higher/lower cumulative confirmed cases rate for each month.
-- There are clear variation of colour tone over time as seen in every month and this means that there are sub-district with extremely high cases rate in that month. 
+- There are clear variation of colour tone over time as seen in every month and this means that there are sub-district with extremely high confirmed cases rate in that month. 
 - There are no fixed pattern for majority of the sub-district because the cases rate of sub-district varies every month. A sub-district rate may be in high percentile for a month (e.g. dark green in March 2020), and the rate may fall into a lower percentile six months later (e.g. light green in September 2020) for the same district.
-- However, we can see that one or two sub-district at the center having a cases rate above 99% (darkest green) in September 2020, March 2021 and August 2021. This may mean that the cases rate of these sub district is so high that it is in >99% as compared to the other sub district's rate that remain in the lower percentile.
-- In general, we can also see that the outer sub-districts (e.g. North East, North West and South of DKI Jarkarta) tends to have a lower percentile cases rate (lighter green) as compared to sub-districts at the center (darker green) throughout the four months with six months interval.
+- However, we can see that one or two sub-district at the center have a cases rate above 99% (darkest green) in September 2020, March 2021 and August 2021. This may mean that the cases rate of these sub district is high in the month that it is in >99% as compared to the other sub district whose rate is in the lower percentile.
+- In general, we can also see that the outer sub-districts (e.g. North East, North West and South of DKI Jarkarta) tends to have a lower percentile cases rate (lighter green) as compared to sub-districts at the center (darker green) in the four plotted months.
 
 ##### 5.1.2.1.2 Cumulative confirmed cases rate by Month for Top 3 Sub-Districts
 
 We already know the top 3 sub-districts with highest cumulative confirmed cases rate are GAMBIR, SENAYAN and KUNINGAN TIMUR from EDA. Next we can plot the percentile map of the top 3 sub-districts by month to see their changes overtime.
 
-This code chunk is similar to the previous code chunk. 
+The following code chunk is similar to the previous code chunk. 
 
 The differences are that we additionally filter the top 3 sub-districts and the tm_shape of df were removed so that we can zoom into the sub district individually.
 
@@ -636,6 +669,7 @@ monthlypercentmapkel <- function(vname, df, monthyear, kelurahan1, kelurahan2, k
           main.title.size = 0.7,
           title = monthyear, 
           title.size = 1.0,
+          legend.title.size = 0.8,
           title.position = c("right","bottom"))
 }
 
@@ -647,27 +681,81 @@ aug21mapkel <- monthlypercentmapkel("cc_cases_rate", dkijkt_covid_rate, "Aug_202
 tmap_arrange(mar20mapkel, sep20mapkel, mar21mapkel, aug21mapkel, asp=2, ncol=2)
 ```
 Top 3 Sub districts percentile Map analysis:
-- All top 3 sub district's rate have been increasing rapidly and have the highest cases rate as the confirmed cases rate colour tone darkens over time from March 2020 to August 2021. 
-- SENAYAN have a high number of confirmed cases rate and the sub district's cases rate remained in >99% percentile throughout from March 2020 to August 2021. 
+
+- All top 3 sub district's cumulative confirmed cases rate have been increasing rapidly and have the highest cases rate as the confirmed cases rate colour tone darkens over time from March 2020 to August 2021. 
+- SENAYAN have a high number of confirmed cases rate and the it's cases rate remained in >99% percentile from March 2020 to August 2021. 
 - In March 2020, compared to other sub-districts, GAMBIR and KUNINGAN TIMUR have a low confirmed cases rate as the rate is in 10% - 50% percentile.
-- September 2020, GAMBIR rate rose to the >99% percentile which shows that there is a sudden increase in the number of confirmed cases. KUNINGAN TIMUR rose slightly from 10% - 50% to 50% - 90%. 
+- In September 2020, GAMBIR cases rate is in the >99% percentile which shows that there is a sudden increase in the number of confirmed cases. KUNINGAN TIMUR cases rate rose from 10% - 50% to 50% - 90%. 
 - All the top three sub districts have a cases rate above 99% percentile in March 2021 and August 2021. This may be the reason why these sub districts have the highest cumulative confirmed cases rate.
 
 
-However, since we the cumulative confirmed cases rate may differ in different months, we may want to see if these sub districts is constantly high for all months.
-
-#### 5.1.2.2 Cumulative confirmed cases rate by Months for Top 3 Sub-Districts 
+However, since the cumulative confirmed cases rate may differ in different months, we also want to see if the confirmed case rate for these sub districts is constantly high for all months.
 
 
-## 5.2 Cumulative confirmed death rate
+#### 5.1.2.2 Bar Graph
 
-Similar to the analysis for Cumulative confirmed cases rate, we will also do the same for the analysis of Cumulative confirmed death rate.
+##### 5.1.2.2.1 Cumulative confirmed cases rate by All Month for Top 3 Sub-Districts 
+
+1. This code chunk creates table individually for the top 3 sub districts using ggplot function of ggplot2.
+
+2. The function first takes in df and kelurahan1 as variable and filter the data by kelurahan, and select the relevant variables.
+
+3. factor function re_order the Month_Year data in the kel_df.
+
+4. The function returns kel_df
+
+5. We get the top three sub-districts data with top3table function
+
+6. The three sub-districts data were then plot.
+
+```{r}
+top3table <- function(df, kelurahan1){
+  kel_df <- df %>%
+              filter(DESA_KELUR == kelurahan1) %>%
+              select(DESA_KELUR, Month_Year, cc_cases_rate)
+  
+  kel_df$Month_Year <- factor(kel_df$Month_Year,
+                          levels = c("Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020", "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021"))
+
+  return (kel_df)
+}
+ 
+d1 <- top3table(dkijkt_covid_rate, "GAMBIR")
+d2 <- top3table(dkijkt_covid_rate, "SENAYAN")
+d3 <- top3table(dkijkt_covid_rate, "KUNINGAN TIMUR")
+
+d1plot <- ggplot(d1,aes(cc_cases_rate, Month_Year)) + geom_bar(fill="darkseagreen",stat="identity") + 
+  xlab("Cumulative Confirmed Cases Rate") + labs(title = "GAMBIR Cumulative confirmed cases rate by Month")
+
+d2plot <- ggplot(d2,aes(cc_cases_rate, Month_Year)) + geom_bar(fill="darkseagreen",stat="identity") + 
+  xlab("Cumulative Confirmed Cases Rate") + labs(title = "SENAYAN Cumulative confirmed cases rate by Month")
+
+d3plot <- ggplot(d3,aes(cc_cases_rate, Month_Year)) + geom_bar(fill="darkseagreen",stat="identity") + 
+  xlab("Cumulative Confirmed Cases Rate") + labs(title = "KUNINGAN TIMUR Cumulative confirmed cases rate by Month")
+
+d1plot
+d2plot
+d3plot
+```
+Chart Analysis:
+
+- GAMBIR have a low confirmed cases rate between March 2020 to May 2020. From May 2020 to August 2021, the confirmed cases rate have been increasing, and there is a spike from August 2020 onwards.
+- SENAYAN	confirmed cases rate rate have been constant from March 2020 to July 2020. From August 2020 to August 2021, the increase continues and there is a spike from October 2020 onwards.
+- KUNINGAN TIMUR confirmed cases rate have been increasing and decreasing between March 2020 to July 2020. From July 2020, the increase continues and there is a spike from September 2020 onwards.
+ 
+
+
+## 5.2 Cumulative death rate
+
+Similar to the analysis for Cumulative confirmed cases rate, we will also do the same for the analysis of Cumulative death rate.
 
 ### 5.2.1 EDA & Thematic Mapping
 
 #### 5.2.1.1 Histogram 
 
-This code chunk uses ggplot function of ggplot2 package to plot a histogram of the cumulative confirmed death rate  (in %) per 10000 population from March 2020 to August 2021 in DKI Jarkata mainland.
+1. The following code chunk uses ggplot function of ggplot2 package to plot a histogram of the cumulative death rate  (in %) per 10000 population from March 2020 to August 2021 in DKI Jarkata mainland.
+
+2. The histogram contains 20 bins.
 
 ```{r}
 ggplot(data=dkijkt_covid_rate, 
@@ -675,64 +763,67 @@ ggplot(data=dkijkt_covid_rate,
   geom_histogram(bins=20, 
                  color="black", 
                  fill="light green") +
-  labs(title = "Distribution of Cumulative confirmed death rate (%) from March 2020 \nto August 2021 in DKI Jarkata Mainland",
-      x = "Cumulative confirmed death rate (per 10000 population)",
+  labs(title = "Distribution of Cumulative death rate (%) from March 2020 \nto August 2021 in DKI Jarkata Mainland",
+      x = "Cumulative death rate (per 10000 population)",
       y = "Frequency")
 ```
 Histogram analysis:
 
-- Majority of the cumulative confirmed death rate is below 0.1%.
+- Majority of the cumulative death rate is below 0.1%.
 - The distribution is right-skewed.
-- There are about 1600 frequency with cumulative confirmed death rate ranging from 0% to 0.01%. 
+- There are about 1600 frequency with cumulative death rate ranging from 0% to 0.01%. 
 
 #### 5.2.1.2 Summary statistic 
 
-This code chunk create a summary statistic of Cumulative confirmed death rate from March 2020 to August 2021 in DKI Jarkata mainland using summary function.
+The following code chunk create a summary statistic of Cumulative death rate from March 2020 to August 2021 in DKI Jarkata mainland using summary function.
 
 ```{r}
 summary(dkijkt_covid_rate$`cc_death_rate`)
 ```
 Summary Statistic analysis:
 
-- The lowest cumulative confirmed death rate is 0% and the highest is about 0.42% from March 2020 to August 2021 across all sub-district.
-- The average cumulative confirmed death rate is 0.037%.
-- There is a gap range between the 3rd Quartie and the Maximum rate from 0.037% to 0.42% which means there are outliers.
+- The lowest cumulative death rate is 0% and the highest is about 0.42% from March 2020 to August 2021 across all sub-district.
+- The average cumulative death rate is 0.037%. It is about 3.7 people out of 10000 population.
+- There is a gap range between the 3rd Quartile and the Maximum rate from 0.037% to 0.42% which means there are outliers.
 
 #### 5.2.1.3 Boxplot 
 
-This code chunk plots a boxplot of Cumulative confirmed death rate from March 2020 to August 2021 in DKI Jarkata mainland using ggplot function of ggplot2 package. 
+1. The following code chunk plots a boxplot of cumulative death rate from March 2020 to August 2021 in DKI Jarkata mainland using ggplot function of ggplot2 package. 
+
+2. The y axis is the Cumulative death rate.
 
 ```{r}
 ggplot(data=dkijkt_covid_rate, 
        aes(x = "", 
            y = cc_death_rate)) +
   geom_boxplot() +
-  labs(x='', y='Cumulative confirmed death rate (per 10000 population)')
+  labs(x='', y='Cumulative death rate (per 10000 population)')
 ```
 Boxplot analysis:
 
-- The boxplot shows that there are many upper outliers with cumulative confirmed death rate above around 0.14%.
+- The boxplot shows that there are many upper outliers with cumulative death rate above around 0.14%.
 
-The histogram, summary statistics and boxplot shows that the cumulative confirmed death rate ranges from 0% to 0.42% and have multiple outliers. However, we have not take sub-districts into consideration at this point.
+The histogram, summary statistic and boxplot shows that the cumulative death rate ranges from 0% to 0.42% and have multiple outliers. However, we have not take sub-districts into consideration at this point.
 
 
 #### 5.2.1.4 Choropleth map 
 
-This code chunk plots a Choropleth map of Cumulative confirmed death rate (per 10000 population) from March 2020 to August 2021 in DKI Jarkata mainland.
+1. The following code chunk plots a Choropleth map of the average cumulative death rate (per 10000 population) from March 2020 to August 2021 in DKI Jarkata mainland by subdistricts.
 
-We compute the mean of cc_death_rate for each sub-district (`DESA_KELUR`) using group_by and summarize function
+2. The mean of cc_death_rate for each sub-district (`DESA_KELUR`) are computed using group_by and summarize function
 
-tmap functions is used to plot the choropleth map.
+3. tmap functions is used to plot the choropleth map.
 
-tmap_mode is used to set the mode. In this case, we will be using "plot" mode.
+4. tmap_mode is used to set the mode. In this case, we will be using "plot" mode.
 
-tm_shape specifies the shape of the map, and we will be using dkijkt_covid_drate_avg data.
+5. tm_shape specifies the shape of the map, and we will be using dkijkt_covid_drate_avg data we have computed.
 
-tm_fill fills the shape with "cc_death_rate" data in 6 different colour tone set with variable n. Each tone represents a range. The style used is "jenks" for natural groupings. 
+6. tm_fill fills the shape with "cc_death_rate" data in 6 different colour tone set with variable n. Each tone represents a range. The style used is "jenks" for natural groupings. 
 
-tm_borders sets the border's transparency to 0.5.
+7. tm_borders sets the border's transparency to 0.5.
 
-tm_layout set the title's name, size and position
+8. tm_layout set the title's name, size and position
+
 
 ```{r}
 dkijkt_covid_drate_avg <- dkijkt_covid_rate %>%
@@ -744,28 +835,30 @@ tm_shape(dkijkt_covid_drate_avg)+
           n = 6,
           style = "jenks") +
   tm_borders(alpha = 0.5) +
-  tm_layout(main.title = "Cumulative confirmed death rate (per 10000 population) by Sub-Districts",
+  tm_layout(main.title = "Cumulative death rate (per 10000 population) by Sub-Districts",
             main.title.position = 'center',
             main.title.size = 0.8, 
+            legend.title.size = 0.7,
+            legend.text.size = 0.7,
             frame = FALSE)
 ```
 Chloropleth map analysis:
 
-- From the choropleth map above, a lighter colour tone means that the sub district has a lower average cumulative confirmed death rate, and a darker colour tone means the sub district has a higher average cumulative death rate.
-- The sub district at the center of DKI JAKARTA with the darkest red colour tone has a high average cumulative confirmed death rate of 0.135%.
+- From the choropleth map above, a lighter colour tone means that the sub district has a lower average cumulative death rate, and a darker colour tone means the sub district has a higher average cumulative death rate.
+- The sub district at the center of DKI JAKARTA with the darkest red colour tone has a high average cumulative death rate of 0.135%.
 - It can be seen that most of the sub district near the center area have a darker colour tone, whereas, sub district at outer area have a lighter colour tone, which means that there are lower death rate in sub district away from center. 
-- This map seems similar to the cumulative confirmed cases rate chloropleth map we have done earlier. Hence, We will analyse in another section later to see if there are any relationship between the cumulative confirmed cases rate and cumulative confirmed death rate.
+- This map seems similar to the cumulative confirmed cases rate chloropleth map we have done earlier. Hence, we will analyse the relationship between the cumulative confirmed cases rate and cumulative death rate later.
 
-Next, We will find out the top 3 sub-district with the highest number of cumulative confirmed death rate. 
+Next, We will find out the top 3 sub-district with the highest number of cumulative death rate. 
 
 #### 5.2.1.5 Top 3 Sub-districts
 
-This code chunks plots a horizontal bar chart of the top 3 sub districts with highest cumulative confirmed death rate 
-We sum up cc_death_rate of each sub-district (`DESA_KELUR`) using group_by and summarize functions, and create a new sf called dkijkt_covid_drate_sum. 
+1. The following code chunks plots a horizontal bar chart of the top 3 sub districts with highest cumulative death rate 
+2. We sum up cc_death_rate of each sub-district (`DESA_KELUR`) using group_by and summarize functions, and create a new sf called dkijkt_covid_drate_sum. 
 
-top_n function of dplyr package is used to find out the top 3 sub districts, with n value set as 3.
+3. top_n function of dplyr package is used to find out the top 3 sub districts, with n value set as 3.
 
-ggplot function of ggplot2 package is used to plot the top 3 sub disticts in horizontal bar chart format.
+4. ggplot function of ggplot2 package is used to plot the top 3 sub disticts in horizontal bar chart format.
 
 ```{r}
 dkijkt_covid_drate_sum <- dkijkt_covid_rate %>%
@@ -775,30 +868,36 @@ dkijkt_covid_drate_sum <- dkijkt_covid_rate %>%
 top3_cc_death_rate <- top_n(dkijkt_covid_drate_sum, n=3, `cc_death_rate`)
 
 ggplot(top3_cc_death_rate, aes(x=cc_death_rate, y=reorder(DESA_KELUR, cc_death_rate), label=round(cc_death_rate, 2))) + geom_col(fill='light green') +
-  labs(title='Top 3 subdistricts with highest cumulative confirmed death rate',
+  labs(title='Top 3 subdistricts with highest cumulative death rate',
        x='cc_death_rate',
        y='Subdistrict') + 
-  geom_text(colour='black', size=3.5)
+  geom_text(colour='black', size=3.5, position = position_stack(vjust = 0.5))
 ```
 Top 3 sub districts analysis:
 
-The top 3 sub districts with highest cumulative confirmed death rate are GAMBIR, KARET SEMANGGI and SELONG with sum death rate of 2.43%, 1.65% and 1.33% respectively.
+The top 3 sub districts with highest cumulative death rate are GAMBIR, KARET SEMANGGI and SELONG with sum death rate of 2.43%, 1.65% and 1.33% respectively.
 
-### 5.2.2 Analytical map
+### 5.2.2 Analytical Mapping
 
 We will focus now include the month variable in the analysis. Similarly, we will use March 2020, Sep 2020, Mar 2021 and Aug 2021 since we do not have Sep 2021 data, to avoid over plotting. 
 
 #### 5.2.2.1 Percentile Map
 
-##### 5.2.2.1.1 Cumulative confirmed death rate by Month for all Sub-Districts
+- We are using percentile map to visualise extreme values at the lower and upper end of the scale.
 
-This code chunk is an R function to extract a variable as a vector out of an sf data frame.
+- Percentile Map is a type of quantile map with six specific categories: 0-1%, 1-10%, 10-50%, 50-90%, 90-99% and 99-100%.
 
-vname refers to variable name
+- We are able to know which sub-district have a higher/lower cumulative death rate in each month.
 
-df refers to data frame
+##### 5.2.2.1.1 Cumulative death rate by Month for all Sub-Districts
 
-The function will then return v.
+1. The following code chunk is an R function to extract a variable as a vector out of an sf data frame.
+
+2. vname refers to variable name
+
+3. df refers to data frame
+
+4. The function will then return v.
 
 ```{r}
 get.var <- function(vname,df) {
@@ -808,27 +907,33 @@ get.var <- function(vname,df) {
 }
 ```
 
-This code chunk creates a function, monthlydpercentmap.
+1. The following code chunk creates a function, monthlydpercentmap.
 
-This function takes in vnam, df and monthyear variables.
+2. This function takes in vnam, df and monthyear variables.
 
-We assigned the respective percent. The var is created using get.var function which takes in vname and df variables. bperc is created using quantile which takes in var and percent as variable. 
+3. filtered_df is the df filtered based on monthyear variable provided
 
-filtered_df is the df filtered based on Month_Year provided
+4. The respective percentile is then assigned. 
 
-tm_shape function of tmap package creates the shape of df.
+5. var is created using get.var function which takes in vname and filtered_df variables.
 
-tm_polygons function of tmap package draws an empty polygon
+6. bperc is created using quantile which takes in var and percent as variable.
 
-tm_shape with variable filtered_df creates the shape of filtered_df
+7. tm_shape function of tmap package creates the shape of df.
 
-tm_fill fills the polygon with vname in blue and includes the labels.
+8. tm_polygons function of tmap package draws an empty polygon
 
-tm_borders creates the border
+9. tm_shape with variable filtered_df creates the shape of filtered_df
 
-After running the function, maps of Mar_2020, Sep_2020, Mar_2021 and Aug_2021 will be created using the monthlypercentmap function
+10. tm_fill fills the polygon with vname in greens and includes the percentile labels.
 
-tmap_arrange then arrange the 4 maps in 2x2 format
+11. tm_borders creates the border
+
+12. tm_layout includes the monthyear at the bottom right of the map and changes the overall look of the map.
+
+13. 13. Percentile maps of Mar_2020, Sep_2020, Mar_2021 and Aug_2021 are created using the monthlydpercentmap function
+
+14. tmap_arrange then arrange the 4 created maps in 2x2 format
 
 ```{r}
 monthlydpercentmap <- function(vname, df, monthyear, legtitle=NA, mtitle="Percentile Map"){
@@ -846,11 +951,13 @@ monthlydpercentmap <- function(vname, df, monthyear, legtitle=NA, mtitle="Percen
              palette="Greens",
           labels=c("< 1%", "1% - 10%", "10% - 50%", "50% - 90%", "90% - 99%", "> 99%")) +
   tm_borders() +
-  tm_layout(main.title = "Distribution of Cumulated confirmed death rate by planning subzone",
+  tm_layout(main.title = "Distribution of Cumulated death rate by planning subzone",
             main.title.position = "center",
             main.title.size = 0.7,
             title = monthyear, 
             title.size = 1.0,
+            legend.title.size = 0.7,
+            legend.text.size = 0.7,
             title.position = c("right","bottom"))
 }
 
@@ -864,17 +971,17 @@ tmap_arrange(mar20dmap, sep20dmap, mar21dmap, aug21dmap, asp=2, ncol=2)
 
 Percentile Map analysis:
 
-- The percentile is respective to the month's data. Hence, We can see which sub-district has a higher/lower cumulative confirmed death rate for each month.
-- In March 2020, all sub-district have similar colour tone and there are not many variation of colour tone. This is because there are no extremely high death rates in March 2020.
-- There are clear variation of colour tone over time as seen in other months like September 2020, March 2021 and August 2021 and this means that there are sub-district with death rate outliers. 
-- There are about two sub-district at the center rate above 99% (darkest green) in March 2021 and August 2021. This may mean that the cases rate of these sub district is very high to the extend that the other sub district's death remains in the lower percentile.
-- In general, we can also see that outer sub-districts (e.g. North East, North West and South of DKI Jarkarta) tends to have a lower percentile death rate (lighter green), while sub-districts at the center have a higher percentile death rate (darker green) throughout the four months with six months interval.
+- The percentile is respective to the month's data. Hence, We can see which sub-district has a higher/lower cumulative death rate for each month.
+- In March 2020, most sub-district have similar colour tone and there are not many variation of colour tone. This is because there are no extremely high death rates in March 2020.
+- There are clear variation of colour tone over time as seen in other months like September 2020, March 2021 and August 2021 and this means that there are sub-district with high death rate and they may be outliers. 
+- There are two sub-district at the center rate above 99% (darkest green) in March 2021 and August 2021. This means that the cases rate of these sub district is very high in the month that lead the other sub district's death rates remaining in the lower percentile. 
+- Generally, we can also see that outer sub-districts (e.g. North East, North West and South of DKI Jarkarta) tends to have a lower percentile death rate (lighter green), while sub-districts at the center have a higher percentile death rate (darker green) in the four months.
 
-##### 5.2.2.1.2 Cumulative confirmed death rate by Month for Top 3 Sub-Districts
+##### 5.2.2.1.2 Cumulative death rate by Month for Top 3 Sub-Districts
 
-We already know the top 3 sub-districts with highest cumulative confirmed death rate are GAMBIR, KARET SEMANGGI and SELONG from EDA. Next we can plot the percentile map of the top 3 sub-districts by month to see their changes overtime.
+We already know the top 3 sub-districts with highest cumulative death rate are GAMBIR, KARET SEMANGGI and SELONG from EDA. Next we can plot the percentile map of the top 3 sub-districts by month to see their changes overtime.
 
-This code chunk is similar to the previous code chunk. 
+The following code chunk is similar to the previous code chunk. 
 
 The differences are that we additionally filter the top 3 sub-districts and the tm_shape of df were removed so that we can zoom into the sub district individually.
 
@@ -895,11 +1002,12 @@ monthlydpercentmapkel <- function(vname, df, monthyear, kelurahan1, kelurahan2, 
           labels=c("< 1%", "1% - 10%", "10% - 50%", "50% - 90%", "90% - 99%", "> 99%")) +
     tm_text("DESA_KELUR", size=0.5) +
   tm_borders() +
-  tm_layout(main.title = "Distribution of Cumulated confirmed death rate by top 3 sub district",
+  tm_layout(main.title = "Distribution of Cumulated death rate by top 3 sub district",
           main.title.position = "center",
           main.title.size = 0.7,
           title = monthyear, 
           title.size = 1.0,
+          legend.title.size = 0.8,
           title.position = c("right","bottom"))
 }
 
@@ -913,15 +1021,73 @@ tmap_arrange(mar20dmapkel, sep20dmapkel, mar21dmapkel, aug21dmapkel, asp=2, ncol
 ```
 Top 3 Sub districts percentile Map analysis:
 
-- GAMBIR's death rate is relatively lower in March 2020 and September 2020 compared to other sub district as the confirmed death rate colour tone is not the darkest. The tone darken in March 2021 and August 2021, which means that the death rate is one of the highest compared to other sub district. 
-- KARET SEMANGGI have one of the highest confirmed death rate in March 2020, September 2020 and March 2021 as shown in darkest green representing the >99% percentile. In August 2021, it's death rate cases rate falls into 50% - 90%. 
+- GAMBIR's cumulative death rate is relatively lower in March 2020 and September 2020 compared to other sub district as the cumulative death rate colour tone is not the darkest. The tone darken in March 2021 and August 2021 with >99%, which means that the death rate is one of the highest compared to other sub district in that month. 
+- KARET SEMANGGI have one of the highest cumulative death rate in March 2020, September 2020 and March 2021 as shown in darkest green representing the >99% percentile. In August 2021, it's death rate cases rate falls into 50% - 90% percentile. 
 - SELONG's death rate have been relatively high, but not the highest, with the 50-99% as compared to other sub-districts. The only exception is March 2021, where it's death rate is one of the highest (>99% percentile) together with GAMBIR and KARET SEMANGGI.
 
-## 5.3 Cumulative confirmed cases rate and death rate relationship
 
-### Choropleth map
+#### 5.2.2.2 Bar Graph.
 
-This code chunk plots a Choropleth map of the average cumulative confirmed cases rate and death rate (per 10000 population) from March 2020 to August 2021 in DKI Jarkata mainland by subdistricts.
+##### 5.2.2.2.1 Cumulative death rate by All Month for Top 3 Sub-Districts 
+
+1. This code chunk creates table individually for the top 3 sub districts using ggplot function of ggplot2.
+
+2. The function first takes in df and kelurahan1 as variable and filter the data by kelurahan, and select the relevant variables
+
+3. factor function re_order the Month_Year data in the kel_df.
+
+4. The function returns kel_df
+
+5. We get the top three sub-districts data with top3table function
+
+6. The three sub-districts data were then plot.
+
+```{r}
+top3table <- function(df, kelurahan1){
+  kel_df <- df %>%
+              filter(DESA_KELUR == kelurahan1) %>%
+              select(DESA_KELUR, Month_Year, cc_death_rate)
+  
+  kel_df$Month_Year <- factor(kel_df$Month_Year,
+                          levels = c("Mar_2020", "Apr_2020", "May_2020", "Jun_2020", "Jul_2020", "Aug_2020", "Sep_2020", "Oct_2020", "Nov_2020", "Dec_2020", "Jan_2021", "Feb_2021", "Mar_2021", "Apr_2021", "May_2021", "Jun_2021", "Jul_2021", "Aug_2021"))
+
+  return (kel_df)
+}
+ 
+d1 <- top3table(dkijkt_covid_rate, "GAMBIR")
+d2 <- top3table(dkijkt_covid_rate, "KARET SEMANGGI")
+d3 <- top3table(dkijkt_covid_rate, "SELONG")
+
+d1plot <- ggplot(d1,aes(cc_death_rate, Month_Year)) + geom_bar(fill="darkseagreen",stat="identity") + 
+  xlab("Cumulative Death Rate") + labs(title = "GAMBIR Cumulative Death rate by Month")
+
+d2plot <- ggplot(d2,aes(cc_death_rate, Month_Year)) + geom_bar(fill="darkseagreen",stat="identity") + 
+  xlab("Cumulative Death Rate") + labs(title = "KARET SEMANGGI Cumulative Death rate by Month")
+
+d3plot <- ggplot(d3,aes(cc_death_rate, Month_Year)) + geom_bar(fill="darkseagreen",stat="identity") + 
+  xlab("Cumulative Death Rate") + labs(title = "SELONG Cumulative Death rate by Month")
+
+d1plot
+d2plot
+d3plot
+```
+
+Chart analysis:
+
+- Between March 2020 to September 2020, GAMBIR did not have any death cases. From Oct 2020 to August 2021, the death rate have been increasing. A spike is seen in Januray 2021.
+- From March_2020 to August 2021, KARET SEMANGGI death rate have increasing, it remained constant for a few month before increasing again.
+- SELONG did not have any death case from March 2020 to August 2020. From August 2020 to August 2021, the rate have been increasing. A spike is seen in Dec 2020.
+
+
+## 5.3 Relationship between cumulative confirmed cases rate and cumulative death rate 
+
+### 5.3.1 Choropleth Map
+
+1. The following code chunk plots a Choropleth map of the average cumulative confirmed cases rate and death rate (per 10000 population) from March 2020 to August 2021 in DKI Jarkata mainland by subdistricts.
+
+2. Average cases rate and death rate are calculated using group by and summarize function
+
+3. tmap package function helps to plot the two choropleth map side by side for comparison 
 
 ```{r}
 dkijkt_covid_rate_avg <- dkijkt_covid_rate %>%
@@ -940,9 +1106,11 @@ dkijkt_covid_rate_avg_map <- tm_shape(dkijkt_covid_rate_avg)+
                     n = 6,
                     style = "jenks") +
             tm_borders(alpha = 0.5) +
-            tm_layout(main.title = "Average cumulative confirmed cases rate (per 10000 population) by Sub-Districts",
+            tm_layout(main.title = "Avg Cumulative confirmed cases rate (per 10000 population) \nby Sub-Districts",
                       main.title.position = 'center',
-                      main.title.size = 0.6, 
+                      main.title.size = 0.7,
+                      legend.title.size = 0.7, 
+                      legend.text.size = 0.7,
                       frame = FALSE)
 
 dkijkt_covid_drate_avg_map <- tm_shape(dkijkt_covid_drate_avg)+
@@ -950,26 +1118,30 @@ dkijkt_covid_drate_avg_map <- tm_shape(dkijkt_covid_drate_avg)+
                     n = 6,
                     style = "jenks") +
             tm_borders(alpha = 0.5) +
-            tm_layout(main.title = "Cumulative confirmed death rate (per 10000 population) by Sub-Districts",
+            tm_layout(main.title = "Avg Cumulative death rate (per 10000 population) \nby Sub-Districts",
                       main.title.position = 'center',
-                      main.title.size = 0.6, 
+                      main.title.size = 0.7,
+                      legend.title.size = 0.7, 
+                      legend.text.size = 0.7,
                       frame = FALSE)
 
 tmap_arrange(dkijkt_covid_rate_avg_map, dkijkt_covid_drate_avg_map, asp=1, ncol=2)
 ```
 
-Choropleth map analysis:
+Choropleth Map analysis:
 
 - Some district have a darker colour tone in the death_rate map as compared to the cases_rate map.
-- We can infer that a high average cumulative confirmed cases rate (orange to dark red) may not necessarily mean a high average cumulutative confirmed death rate (orange to dark red).
-- On the other hand, a low average cumulative confirmed cases rate (pale to light orange) may not necessarily mean a low average cumulative confirmed death rate (pale to light orange).
+- We can infer that a high average cumulative confirmed cases rate (orange to dark red) may not necessarily mean a high average cumulative death rate (orange to dark red).
+- On the other hand, a low average cumulative confirmed cases rate (pale to light orange) may not necessarily mean a low average cumulative death rate (pale to light orange).
 
 # 6 Conclusion
 
 In conclusion, from this analysis, we found out that:
 
-- Sub-districts with highest number of confirmed cases are GAMBIR, SENAYAN, KUNINGAN TIMUR
-- sub-districts with highest number of confirmed death are GAMBIR, KARET SEMANGGI, SELONG
-- There are no fixed pattern of how cases and death rate increase or decrease over time because the cases/death rate of sub-district varies every month.
-- However, the top three sub-districts with highest number of cases and death rate are likely to have extremely high number of cases and death rate in certain month to widen the range and become an outlier. The other sub-district's cases and death will naturally have a low percentile as compared to the outlier.
-- In general, outer sub-districts (e.g. North East, North West and South of DKI Jarkarta) tends to have a lower cases and death rate, while sub-districts at the Center tends to have a higher cases and death rate. 
+- Sub-districts in DKI Jarkarta with highest number of cumulative confirmed cases are GAMBIR, SENAYAN, KUNINGAN TIMUR
+- Sub-districts in DKI Jarkarta with highest number of cumulative death cases are GAMBIR, KARET SEMANGGI, SELONG
+- There are no fixed pattern of how confirmed cases and death cases increase or decrease over time (month) in DKI Jarkarta because the confirmed cases and death cases of each sub-district varies every month. It can be higher or lower.
+- However, the top three sub-districts with highest number of confirmed cases rate and death rate are likely to have extremely high number of confirmed cases and death cases in certain month that widen the range and resulting in the sub-districts having an outlier rate. The other sub-district's confirmed cases and death rate will naturally belong to the low percentile as compared to the outlier.
+- In general, outer sub-districts (e.g. North East, North West and South of DKI Jarkarta) tends to have a lower confirmed cases rate and death rate, while sub-districts at the Center tends to have a higher confirmed cases rate and death rate.
+- A high cumulative confirmed cases rate does not represent a high cumulative death rate.
+- A low cumulative confirmed cases rate does not represent a low cumulative death rate.
