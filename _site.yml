@@ -15,6 +15,10 @@ navbar:
         href: "https://kwekyichen-is415.netlify.app/posts/2021-08-23-in-class-exercise-2/"
       - text: "In-class Exercise 3"
         href: "https://kwekyichen-is415.netlify.app/posts/2021-08-30-in-class-exercise-3/"
+      - text: "In-class Exercise 4"
+        href: "https://kwekyichen-is415.netlify.app/posts/2021-09-06-in-class-exercise-4/"
+      - text: "In-class Exercise 5"
+        href: "https://kwekyichen-is415.netlify.app/posts/2021-09-13-in-class-exercise-5/"
     - text: "Hands-on Exercise"
       menu:
       - text: "Hands-on Exercise 2"
