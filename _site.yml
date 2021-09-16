@@ -9,6 +9,8 @@ navbar:
       menu: 
       - text: "Take-home Exercise 1"
         href: "https://kwekyichen-is415.netlify.app/posts/2021-09-06-takehome-ex01/"
+      - text: "Take-home Exercise 2"
+        href: "https://kwekyichen-is415.netlify.app/posts/2021-09-16-takehome-ex02/"
     - text: "In-class Exercise"
       menu:
       - text: "In-class Exercise 2"

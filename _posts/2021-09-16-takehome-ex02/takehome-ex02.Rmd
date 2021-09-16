@@ -1,0 +1,313 @@
+---
+title: "Take Home Exercise 02"
+description: |
+  Analysing and Visualising the distribution of Airbnb listings.
+author:
+  - name: Kwek Yi Chen
+    url: https://example.com/kwekyichen
+date: 09-16-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+    toc_float: true
+    number_sections: true
+    code_folding: true
+---
+
+# Introduction
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Installing packages
+
+```{r}
+packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'onemapsgapi', 'tidyr')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+# Set up Token
+
+```{r}
+token <- get_token("yichen.kwek.2019@smu.edu.sg", "password")
+```
+
+# Data
+
+- Airbnb Listings (June 2019 & July 2021) in csv format from http://insideairbnb.com/get-the-data.html
+- Hotels in csv format
+- Tourist Attractions in csv format
+- MrtLrtStn in ESRI shapefile format from https://datamall.lta.gov.sg/
+
+# Spatial Data Wrangling
+
+```{r}
+mrtlrt_sf <- st_read(dsn = "data", layer="MRTLRTStnPtt")
+
+tmap_mode('plot')
+tm_shape(mrtlrt_sf)+
+  tm_dots()
+```
+
+```{r}
+airbnb0619 <- read.csv("data/listings30062019.csv")
+
+airbnb0619_sf <- st_as_sf(airbnb0619,
+                    coords = c("longitude", 
+                               "latitude"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
+
+tm_shape(airbnb0619_sf)+
+  tm_dots()
+```
+
+```{r}
+airbnb0721 <- read.csv("data/listings19072021.csv")
+
+airbnb0721_sf <- st_as_sf(airbnb0721,
+                    coords = c("longitude", 
+                               "latitude"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
+
+tm_shape(airbnb0721_sf)+
+  tm_dots()
+```
+
+```{r}
+hotels <- read.csv("data/hotels.csv")
+
+hotels_sf <- st_as_sf(hotels,
+                    coords = c("Lng", 
+                               "Lat"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
+
+tm_shape(hotels_sf)+
+  tm_dots()
+```
+
+```{r}
+tourism <- read.csv("data/tourism.csv")
+
+tourism <- tourism %>%
+            drop_na("LATITUDE")
+
+tourism_sf <- st_as_sf(tourism,
+                    coords = c("Lng", 
+                               "Lat"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
+
+tmap_mode('plot')
+tm_shape(tourism_sf)+
+  tm_dots()
+```
+
+```{r}
+sg_sf <- st_read(dsn = "data", layer="CostalOutline")
+```
+
+Converting sf data frames to sp’s Spatial* class
+
+```{r}
+airbnb0619 <- as_Spatial(airbnb0619_sf)
+airbnb0721 <- as_Spatial(airbnb0721_sf)
+hotels <- as_Spatial(hotels_sf)
+tourism <- as_Spatial(tourism_sf)
+mrtlrt <- as_Spatial(mrtlrt_sf)
+sg <- as_Spatial(sg_sf)
+```
+
+Converting the Spatial* class into generic sp format
+
+```{r}
+airbnb0619_sp <- as(airbnb0619, "SpatialPoints")
+airbnb0721_sp <- as(airbnb0721, "SpatialPoints")
+hotels_sp <- as(hotels, "SpatialPoints")
+tourism_sp <- as(tourism, "SpatialPoints")
+mrtlrt_sp <- as(mrtlrt, "SpatialPoints")
+sg_sp <- as(sg, "SpatialPolygons")
+```
+
+Converting the generic sp format into spatstat’s ppp format
+
+```{r}
+airbnb0619_ppp <- as(airbnb0619_sp, "ppp")
+airbnb0721_ppp <- as(airbnb0721_sp, "ppp")
+hotels_ppp <- as(hotels_sp, "ppp")
+tourism_ppp <- as(tourism_sp, "ppp")
+mrtlrt_ppp <- as(mrtlrt_sp, "ppp")
+```
+
+Check for duplicates in ppp object
+
+```{r}
+any(duplicated(airbnb0619_ppp))
+```
+
+```{r}
+any(duplicated(airbnb0721_ppp))
+```
+
+```{r}
+any(duplicated(hotels_ppp))
+```
+
+```{r}
+any(duplicated(tourism_ppp))
+```
+
+```{r}
+any(duplicated(mrtlrt_ppp))
+```
+
+Handling duplicates using jittering.
+
+Jittering will add a small perturbation to the duplicate points so that they do not occupy the exact same space.
+```{r}
+airbnb0619_ppp_jit <- rjitter(airbnb0619_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+airbnb0721_ppp_jit <- rjitter(airbnb0721_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+hotels_ppp_jit <- rjitter(hotels_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+tourism_ppp_jit <- rjitter(tourism_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+```
+
+Check if duplicates still exist
+
+```{r}
+any(duplicated(airbnb0619_ppp_jit))
+```
+
+```{r}
+any(duplicated(airbnb0721_ppp_jit))
+```
+
+```{r}
+any(duplicated(hotels_ppp_jit))
+```
+
+```{r}
+any(duplicated(tourism_ppp_jit))
+```
+
+creating owin objects
+
+```{r}
+sg_owin <- as(sg_sp, "owin")
+```
+
+```{r}
+plot(sg_owin)
+```
+
+Combining point events object and owin object
+
+```{r}
+airbnb0619SG_ppp = airbnb0619_ppp_jit[sg_owin]
+airbnb0721SG_ppp = airbnb0721_ppp_jit[sg_owin]
+hotelsSG_ppp = hotels_ppp_jit[sg_owin]
+tourismSG_ppp = tourism_ppp_jit[sg_owin]
+mrtlrtSG_ppp = mrtlrt_ppp[sg_owin]
+```
+
+```{r}
+plot(airbnb0619SG_ppp)
+```
+
+# Section A: Airbnb Distribution in 2019
+
+## 1. Exploratory Spatial Data Analysis
+
+### Kernel density maps
+
+#### Airbnb listings
+
+```{r}
+airbnb0619SG_ppp.km <- rescale(airbnb0619SG_ppp, 1000, "km")
+
+kde_airbnb0619SG_600 <- density(airbnb0619SG_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
+
+plot(kde_airbnb0619SG_600)
+```
+
+```{r}
+airbnb0721SG_ppp.km <- rescale(airbnb0721SG_ppp, 1000, "km")
+
+kde_airbnb0721SG_ppp_bw <- density(airbnb0721SG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian") 
+
+plot(kde_airbnb0721SG_ppp_bw)
+```
+
+#### Hotels
+
+```{r}
+hotels_ppp.km <- rescale(hotelsSG_ppp, 1000, "km")
+
+kde_hotelsSG_600 <- density(hotels_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
+
+plot(kde_hotelsSG_600)
+```
+
+#### MRT
+
+```{r}
+mrtlrt_ppp.km <- rescale(mrtlrtSG_ppp, 1000, "km")
+
+kde_mrtlrtSG_600 <- density(mrtlrt_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
+
+plot(kde_mrtlrtSG_600)
+```
+
+#### Tourist Attractions
+
+```{r}
+tourism_ppp.km <- rescale(tourismSG_ppp, 1000, "km")
+
+kde_tourismSG_600 <- density(tourism_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
+
+plot(kde_tourismSG_600)
+```
+
+### Kernel density maps on openstreetmap of Singapore
+
+
+## 2. Second-order Spatial Point Patterns Analysis
+
+### Null hypothesis and alternative hypothesis
+
+### Test
+
+### Statistical conclusions.
+
+# Section B: Impact of COVID-19
+
+## 3. Exploratory Spatial Data Analysis
+
+## 4. Second-order Spatial Point Patterns Analysis
