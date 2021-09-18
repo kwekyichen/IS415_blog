@@ -29,6 +29,8 @@ navbar:
         href: "https://kwekyichen-is415.netlify.app/posts/2021-08-30-hands-onex03/"
       - text: "Hands-on Exercise 4"
         href: "https://kwekyichen-is415.netlify.app/posts/2021-09-05-hands-onex04/"
+      - text: "Hands-on Exercise 6"
+        href: "https://kwekyichen-is415.netlify.app/posts/2021-09-18-hands-onex06/"
     - text: "About"
       href: about.html
 output: distill::distill_article

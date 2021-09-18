@@ -174,6 +174,7 @@ any(duplicated(mrtlrt_ppp))
 Handling duplicates using jittering.
 
 Jittering will add a small perturbation to the duplicate points so that they do not occupy the exact same space.
+
 ```{r}
 airbnb0619_ppp_jit <- rjitter(airbnb0619_ppp, 
                              retry=TRUE, 
