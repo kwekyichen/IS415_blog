@@ -117,7 +117,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/Dictionary.xlsx","data/aspatial/Hunan_2012.csv","data/geospatial/Hunan.dbf","data/geospatial/Hunan.prj","data/geospatial/Hunan.qpj","data/geospatial/Hunan.shp","data/geospatial/Hunan.shx","hands-onex06_files/figure-html5/unnamed-chunk-16-1.png","hands-onex06_files/figure-html5/unnamed-chunk-17-1.png","hands-onex06_files/figure-html5/unnamed-chunk-18-1.png","hands-onex06_files/figure-html5/unnamed-chunk-25-1.png","hands-onex06_files/figure-html5/unnamed-chunk-26-1.png","hands-onex06_files/figure-html5/unnamed-chunk-29-1.png","hands-onex06_files/figure-html5/unnamed-chunk-39-1.png","hands-onex06_files/figure-html5/unnamed-chunk-47-1.png","hands-onex06_files/figure-html5/unnamed-chunk-5-1.png"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/Dictionary.xlsx","data/aspatial/Hunan_2012.csv","data/geospatial/Hunan.dbf","data/geospatial/Hunan.prj","data/geospatial/Hunan.qpj","data/geospatial/Hunan.shp","data/geospatial/Hunan.shx","hands-onex06_files/anchor-4.2.2/anchor.min.js","hands-onex06_files/bowser-1.9.3/bowser.min.js","hands-onex06_files/distill-2.2.21/template.v2.js","hands-onex06_files/figure-html5/unnamed-chunk-16-1.png","hands-onex06_files/figure-html5/unnamed-chunk-17-1.png","hands-onex06_files/figure-html5/unnamed-chunk-18-1.png","hands-onex06_files/figure-html5/unnamed-chunk-25-1.png","hands-onex06_files/figure-html5/unnamed-chunk-26-1.png","hands-onex06_files/figure-html5/unnamed-chunk-29-1.png","hands-onex06_files/figure-html5/unnamed-chunk-39-1.png","hands-onex06_files/figure-html5/unnamed-chunk-47-1.png","hands-onex06_files/figure-html5/unnamed-chunk-5-1.png","hands-onex06_files/header-attrs-2.10/header-attrs.js","hands-onex06_files/jquery-1.11.3/jquery.min.js","hands-onex06_files/popper-2.6.0/popper.min.js","hands-onex06_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-onex06_files/tippy-6.2.7/tippy-light-border.css","hands-onex06_files/tippy-6.2.7/tippy.css","hands-onex06_files/tippy-6.2.7/tippy.umd.min.js","hands-onex06_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2108,6 +2108,7 @@ Hands-on Exercise
 <a href="https://kwekyichen-is415.netlify.app/posts/2021-08-30-hands-onex02/">Hands-on Exercise 2</a>
 <a href="https://kwekyichen-is415.netlify.app/posts/2021-08-30-hands-onex03/">Hands-on Exercise 3</a>
 <a href="https://kwekyichen-is415.netlify.app/posts/2021-09-05-hands-onex04/">Hands-on Exercise 4</a>
+<a href="https://kwekyichen-is415.netlify.app/posts/2021-09-18-hands-onex06/">Hands-on Exercise 6</a>
 </div>
 </div>
 <a href="../../about.html">About</a>
@@ -2135,11 +2136,24 @@ Hands-on Exercise
 <div class="d-article">
 <h1 id="install-packages">Install Packages</h1>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'sf'</span>, <span class='st'>'spdep'</span>, <span class='st'>'tmap'</span>, <span class='st'>'tidyverse'</span><span class='op'>)</span>
+<span class='kw'>for</span> <span class='op'>(</span><span class='va'>p</span> <span class='kw'>in</span> <span class='va'>packages</span><span class='op'>)</span><span class='op'>{</span>
+  <span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>p</span>, character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
+    <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
+  <span class='op'>}</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>p</span>,character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
 </div>
 <h1 id="data-wrangling">Data Wrangling</h1>
 <p>Import shapefile into r environment</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan</span> <span class='op'>&lt;-</span> <span class='fu'>st_read</span><span class='op'>(</span>dsn <span class='op'>=</span> <span class='st'>"data/geospatial"</span>, layer <span class='op'>=</span> <span class='st'>"Hunan"</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>Reading layer `Hunan&#39; from data source 
   `C:\kwekyichen\IS415_blog\_posts\2021-09-18-hands-onex06\data\geospatial&#39; 
   using driver `ESRI Shapefile&#39;
@@ -2151,21 +2165,36 @@ Geodetic CRS:  WGS 84</code></pre>
 </div>
 <p>Import csv file into r environment</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan2012</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/aspatial/Hunan_2012.csv"</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <p>Relational Join</p>
 <p>This is performed by using left_join() of dplyr package.</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan</span> <span class='op'>&lt;-</span> <span class='fu'>left_join</span><span class='op'>(</span><span class='va'>hunan</span>,<span class='va'>hunan2012</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <p>Choropleth Map Distribution of GDPPC 2012</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>qtm</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='st'>"GDPPC"</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-5-1.png" width="624" /></p>
 </div>
 <h1 id="computing-contiguity-spatial-weights">Computing Contiguity Spatial Weights</h1>
 <p>Use poly2nb() of spdep package to compute contiguity weight matrices for the study area. The function builds a neighbours list based on regions with contiguous boundaries. The function takes in “queen” argument that takes TRUE or FALSE. FALSE will return list of first order neighbours using the Queen criteria.</p>
 <h2 id="computing-queen-contiguity-based-neighbours">Computing (QUEEN) contiguity based neighbours</h2>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wm_q</span> <span class='op'>&lt;-</span> <span class='fu'>poly2nb</span><span class='op'>(</span><span class='va'>hunan</span>, queen<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>wm_q</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>Neighbour list object:
 Number of regions: 88 
 Number of nonzero links: 448 
@@ -2183,18 +2212,34 @@ Link number distribution:
 <p>There are 88 area units in Hunan. The most connected area unit have 11 neighbours.</p>
 <p>We can see the first for first polygon with the code below</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wm_q</span><span class='op'>[[</span><span class='fl'>88</span><span class='op'>]</span><span class='op'>]</span>
+</code></pre>
+</div>
 <pre><code>[1] 59 87</code></pre>
 </div>
 <p>Retrieve the county name of Polygon ID=1 with the code chunk below</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan</span><span class='op'>$</span><span class='va'>County</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+</code></pre>
+</div>
 <pre><code>[1] &quot;Anxiang&quot;</code></pre>
 </div>
 <p>Retrieve county names of the five neighboring polygons with the code chunk below</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan</span><span class='op'>$</span><span class='va'>NAME_3</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>3</span>,<span class='fl'>4</span>,<span class='fl'>57</span>,<span class='fl'>85</span><span class='op'>)</span><span class='op'>]</span>
+</code></pre>
+</div>
 <pre><code>[1] &quot;Hanshou&quot; &quot;Jinshi&quot;  &quot;Li&quot;      &quot;Nan&quot;     &quot;Taoyuan&quot;</code></pre>
 </div>
 <p>display the complete weight matrix by using str().</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>wm_q</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>List of 88
  $ : int [1:5] 2 3 4 57 85
  $ : int [1:5] 1 57 58 78 85
@@ -2293,6 +2338,11 @@ Link number distribution:
 <h2 id="creating-rook-contiguity-based-neighbours">Creating (ROOK) contiguity based neighbours</h2>
 <p>Compute Rook contiguity weight matrix.</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wm_r</span> <span class='op'>&lt;-</span> <span class='fu'>poly2nb</span><span class='op'>(</span><span class='va'>hunan</span>, queen<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>wm_r</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>Neighbour list object:
 Number of regions: 88 
 Number of nonzero links: 440 
@@ -2310,16 +2360,29 @@ Link number distribution:
 <p>The result shows 88 area units. The most connected area unit have 10 neighbours.</p>
 <p>Visualising contiguity weights</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>longitude</span> <span class='op'>&lt;-</span> <span class='fu'>map_dbl</span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, <span class='op'>~</span><span class='fu'>st_centroid</span><span class='op'>(</span><span class='va'>.x</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>latitude</span> <span class='op'>&lt;-</span> <span class='fu'>map_dbl</span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, <span class='op'>~</span><span class='fu'>st_centroid</span><span class='op'>(</span><span class='va'>.x</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <p>Put longitude and latitude into the same object.</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>coords</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>longitude</span>, <span class='va'>latitude</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>coords</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>     longitude latitude
 [1,]  112.1531 29.44362
 [2,]  112.0372 28.86489
@@ -2330,14 +2393,32 @@ Link number distribution:
 </div>
 <p>Plotting Queen contiguity based neighbours maps</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, border<span class='op'>=</span><span class='st'>"lightgrey"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>wm_q</span>, <span class='va'>coords</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, cex <span class='op'>=</span> <span class='fl'>0.6</span>, add <span class='op'>=</span> <span class='cn'>TRUE</span>, col<span class='op'>=</span> <span class='st'>"red"</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-16-1.png" width="624" /></p>
 </div>
 <p>Plotting Rook contiguity based neighbours maps</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, border<span class='op'>=</span><span class='st'>"lightgrey"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>wm_r</span>, <span class='va'>coords</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, cex <span class='op'>=</span> <span class='fl'>0.6</span>, add <span class='op'>=</span> <span class='cn'>TRUE</span>, col <span class='op'>=</span> <span class='st'>"red"</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-17-1.png" width="624" /></p>
 </div>
 <p>Side by Side Comparison</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, border<span class='op'>=</span><span class='st'>"lightgrey"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>wm_q</span>, <span class='va'>coords</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, cex <span class='op'>=</span> <span class='fl'>0.6</span>, add <span class='op'>=</span> <span class='cn'>TRUE</span>, col<span class='op'>=</span> <span class='st'>"red"</span>, main<span class='op'>=</span><span class='st'>"Queen Contiguity"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, border<span class='op'>=</span><span class='st'>"lightgrey"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>wm_r</span>, <span class='va'>coords</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, cex <span class='op'>=</span> <span class='fl'>0.6</span>, add <span class='op'>=</span> <span class='cn'>TRUE</span>, col <span class='op'>=</span> <span class='st'>"red"</span>, main<span class='op'>=</span><span class='st'>"Rook Contiguity"</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-18-1.png" width="624" /></p>
 </div>
 <h2 id="computing-distance-based-neighbours">Computing distance based neighbours</h2>
@@ -2345,11 +2426,22 @@ Link number distribution:
 <p>The function identifies neighbours of region points by Euclidean distance with a distance band with lower d1= and upper d2= bounds controlled by the bounds= argument. If unprojected coordinates are used and either specified in the coordinates object x or with x as a two column matrix and longlat=TRUE, great circle distances in km will be calculated assuming the WGS84 reference ellipsoid.</p>
 <p>Determine the upper limit for distance band</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>k1</span> <span class='op'>&lt;-</span> <span class='fu'>knn2nb</span><span class='op'>(</span><span class='fu'>knearneigh</span><span class='op'>(</span><span class='va'>coords</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>k1dists</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'>nbdists</span><span class='op'>(</span><span class='va'>k1</span>, <span class='va'>coords</span>, longlat <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>k1dists</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   24.79   32.57   38.01   39.07   44.52   61.79 </code></pre>
 </div>
 <p>Computing fixed distance weight matrix</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wm_d62</span> <span class='op'>&lt;-</span> <span class='fu'>dnearneigh</span><span class='op'>(</span><span class='va'>coords</span>, <span class='fl'>0</span>, <span class='fl'>62</span>, longlat <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>wm_d62</span>
+</code></pre>
+</div>
 <pre><code>Neighbour list object:
 Number of regions: 88 
 Number of nonzero links: 324 
@@ -2358,6 +2450,10 @@ Average number of links: 3.681818 </code></pre>
 </div>
 <p>Display the content of wm_d62 weight matrix.</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>wm_d62</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>List of 88
  $ : int [1:5] 3 4 5 57 64
  $ : int [1:4] 57 58 78 85
@@ -2457,6 +2553,10 @@ Average number of links: 3.681818 </code></pre>
 </div>
 <p>Display the structure of the weight matrix with table() and card() of spdep.</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>County</span>, <span class='fu'>card</span><span class='op'>(</span><span class='va'>wm_d62</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>               
                 1 2 3 4 5 6
   Anhua         1 0 0 0 0 0
@@ -2549,24 +2649,52 @@ Average number of links: 3.681818 </code></pre>
   Zixing        0 0 1 0 0 0</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>n_comp</span> <span class='op'>&lt;-</span> <span class='fu'>n.comp.nb</span><span class='op'>(</span><span class='va'>wm_d62</span><span class='op'>)</span>
+<span class='va'>n_comp</span><span class='op'>$</span><span class='va'>nc</span>
+</code></pre>
+</div>
 <pre><code>[1] 1</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>n_comp</span><span class='op'>$</span><span class='va'>comp.id</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>
  1 
 88 </code></pre>
 </div>
 <p>Plotting fixed distance weight matrix</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, border<span class='op'>=</span><span class='st'>"lightgrey"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>wm_d62</span>, <span class='va'>coords</span>, add<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>k1</span>, <span class='va'>coords</span>, add<span class='op'>=</span><span class='cn'>TRUE</span>, col<span class='op'>=</span><span class='st'>"red"</span>, length<span class='op'>=</span><span class='fl'>0.08</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-25-1.png" width="624" /></p>
 </div>
 <p>Red lines show the links of 1st nearest neighbours and the black lines show the links of neighbours within the cut-off distance of 62km.</p>
 <p>Side by Side</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, border<span class='op'>=</span><span class='st'>"lightgrey"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>k1</span>, <span class='va'>coords</span>, add<span class='op'>=</span><span class='cn'>TRUE</span>, col<span class='op'>=</span><span class='st'>"red"</span>, length<span class='op'>=</span><span class='fl'>0.08</span>, main<span class='op'>=</span><span class='st'>"1st nearest neighbours"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, border<span class='op'>=</span><span class='st'>"lightgrey"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>wm_d62</span>, <span class='va'>coords</span>, add<span class='op'>=</span><span class='cn'>TRUE</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, cex <span class='op'>=</span> <span class='fl'>0.6</span>, main<span class='op'>=</span><span class='st'>"Distance link"</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-26-1.png" width="624" /></p>
 </div>
 <p>Computing adaptive distance weight matrix</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>knn6</span> <span class='op'>&lt;-</span> <span class='fu'>knn2nb</span><span class='op'>(</span><span class='fu'>knearneigh</span><span class='op'>(</span><span class='va'>coords</span>, k<span class='op'>=</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>knn6</span>
+</code></pre>
+</div>
 <pre><code>Neighbour list object:
 Number of regions: 88 
 Number of nonzero links: 528 
@@ -2575,6 +2703,10 @@ Average number of links: 6
 Non-symmetric neighbours list</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>knn6</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>List of 88
  $ : int [1:6] 2 3 4 5 57 64
  $ : int [1:6] 1 3 57 58 78 85
@@ -2673,12 +2805,23 @@ Non-symmetric neighbours list</code></pre>
 </div>
 <p>Plotting distance based neighbours</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, border<span class='op'>=</span><span class='st'>"lightgrey"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>knn6</span>, <span class='va'>coords</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, cex <span class='op'>=</span> <span class='fl'>0.6</span>, add <span class='op'>=</span> <span class='cn'>TRUE</span>, col <span class='op'>=</span> <span class='st'>"red"</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-29-1.png" width="624" /></p>
 </div>
 <h2 id="weights-based-on-idw">Weights based on IDW</h2>
 <p>derive a spatial weight matrix based on Inversed Distance method.</p>
 <p>Compute the distances between areas by using nbdists() of spdep.</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dist</span> <span class='op'>&lt;-</span> <span class='fu'>nbdists</span><span class='op'>(</span><span class='va'>wm_q</span>, <span class='va'>coords</span>, longlat <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>ids</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>dist</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fl'>1</span><span class='op'>/</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>ids</span>
+</code></pre>
+</div>
 <pre><code>[[1]]
 [1] 0.01535405 0.03916350 0.01820896 0.02807922 0.01145113
 
@@ -2967,6 +3110,11 @@ Non-symmetric neighbours list</code></pre>
 <h2 id="row-standardised-weights-matrix">Row-standardised weights matrix</h2>
 <p>Assign weights to each neighboring polygon</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rswm_q</span> <span class='op'>&lt;-</span> <span class='fu'>nb2listw</span><span class='op'>(</span><span class='va'>wm_q</span>, style<span class='op'>=</span><span class='st'>"W"</span>, zero.policy <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>rswm_q</span>
+</code></pre>
+</div>
 <pre><code>Characteristics of weights list object:
 Neighbour list object:
 Number of regions: 88 
@@ -2981,11 +3129,20 @@ W 88 7744 88 37.86334 365.9147</code></pre>
 </div>
 <p>Weight of the first polygon’s four neighbors type:</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rswm_q</span><span class='op'>$</span><span class='va'>weights</span><span class='op'>[</span><span class='fl'>10</span><span class='op'>]</span>
+</code></pre>
+</div>
 <pre><code>[[1]]
 [1] 0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125</code></pre>
 </div>
 <p>derive a row standardised distance weight matrix with the same method</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rswm_ids</span> <span class='op'>&lt;-</span> <span class='fu'>nb2listw</span><span class='op'>(</span><span class='va'>wm_q</span>, glist<span class='op'>=</span><span class='va'>ids</span>, style<span class='op'>=</span><span class='st'>"B"</span>, zero.policy<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>rswm_ids</span>
+</code></pre>
+</div>
 <pre><code>Characteristics of weights list object:
 Neighbour list object:
 Number of regions: 88 
@@ -2999,10 +3156,18 @@ Weights constants summary:
 B 88 7744 8.786867 0.3776535 3.8137</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rswm_ids</span><span class='op'>$</span><span class='va'>weights</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+</code></pre>
+</div>
 <pre><code>[[1]]
 [1] 0.01535405 0.03916350 0.01820896 0.02807922 0.01145113</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>rswm_ids</span><span class='op'>$</span><span class='va'>weights</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 0.008218 0.015088 0.018739 0.019614 0.022823 0.040338 </code></pre>
 </div>
@@ -3010,6 +3175,11 @@ B 88 7744 8.786867 0.3776535 3.8137</code></pre>
 <h2 id="spatial-lag-with-row-standardized-weights">Spatial lag with row-standardized weights</h2>
 <p>Compute the average neighbor GDPPC value for each polygon</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>GDPPC.lag</span> <span class='op'>&lt;-</span> <span class='fu'>lag.listw</span><span class='op'>(</span><span class='va'>rswm_q</span>, <span class='va'>hunan</span><span class='op'>$</span><span class='va'>GDPPC</span><span class='op'>)</span>
+<span class='va'>GDPPC.lag</span>
+</code></pre>
+</div>
 <pre><code> [1] 24847.20 22724.80 24143.25 27737.50 27270.25 21248.80 43747.00
  [8] 33582.71 45651.17 32027.62 32671.00 20810.00 25711.50 30672.33
 [15] 33457.75 31689.20 20269.00 23901.60 25126.17 21903.43 22718.60
@@ -3026,9 +3196,19 @@ B 88 7744 8.786867 0.3776535 3.8137</code></pre>
 </div>
 <p>Append the spatially lag GDPPC values onto hunan SpatialPolygonDataFrame</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>lag.list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>NAME_3</span>, <span class='fu'>lag.listw</span><span class='op'>(</span><span class='va'>rswm_q</span>, <span class='va'>hunan</span><span class='op'>$</span><span class='va'>GDPPC</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>lag.res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>lag.list</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>lag.res</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"NAME_3"</span>, <span class='st'>"lag GDPPC"</span><span class='op'>)</span>
+<span class='va'>hunan</span> <span class='op'>&lt;-</span> <span class='fu'>left_join</span><span class='op'>(</span><span class='va'>hunan</span>,<span class='va'>lag.res</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>Simple feature collection with 6 features and 36 fields
 Geometry type: POLYGON
 Dimension:     XY
@@ -3079,15 +3259,28 @@ Geodetic CRS:  WGS 84
 </div>
 <p>GDPPC and spatial lag GDPPC</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gdppc</span> <span class='op'>&lt;-</span> <span class='fu'>qtm</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='st'>"GDPPC"</span><span class='op'>)</span>
+<span class='va'>lag_gdppc</span> <span class='op'>&lt;-</span> <span class='fu'>qtm</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='st'>"lag GDPPC"</span><span class='op'>)</span>
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>gdppc</span>, <span class='va'>lag_gdppc</span>, asp<span class='op'>=</span><span class='fl'>1</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-39-1.png" width="624" /></p>
 </div>
 <p>Spatial window sum</p>
 <p>Assign knn6 to a new variable</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>knn6a</span> <span class='op'>&lt;-</span> <span class='va'>knn6</span>
+</code></pre>
+</div>
 </div>
 <p>add the diagonal element to the neighbour list</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>include.self</span><span class='op'>(</span><span class='va'>knn6a</span><span class='op'>)</span>
+</code></pre>
+</div>
 <pre><code>Neighbour list object:
 Number of regions: 88 
 Number of nonzero links: 616 
@@ -3097,27 +3290,52 @@ Non-symmetric neighbours list</code></pre>
 </div>
 <p>assign binary weights to the neighbour structure</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>binary.knn6</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>knn6a</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='fl'>0</span><span class='op'>*</span><span class='va'>x</span><span class='op'>+</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>binary.knn6</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+</code></pre>
+</div>
 <pre><code>[[1]]
 [1] 1 1 1 1 1 1</code></pre>
 </div>
 <p>nb2listw() and glist() to explicitly assign weight values.</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wm_knn6</span> <span class='op'>&lt;-</span> <span class='fu'>nb2listw</span><span class='op'>(</span><span class='va'>knn6a</span>, glist <span class='op'>=</span> <span class='va'>binary.knn6</span>, style <span class='op'>=</span> <span class='st'>"B"</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <p>compute the lag variable with lag.listw()</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>lag_knn6</span> <span class='op'>&lt;-</span> <span class='fu'>lag.listw</span><span class='op'>(</span><span class='va'>wm_knn6</span>, <span class='va'>hunan</span><span class='op'>$</span><span class='va'>GDPPC</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <p>convert the lag variable listw object into a data.frame</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>lag.list.knn6</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>NAME_3</span>, <span class='fu'>lag.listw</span><span class='op'>(</span><span class='va'>wm_knn6</span>, <span class='va'>hunan</span><span class='op'>$</span><span class='va'>GDPPC</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>lag_knn6.res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>lag.list.knn6</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>lag_knn6.res</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"NAME_3"</span>, <span class='st'>"lag_sum GDPPC"</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <p>append lag_sum GDPPC values to hunan sf data.frame</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan</span> <span class='op'>&lt;-</span> <span class='fu'>left_join</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='va'>lag_knn6.res</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <p>Plot GDPPC and lag_sum GDPPC</p>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gdppc</span> <span class='op'>&lt;-</span> <span class='fu'>qtm</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='st'>"GDPPC"</span><span class='op'>)</span>
+<span class='va'>lag_sum_gdppc</span> <span class='op'>&lt;-</span> <span class='fu'>qtm</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='st'>"lag_sum GDPPC"</span><span class='op'>)</span>
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>gdppc</span>, <span class='va'>lag_sum_gdppc</span>, asp<span class='op'>=</span><span class='fl'>1</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</code></pre>
+</div>
 <p><img src="hands-onex06_files/figure-html5/unnamed-chunk-47-1.png" width="624" /></p>
 </div>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
