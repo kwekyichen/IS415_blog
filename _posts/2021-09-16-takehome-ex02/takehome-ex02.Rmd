@@ -452,7 +452,9 @@ We can see that all the geospatial data are converted to their respective Spatia
 
 ### 4.3.2 Converting the Spatial* class into generic sp format
 
+Next, we will convert Spatial* classes into Spatial object so that we can convert it into ppp object.
 
+The following code chunk converts Spatial* classes into generic sp format using as function which sets the classes to their respective sp format. 
 
 ```{r}
 airbnb0619_sp <- as(airbnb0619, "SpatialPoints")
@@ -466,6 +468,10 @@ mpsz_sp <- as(mpsz, "SpatialPolygons")
 
 ### 4.3.3 Converting the generic sp format into spatstat’s ppp format
 
+We will next convert the spatial data into spatstat's ppp format.
+
+The following code chunk converts spatial data into spatstat's ppp format using as function. 
+
 ```{r}
 airbnb0619_ppp <- as(airbnb0619_sp, "ppp")
 airbnb0721_ppp <- as(airbnb0721_sp, "ppp")
@@ -474,33 +480,52 @@ tourism_ppp <- as(tourism_sp, "ppp")
 mrtlrt_ppp <- as(mrtlrt_sp, "ppp")
 ```
 
-### 4.3.4 Check for duplicates in ppp object
+### 4.3.4 Handling duplicates in ppp object
+
+#### 4.3.4.1 Check for dupliciates duplicates in each ppp object.
+
+The following code chunk use any and duplicated function of base R package to check for duplicates, and sum up the count of duplicated points using sum function of base R package and multiplicity function of spatstat package.
 
 ```{r}
 any(duplicated(airbnb0619_ppp))
+sum(multiplicity(airbnb0619_ppp) > 1)
 ```
+
+From the result above, there are 6 duplicates in airbnb0619_ppp object. 
 
 ```{r}
 any(duplicated(airbnb0721_ppp))
+sum(multiplicity(airbnb0721_ppp) > 1)
 ```
+
+From the result above, there are 224 duplicates in airbnb0721_ppp object. 
 
 ```{r}
 any(duplicated(hotels_ppp))
+sum(multiplicity(hotels_ppp) > 1)
 ```
+
+From the result above, there are 10 duplicates in hotels_ppp object.
 
 ```{r}
 any(duplicated(tourism_ppp))
+sum(multiplicity(tourism_ppp) > 1)
 ```
+
+From the result above, there are 7 duplicates in tourism_ppp object.
 
 ```{r}
 any(duplicated(mrtlrt_ppp))
+sum(multiplicity(mrtlrt_ppp) > 1)
 ```
 
-We can see that ...
+From the result above, there are no duplicate in mrtlrt_ppp object.
 
-Handling duplicates using jittering.
+#### 4.3.4.2 Handling duplicates
 
-Jittering will add a small perturbation to the duplicate points so that they do not occupy the exact same space.
+We will use jittering to handle duplicates so that we will not lose useful points. Jittering adds a small perturbation to the duplicated points so that they do not occupy the exact same space.
+
+The following code chunk uses rjitter function of spatstat to jitter the ppp object with duplicates.
 
 ```{r}
 airbnb0619_ppp_jit <- rjitter(airbnb0619_ppp, 
@@ -524,40 +549,49 @@ tourism_ppp_jit <- rjitter(tourism_ppp,
                              drop=TRUE)
 ```
 
-Check if duplicates still exist
+#### 4.3.4.3 Check if duplicates still exist
 
 ```{r}
 any(duplicated(airbnb0619_ppp_jit))
+sum(multiplicity(airbnb0619_ppp_jit) > 1)
 ```
 
 ```{r}
 any(duplicated(airbnb0721_ppp_jit))
+sum(multiplicity(airbnb0721_ppp_jit) > 1)
 ```
 
 ```{r}
 any(duplicated(hotels_ppp_jit))
+sum(multiplicity(hotels_ppp_jit) > 1)
 ```
 
 ```{r}
 any(duplicated(tourism_ppp_jit))
+sum(multiplicity(tourism_ppp_jit) > 1)
 ```
 
-### 4.3.5 creating owin objects
+We can confirm that there are no duplicated points after jittering.
+
+### 4.3.5 Create owin objects
+
+We will next create owin object to represent the Singapore boundary.
+
+The following code chunk converts sg SpatialPolygon objects into owin object of spatstat using as function. 
 
 ```{r}
 sg_owin <- as(sg_sp, "owin")
-mpsz_owin <- as(mpsz_sp, "owin")
 ```
+
+The following code chunk plots sg_owin using plot function of base R package.
 
 ```{r}
 plot(sg_owin)
 ```
 
-```{r}
-plot(mpsz_owin)
-```
-
 ### 4.3.6 Combining point events object and owin object
+
+The following code chunk combines the point objects of airbnb0619, airbnb0721, hotels, tourism and mrtlrt with the owin object into one ppp object class.
 
 ```{r}
 airbnb0619SG_ppp = airbnb0619_ppp_jit[sg_owin]
@@ -567,92 +601,372 @@ tourismSG_ppp = tourism_ppp_jit[sg_owin]
 mrtlrtSG_ppp = mrtlrt_ppp[sg_owin]
 ```
 
-```{r}
-airbnb0619SG_ppp1 = airbnb0619_ppp_jit[mpsz_owin]
-airbnb0721SG_ppp1 = airbnb0721_ppp_jit[mpsz_owin]
-hotelsSG_ppp1 = hotels_ppp_jit[mpsz_owin]
-tourismSG_ppp1 = tourism_ppp_jit[mpsz_owin]
-mrtlrtSG_ppp1 = mrtlrt_ppp[mpsz_owin]
-```
+The following code chunk plots the ppp object class using plot function of base R package.
 
 ```{r}
 plot(airbnb0619SG_ppp)
 ```
 
 ```{r}
-plot(airbnb0619SG_ppp1)
+plot(airbnb0721SG_ppp)
 ```
 
-# Section A: Airbnb Distribution in 2019
+```{r}
+plot(hotelsSG_ppp)
+```
 
-## 1. Exploratory Spatial Data Analysis
+```{r}
+plot(tourismSG_ppp)
+```
 
-### Kernel density maps
+```{r}
+plot(mrtlrtSG_ppp)
+```
 
-#### Airbnb listings
+
+# 5 Section A: Airbnb Distribution in 2019
+
+## 5.1 Exploratory Spatial Data Analysis
+
+### 5.1.1 Kernel density maps
+
+#### 5.1.1.1 Airbnb0619 listings
+
+##### 5.1.1.1.1 Compute kernel density estimation with automatic bandwidth selection method
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+
+```{r}
+kde_airbnb0619SG_bw <- density(airbnb0619SG_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+```
+
+The following code chunk plots the kde_airbnb0619SG_bw using plot function of base R
+
+```{r}
+plot(kde_airbnb0619SG_bw)
+```
+
+The density values of the output range is  too small because the default unit of measurement of svy21 is in meter. As a result, the density values computed is in “number of points per square meter”.
+
+##### 5.1.1.1.2 Rescalling KDE values
+
+The following code chunk recale the KDE value of airbnb0619SG_ppp using rescale function of spatstat from meter to kilometer.
 
 ```{r}
 airbnb0619SG_ppp.km <- rescale(airbnb0619SG_ppp, 1000, "km")
-
-kde_airbnb0619SG_600 <- density(airbnb0619SG_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
-
-plot(kde_airbnb0619SG_600)
 ```
+
+##### 5.1.1.1.3 Different automatic bandwidth methods
+
+The following code chunk calculate the bandwidth using different methods
+
+```{r}
+bw.CvL(airbnb0619SG_ppp.km)
+```
+
+```{r}
+bw.scott(airbnb0619SG_ppp.km)
+```
+
+```{r}
+bw.ppl(airbnb0619SG_ppp.km)
+```
+
+```{r}
+bw.diggle(airbnb0619SG_ppp.km)
+```
+
+From the result above, since bw.diggle has the lowest sigma, we will be using it for the other ppp object in order to detect close cluster.
+
+##### 5.1.1.1.4 Plot KDE Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method
+5. plot function of base R package is used to plot kde_airbnb0619SG_bw.km
+
+```{r}
+kde_airbnb0619SG_bw.km <- density(airbnb0619SG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+plot(kde_airbnb0619SG_bw.km)
+```
+
+##### 5.1.1.1.5 Convert KDE output into grid object.
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_airbnb0619SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_bw.km)
+spplot(gridded_kde_airbnb0619SG_bw)
+```
+
+##### 5.1.1.1.6 Convert grid object into raster
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_airbnb0619SG_bw_raster <- raster(gridded_kde_airbnb0619SG_bw)
+kde_airbnb0619SG_bw_raster
+```
+
+From the result above, the crs is NA
+
+##### 5.1.1.1.7 Assign project system
+
+The following code chunk assign CRS to kde_airbnb0619SG_bw_raster
+
+```{r}
+projection(kde_airbnb0619SG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_airbnb0619SG_bw_raster
+```
+
+
+#### 5.1.1.2 Airbnb0721 listings
+
+##### 5.1.1.2.1 Rescale KDE values
+
+The following code chunk recale the KDE value of airbnb0721SG_ppp using rescale function of spatstat from meter to kilometer.
 
 ```{r}
 airbnb0721SG_ppp.km <- rescale(airbnb0721SG_ppp, 1000, "km")
+```
 
-kde_airbnb0721SG_ppp_bw <- density(airbnb0721SG_ppp.km,
+##### 5.1.1.2.2 Plot KDE Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+
+```{r}
+kde_airbnb0721SG_bw.km <- density(airbnb0721SG_ppp.km,
                               sigma=bw.diggle,
                               edge=TRUE,
-                            kernel="gaussian") 
+                            kernel="gaussian")
 
-plot(kde_airbnb0721SG_ppp_bw)
+plot(kde_airbnb0721SG_bw.km)
 ```
 
-#### Hotels
+##### 5.1.1.2.3 Convert KDE output into grid object.
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
 
 ```{r}
-hotels_ppp.km <- rescale(hotelsSG_ppp, 1000, "km")
-
-kde_hotelsSG_600 <- density(hotels_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
-
-plot(kde_hotelsSG_600)
+gridded_kde_airbnb0721SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_bw.km)
+spplot(gridded_kde_airbnb0721SG_bw)
 ```
 
-#### MRT
+##### 5.1.1.2.4 Convert grid object into raster and assign project system
+
+The following code chunk converts grid object into raster using raster function of raster package
 
 ```{r}
-mrtlrt_ppp.km <- rescale(mrtlrtSG_ppp, 1000, "km")
-
-kde_mrtlrtSG_600 <- density(mrtlrt_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
-
-plot(kde_mrtlrtSG_600)
+kde_airbnb0721SG_bw_raster <- raster(gridded_kde_airbnb0721SG_bw)
+projection(kde_airbnb0721SG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_airbnb0721SG_bw_raster
 ```
 
-#### Tourist Attractions
+
+#### 5.1.1.3 Hotels
+
+##### 5.1.1.3.1 Rescale KDE values
+
+The following code chunk recale the KDE value of hotelsSG_ppp using rescale function of spatstat from meter to kilometer.
 
 ```{r}
-tourism_ppp.km <- rescale(tourismSG_ppp, 1000, "km")
-
-kde_tourismSG_600 <- density(tourism_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
-
-plot(kde_tourismSG_600)
+hotelsSG_ppp.km <- rescale(hotelsSG_ppp, 1000, "km")
 ```
 
-### Kernel density maps on openstreetmap of Singapore
+##### 5.1.1.3.2 Plot KDE Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+
+```{r}
+kde_hotelsSG_bw.km <- density(hotelsSG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+plot(kde_hotelsSG_bw.km)
+```
+
+##### 5.1.1.3.3 Convert KDE output into grid object.
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_hotelsSG_bw <- as.SpatialGridDataFrame.im(kde_hotelsSG_bw.km)
+spplot(gridded_kde_hotelsSG_bw)
+```
+
+##### 5.1.1.3.4 Convert grid object into raster and assign project system
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_hotelsSG_bw_raster <- raster(gridded_kde_hotelsSG_bw)
+projection(kde_hotelsSG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_hotelsSG_bw_raster
+```
+
+#### 5.1.1.4 MRTLRT
+
+##### 5.1.1.4.1 Rescale KDE values
+
+The following code chunk recale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.
+
+```{r}
+mrtlrtSG_ppp.km <- rescale(mrtlrtSG_ppp, 1000, "km")
+```
+
+##### 5.1.1.4.2 Plot KDE Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+
+```{r}
+kde_mrtlrtSG_bw.km <- density(mrtlrtSG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+plot(kde_mrtlrtSG_bw.km)
+```
+
+##### 5.1.1.4.3 Convert KDE output into grid object.
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_mrtlrtSG_bw <- as.SpatialGridDataFrame.im(kde_mrtlrtSG_bw.km)
+spplot(gridded_kde_mrtlrtSG_bw)
+```
+
+##### 5.1.1.4.4 Convert grid object into raster and assign project system
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_mrtlrtSG_bw_raster <- raster(gridded_kde_mrtlrtSG_bw)
+projection(kde_mrtlrtSG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_mrtlrtSG_bw_raster
+```
+
+#### 5.1.1.5 Tourist Attractions
+
+##### 5.1.1.5.1 Rescale KDE values
+
+The following code chunk recale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.
+
+```{r}
+tourismSG_ppp.km <- rescale(tourismSG_ppp, 1000, "km")
+```
+
+##### 5.1.1.5.2 Plot KDE Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+
+```{r}
+kde_tourismSG_bw.km <- density(tourismSG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+plot(kde_tourismSG_bw.km)
+```
+
+##### 5.1.1.5.3 Convert KDE output into grid object.
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_tourismSG_bw <- as.SpatialGridDataFrame.im(kde_tourismSG_bw.km)
+spplot(gridded_kde_tourismSG_bw)
+```
+
+##### 5.1.1.5.4 Convert grid object into raster and assign project system
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_tourismSG_bw_raster <- raster(gridded_kde_tourismSG_bw)
+projection(kde_tourismSG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_tourismSG_bw_raster
+```
+
+### 5.1.2 Kernel density maps on Openstreetmap of Singapore
+
+Airbnb0619
+
+```{r}
+tmap_mode("plot")
+tm_shape(kde_airbnb0619SG_bw_raster)+
+  tm_raster(palette="Purples")+
+tm_basemap(leaflet::providers$OpenStreetMap)
+```
+
+Hotels
+
+```{r}
+tm_shape(kde_hotelsSG_bw_raster)+
+  tm_raster(palette="Purples")+
+tm_basemap(leaflet::providers$OpenStreetMap)
+```
 
 
-## 2. Second-order Spatial Point Patterns Analysis
+MrtLrt
 
-### Null hypothesis and alternative hypothesis
+```{r}
+tm_shape(kde_mrtlrtSG_bw_raster)+
+  tm_raster(palette="Purples")+
+tm_basemap(leaflet::providers$OpenStreetMap)
+```
 
-### Test
+Tourist Attractions
 
-### Statistical conclusions.
+```{r}
+tm_shape(kde_tourismSG_bw_raster)+
+  tm_raster(palette="Purples")+
+tm_basemap(leaflet::providers$OpenStreetMap)
+```
 
-# Section B: Impact of COVID-19
+## 5.2 Second-order Spatial Point Patterns Analysis
 
-## 3. Exploratory Spatial Data Analysis
+### 5.2.1 Null hypothesis and alternative hypothesis
 
-## 4. Second-order Spatial Point Patterns Analysis
+### 5.2.2 Test
+
+### 5.2.3 Statistical conclusions
+# 6 Section B: Impact of COVID-19
+
+## 6.1 Exploratory Spatial Data Analysis
+
+### 6.1.1 Kernel density maps
+
+### 6.1.2 Kernel density maps on Openstreetmap of Singapore
+
+
+## 6.2 Second-order Spatial Point Patterns Analysis
+
+### 6.2.1 Null hypothesis and alternative hypothesis
+### 6.2.2 Test
+### 6.2.3 Statistical conclusions.
+
