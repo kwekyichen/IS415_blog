@@ -1,0 +1,251 @@
+---
+title: "In Class Exercise 6"
+description: |
+  A short description of the post.
+author:
+  - name: Kwek Yi Chen
+    url: https://example.com/kwekyichen
+date: 09-20-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Install packages
+
+sf: to handle spatial data
+spdep: for spatial weighting
+tmap: for mapping
+tidyverse: import data
+
+```{r echo=TRUE}
+packages = c('sf', 'spdep', 'tmap', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+# Read data
+
+st_read to read shapefile
+
+```{r echo=TRUE}
+hunan <- st_read(dsn = "data/geospatial", layer = "Hunan")
+```
+
+Import csv file into r environment
+
+```{r echo=TRUE}
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+This is performed by using left_join() of dplyr package.
+
+```{r echo=TRUE}
+hunan <- left_join(hunan,hunan2012)
+```
+
+Plot basemap of hunan with county name on it
+
+- Inserting text into polygon using tm_text
+
+```{r echo=TRUE}
+basemap <- tm_shape(hunan) +
+  tm_polygons() +
+  tm_text("NAME_3", size=0.5)
+
+gdppc <- qtm(hunan, "GDPPC")
+tmap_arrange(basemap, gdppc, asp=1, ncol=2)
+```
+
+# Computing Contiguity Spatial Weights
+
+Use poly2nb() of spdep package to compute contiguity weight matrices for the study area. The function builds a neighbours list based on regions with contiguous boundaries. The function takes in “queen” argument that takes TRUE or FALSE. FALSE will return list of first order neighbours using the Queen criteria.
+
+## Computing (QUEEN) contiguity based neighbours
+
+```{r echo=TRUE}
+wm_q <- poly2nb(hunan, queen=TRUE)
+summary(wm_q)
+```
+
+Links refers to neighbours.
+
+The number of neighbours
+The number of polygons with the number of neighbours ^
+Center point is around 5.
+
+Retrieve neigbour's GDPPC
+
+```{r echo=TRUE}
+nb1 <- wm_q[[1]]
+nb1 <- hunan$GDPPC[nb1]
+nb1
+```
+
+# Visualise contiguity weights
+
+Calculating the center point of each area using st_centroid. First is Lng and Second is Lat.
+
+.x refers to the simple feature geometry
+
+```{r echo=TRUE}
+longitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[1]])
+```
+
+```{r echo=TRUE}
+latitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[2]])
+```
+
+Put longitude and latitude into the same object.
+
+```{r echo=TRUE}
+coords <- cbind(longitude, latitude)
+```
+
+Plotting the neighbours (Queen)
+
+```{r echo=TRUE, fig.width=8, fig.height=6}
+plot(hunan$geometry, border="lightgrey")
+plot(wm_q, coords, pch = 19, cex = 0.6, add = TRUE, col = "red")
+```
+Plotting Rook contiguity based neighbours maps
+
+```{r echo=TRUE, fig.width=8, fig.height=6}
+
+wm_r <- poly2nb(hunan, queen=FALSE)
+
+plot(hunan$geometry, border="lightgrey")
+plot(wm_r, coords, pch = 19, cex = 0.6, add = TRUE, col = "red")
+```
+
+Queens: Includes diagonal, tip touching area
+Rook: Does not include diagonal, tip touching area
+
+```{r echo=TRUE}
+par(mfrow=c(1,2))
+plot(hunan$geometry, border="lightgrey")
+plot(wm_q, coords, pch = 19, cex = 0.6, add = TRUE, col= "red", main="Queen Contiguity")
+plot(hunan$geometry, border="lightgrey")
+plot(wm_r, coords, pch = 19, cex = 0.6, add = TRUE, col = "red", main="Rook Contiguity")
+```
+
+# Computing distance based neighbours
+
+If the value of lat long is small, it is like that it is in decimal degree. Cannot calculate distance with decimal degree. If it projected, set longlat=false 
+
+Note that it is calculated based on centroid
+
+```{r echo=TRUE}
+k1 <- knn2nb(knearneigh(coords))
+k1dists <- unlist(nbdists(k1, coords, longlat = TRUE))
+summary(k1dists)
+```
+
+Use cut off of 62. Must define the start, 0.
+
+Computing fixed distance weight matrix
+
+```{r echo=TRUE}
+wm_d62 <- dnearneigh(coords, 0, 62, longlat = TRUE)
+wm_d62
+```
+
+Display the content of wm_d62 weight matrix.
+
+```{r echo=TRUE}
+str(wm_d62)
+```
+
+```{r echo=TRUE}
+table(hunan$County, card(wm_d62))
+```
+
+Left plot shows first nearest neighbour
+
+```{r echo=TRUE}
+par(mfrow=c(1,2))
+plot(hunan$geometry, border="lightgrey")
+plot(k1, coords, add=TRUE, col="red", length=0.08, main="1st nearest neighbours")
+plot(hunan$geometry, border="lightgrey")
+plot(wm_d62, coords, add=TRUE, pch = 19, cex = 0.6, main="Distance link")
+```
+For the plot on the right, to interpret, we can say based on the 62km distance, this point (point A) have how many neighbours.
+
+Computing adaptive distance weight matrix
+
+In real world, certain location, entity might be closer or further. e.g. many near neighbours or too little number of neighbours. Hence, we fix the number of neighbours (k=6).
+
+```{r echo=TRUE}
+knn6 <- knn2nb(knearneigh(coords, k=6))
+knn6
+```
+
+```{r echo=TRUE}
+str(knn6)
+```
+
+# Weights based on IDW
+
+derive a spatial weight matrix based on Inversed Distance method.
+
+Compute the distances between areas by using nbdists() of spdep.
+
+Closer have higher weight. Further have lower weight
+
+```{r echo=TRUE}
+dist <- nbdists(wm_q, coords, longlat = TRUE)
+ids <- lapply(dist, function(x) 1/(x))
+ids
+```
+
+# Row-standardised weights matrix
+
+Take note the style and zero.policy
+
+Most common used: "W" and "B". "W" means equal weight. "B" means original Binary. 
+
+Zero.policy: can accept polygon without neighbour? 
+NULL will exclude polygons without neighbour.
+False will show error if there are any empty neighbour
+True allows polygons without neighbour.
+SHOULD USE DEFAULT... WE WANT TO POLYGONS WITH NEIGHBOURS
+
+```{r echo=TRUE}
+rswm_q <- nb2listw(wm_q, style="W", zero.policy = TRUE)
+rswm_q
+```
+
+# Application of Spatial Weight Matrix
+
+## Spatial lag with row-standardized weights
+
+```{r echo=TRUE}
+GDPPC.lag <- lag.listw(rswm_q, hunan$GDPPC)
+GDPPC.lag
+```
+
+If calculate based on row-standardise weight.. It is just sum of the row / num
+
+```{r echo=TRUE}
+lag.list <- list(hunan$NAME_3, lag.listw(rswm_q, hunan$GDPPC))
+lag.res <- as.data.frame(lag.list)
+colnames(lag.res) <- c("NAME_3", "lag GDPPC")
+hunan <- left_join(hunan,lag.res)
+```
+
+```{r echo=TRUE}
+gdppc <- qtm(hunan, "GDPPC")
+lag_gdppc <- qtm(hunan, "lag GDPPC")
+tmap_arrange(gdppc, lag_gdppc, asp=1, ncol=2)
+```
+
+Lag_GDPPC: Average GDPPC of neighbours without including the target itself.
