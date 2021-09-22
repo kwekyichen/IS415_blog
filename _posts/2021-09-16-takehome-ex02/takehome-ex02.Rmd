@@ -452,9 +452,7 @@ We can see that all the geospatial data are converted to their respective Spatia
 
 ### 4.3.2 Converting the Spatial* class into generic sp format
 
-Next, we will convert Spatial* classes into Spatial object so that we can convert it into ppp object.
 
-The following code chunk converts Spatial* classes into generic sp format using as function which sets the classes to their respective sp format. 
 
 ```{r eval=FALSE}
 airbnb0619_sp <- as(airbnb0619, "SpatialPoints")
@@ -468,11 +466,15 @@ mpsz_sp <- as(mpsz, "SpatialPolygons")
 
 ### 4.3.3 Converting the generic sp format into spatstat’s ppp format
 
+<<<<<<< HEAD
 We will next convert the spatial data into spatstat's ppp format.
 
 The following code chunk converts spatial data into spatstat's ppp format using as function. 
 
 ```{r eval=FALSE}
+=======
+```{r}
+>>>>>>> parent of 950ef92 (takehome2 update)
 airbnb0619_ppp <- as(airbnb0619_sp, "ppp")
 airbnb0721_ppp <- as(airbnb0721_sp, "ppp")
 hotels_ppp <- as(hotels_sp, "ppp")
@@ -480,52 +482,65 @@ tourism_ppp <- as(tourism_sp, "ppp")
 mrtlrt_ppp <- as(mrtlrt_sp, "ppp")
 ```
 
+<<<<<<< HEAD
 ### 4.3.4 Handling duplicates in ppp object
 
 #### 4.3.4.1 Check for dupliciates duplicates in each ppp object
 
 The following code chunk use any and duplicated function of base R package to check for duplicates, and sum up the count of duplicated points using sum function of base R package and multiplicity function of spatstat package.
+=======
+### 4.3.4 Check for duplicates in ppp object
+>>>>>>> parent of 950ef92 (takehome2 update)
 
 ```{r eval=FALSE}
 any(duplicated(airbnb0619_ppp))
-sum(multiplicity(airbnb0619_ppp) > 1)
 ```
 
+<<<<<<< HEAD
 From the result above, there are 6 duplicates in airbnb0619_ppp object. 
 
 ```{r eval=FALSE}
+=======
+```{r}
+>>>>>>> parent of 950ef92 (takehome2 update)
 any(duplicated(airbnb0721_ppp))
-sum(multiplicity(airbnb0721_ppp) > 1)
 ```
 
+<<<<<<< HEAD
 From the result above, there are 224 duplicates in airbnb0721_ppp object. 
 
 ```{r eval=FALSE}
+=======
+```{r}
+>>>>>>> parent of 950ef92 (takehome2 update)
 any(duplicated(hotels_ppp))
-sum(multiplicity(hotels_ppp) > 1)
 ```
 
+<<<<<<< HEAD
 From the result above, there are 10 duplicates in hotels_ppp object.
 
 ```{r eval=FALSE}
+=======
+```{r}
+>>>>>>> parent of 950ef92 (takehome2 update)
 any(duplicated(tourism_ppp))
-sum(multiplicity(tourism_ppp) > 1)
 ```
 
+<<<<<<< HEAD
 From the result above, there are 7 duplicates in tourism_ppp object.
 
 ```{r eval=FALSE}
+=======
+```{r}
+>>>>>>> parent of 950ef92 (takehome2 update)
 any(duplicated(mrtlrt_ppp))
-sum(multiplicity(mrtlrt_ppp) > 1)
 ```
 
-From the result above, there are no duplicate in mrtlrt_ppp object.
+We can see that ...
 
-#### 4.3.4.2 Handling duplicates
+Handling duplicates using jittering.
 
-We will use jittering to handle duplicates so that we will not lose useful points. Jittering adds a small perturbation to the duplicated points so that they do not occupy the exact same space.
-
-The following code chunk uses rjitter function of spatstat to jitter the ppp object with duplicates.
+Jittering will add a small perturbation to the duplicate points so that they do not occupy the exact same space.
 
 ```{r eval=FALSE}
 airbnb0619_ppp_jit <- rjitter(airbnb0619_ppp, 
@@ -549,49 +564,46 @@ tourism_ppp_jit <- rjitter(tourism_ppp,
                              drop=TRUE)
 ```
 
-#### 4.3.4.3 Check if duplicates still exist
+Check if duplicates still exist
 
 ```{r eval=FALSE}
 any(duplicated(airbnb0619_ppp_jit))
-sum(multiplicity(airbnb0619_ppp_jit) > 1)
 ```
 
 ```{r eval=FALSE}
 any(duplicated(airbnb0721_ppp_jit))
-sum(multiplicity(airbnb0721_ppp_jit) > 1)
 ```
 
 ```{r eval=FALSE}
 any(duplicated(hotels_ppp_jit))
-sum(multiplicity(hotels_ppp_jit) > 1)
 ```
 
 ```{r eval=FALSE}
 any(duplicated(tourism_ppp_jit))
-sum(multiplicity(tourism_ppp_jit) > 1)
 ```
 
-We can confirm that there are no duplicated points after jittering.
-
-### 4.3.5 Create owin objects
-
-We will next create owin object to represent the Singapore boundary.
-
-The following code chunk converts sg SpatialPolygon objects into owin object of spatstat using as function. 
+### 4.3.5 creating owin objects
 
 ```{r eval=FALSE}
 sg_owin <- as(sg_sp, "owin")
+mpsz_owin <- as(mpsz_sp, "owin")
 ```
 
+<<<<<<< HEAD
 The following code chunk plots sg_owin using plot function of base R package.
 
 ```{r eval=FALSE}
+=======
+```{r}
+>>>>>>> parent of 950ef92 (takehome2 update)
 plot(sg_owin)
 ```
 
-### 4.3.6 Combining point events object and owin object
+```{r}
+plot(mpsz_owin)
+```
 
-The following code chunk combines the point objects of airbnb0619, airbnb0721, hotels, tourism and mrtlrt with the owin object into one ppp object class.
+### 4.3.6 Combining point events object and owin object
 
 ```{r eval=FALSE}
 airbnb0619SG_ppp = airbnb0619_ppp_jit[sg_owin]
@@ -601,6 +613,7 @@ tourismSG_ppp = tourism_ppp_jit[sg_owin]
 mrtlrtSG_ppp = mrtlrt_ppp[sg_owin]
 ```
 
+<<<<<<< HEAD
 The following code chunk plots the ppp object class using plot function of base R package.
 
 ```{r eval=FALSE}
@@ -621,17 +634,31 @@ plot(tourismSG_ppp)
 
 ```{r eval=FALSE}
 plot(mrtlrtSG_ppp)
+=======
+```{r}
+airbnb0619SG_ppp1 = airbnb0619_ppp_jit[mpsz_owin]
+airbnb0721SG_ppp1 = airbnb0721_ppp_jit[mpsz_owin]
+hotelsSG_ppp1 = hotels_ppp_jit[mpsz_owin]
+tourismSG_ppp1 = tourism_ppp_jit[mpsz_owin]
+mrtlrtSG_ppp1 = mrtlrt_ppp[mpsz_owin]
 ```
 
+```{r}
+plot(airbnb0619SG_ppp)
+```
 
-# 5 Section A: Airbnb Distribution in 2019
+```{r}
+plot(airbnb0619SG_ppp1)
+>>>>>>> parent of 950ef92 (takehome2 update)
+```
 
-## 5.1 Exploratory Spatial Data Analysis
+# Section A: Airbnb Distribution in 2019
 
-### 5.1.1 Kernel density maps
+## 1. Exploratory Spatial Data Analysis
 
-#### 5.1.1.1 Airbnb0619 listings
+### Kernel density maps
 
+<<<<<<< HEAD
 ##### 5.1.1.1.1 Compute kernel density estimation with automatic bandwidth selection method
 
 1. The following code chunk computes kernel density using density function of spatstat package.
@@ -657,15 +684,16 @@ The density values of the output range is  too small because the default unit of
 ##### 5.1.1.1.2 Rescalling KDE values
 
 The following code chunk rescale the KDE value of airbnb0619SG_ppp using rescale function of spatstat from meter to kilometer.
+=======
+#### Airbnb listings
+>>>>>>> parent of 950ef92 (takehome2 update)
 
 ```{r eval=FALSE}
 airbnb0619SG_ppp.km <- rescale(airbnb0619SG_ppp, 1000, "km")
-```
 
-##### 5.1.1.1.3 Different automatic bandwidth methods
+kde_airbnb0619SG_600 <- density(airbnb0619SG_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
 
-The following code chunk calculate the bandwidth using different methods
-
+<<<<<<< HEAD
 ```{r eval=FALSE}
 bw.CvL(airbnb0619SG_ppp.km)
 ```
@@ -754,10 +782,20 @@ hotelsSG_ppp.km <- rescale(hotelsSG_ppp, 1000, "km")
 
 ```{r eval=FALSE}
 kde_hotelsSG_bw.km <- density(hotelsSG_ppp.km,
+=======
+plot(kde_airbnb0619SG_600)
+```
+
+```{r}
+airbnb0721SG_ppp.km <- rescale(airbnb0721SG_ppp, 1000, "km")
+
+kde_airbnb0721SG_ppp_bw <- density(airbnb0721SG_ppp.km,
+>>>>>>> parent of 950ef92 (takehome2 update)
                               sigma=bw.diggle,
                               edge=TRUE,
-                            kernel="gaussian")
+                            kernel="gaussian") 
 
+<<<<<<< HEAD
 par(mfrow=c(1,2))
 plot(kde_hotelsSG_bw.km, main = "KDE Map")
 plot(hotelsSG_ppp, main="Point Map")
@@ -773,9 +811,19 @@ spplot(gridded_kde_hotelsSG_bw)
 ```
 
 ##### 5.1.1.2.4 Convert grid object into raster and assign project system
+=======
+plot(kde_airbnb0721SG_ppp_bw)
+```
 
-The following code chunk converts grid object into raster using raster function of raster package
+#### Hotels
 
+```{r}
+hotels_ppp.km <- rescale(hotelsSG_ppp, 1000, "km")
+>>>>>>> parent of 950ef92 (takehome2 update)
+
+kde_hotelsSG_600 <- density(hotels_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
+
+<<<<<<< HEAD
 ```{r eval=FALSE}
 kde_hotelsSG_bw_raster <- raster(gridded_kde_hotelsSG_bw)
 projection(kde_hotelsSG_bw_raster) <- CRS("+init=EPSG:3414")
@@ -821,9 +869,29 @@ spplot(gridded_kde_mrtlrtSG_bw)
 ```
 
 ##### 5.1.1.3.4 Convert grid object into raster and assign project system
+=======
+plot(kde_hotelsSG_600)
+```
 
-The following code chunk converts grid object into raster using raster function of raster package
+#### MRT
 
+```{r}
+mrtlrt_ppp.km <- rescale(mrtlrtSG_ppp, 1000, "km")
+
+kde_mrtlrtSG_600 <- density(mrtlrt_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
+
+plot(kde_mrtlrtSG_600)
+```
+
+#### Tourist Attractions
+
+```{r}
+tourism_ppp.km <- rescale(tourismSG_ppp, 1000, "km")
+>>>>>>> parent of 950ef92 (takehome2 update)
+
+kde_tourismSG_600 <- density(tourism_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
+
+<<<<<<< HEAD
 ```{r eval=FALSE}
 kde_mrtlrtSG_bw_raster <- raster(gridded_kde_mrtlrtSG_bw)
 projection(kde_mrtlrtSG_bw_raster) <- CRS("+init=EPSG:3414")
@@ -1663,9 +1731,25 @@ tmap_arrange(airbnb0619map, airbnb0721map)
 ```{r eval=FALSE}
 tmap_mode("plot")
 ```
+=======
+plot(kde_tourismSG_600)
+```
 
-## 6.2 Second-order Spatial Point Patterns Analysis
+### Kernel density maps on openstreetmap of Singapore
 
+
+## 2. Second-order Spatial Point Patterns Analysis
+
+### Null hypothesis and alternative hypothesis
+
+### Test
+
+### Statistical conclusions.
+>>>>>>> parent of 950ef92 (takehome2 update)
+
+# Section B: Impact of COVID-19
+
+<<<<<<< HEAD
 ### 6.2.1 Nearest Neighbour Analysis (CONTINUE FROM HERE)
 
 #### 6.2.1.1 Hypothesis
@@ -1835,3 +1919,8 @@ tmap_arrange(airbnb0619map, tourismmap)
 ```{r eval=FALSE}
 tmap_mode("plot")
 ```
+=======
+## 3. Exploratory Spatial Data Analysis
+
+## 4. Second-order Spatial Point Patterns Analysis
+>>>>>>> parent of 950ef92 (takehome2 update)
