@@ -625,3 +625,614 @@ plot(mrtlrtSG_ppp)
 ```
 
 
+
+# 5 Section A: Airbnb Distribution in 2019
+
+## 5.1 Exploratory Spatial Data Analysis
+
+### 5.1.1 Kernel density maps
+
+#### 5.1.1.1 Airbnb0619 listings
+
+##### 5.1.1.1.1 Compute kernel density estimation with automatic bandwidth selection method
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+
+```{r}
+kde_airbnb0619SG_bw <- density(airbnb0619SG_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+```
+
+The following code chunk plots the kde_airbnb0619SG_bw using plot function of base R
+
+```{r}
+plot(kde_airbnb0619SG_bw)
+```
+
+The density values of the output range is  too small because the default unit of measurement of svy21 is in meter. As a result, the density values computed is in “number of points per square meter”.
+
+##### 5.1.1.1.2 Rescalling KDE values
+
+The following code chunk rescale the KDE value of airbnb0619SG_ppp using rescale function of spatstat from meter to kilometer.
+
+```{r}
+airbnb0619SG_ppp.km <- rescale(airbnb0619SG_ppp, 1000, "km")
+```
+
+##### 5.1.1.1.3 Different automatic bandwidth methods
+
+The following code chunk calculate the bandwidth using different methods
+
+```{r}
+bw.CvL(airbnb0619SG_ppp.km)
+```
+
+```{r}
+bw.scott(airbnb0619SG_ppp.km)
+```
+
+```{r}
+bw.ppl(airbnb0619SG_ppp.km)
+```
+
+```{r}
+bw.diggle(airbnb0619SG_ppp.km)
+```
+
+From the result above, since bw.diggle has the lowest sigma, we will be using it for the other ppp object in order to detect close cluster.
+
+##### 5.1.1.1.4 KDE Map and Point Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method
+5. plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side
+
+```{r}
+kde_airbnb0619SG_bw.km <- density(airbnb0619SG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+
+par(mfrow=c(1,2))
+plot(kde_airbnb0619SG_bw.km)
+plot(airbnb0619SG_ppp)
+```
+
+
+##### 5.1.1.1.5 Convert KDE output into grid object
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_airbnb0619SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_bw.km)
+spplot(gridded_kde_airbnb0619SG_bw)
+```
+
+##### 5.1.1.1.6 Convert grid object into raster
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_airbnb0619SG_bw_raster <- raster(gridded_kde_airbnb0619SG_bw)
+kde_airbnb0619SG_bw_raster
+```
+
+From the result above, the crs is NA
+
+##### 5.1.1.1.7 Assign project system
+
+The following code chunk assign CRS to kde_airbnb0619SG_bw_raster
+
+```{r}
+projection(kde_airbnb0619SG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_airbnb0619SG_bw_raster
+```
+
+#### 5.1.1.2 Hotels
+
+##### 5.1.1.2.1 Rescale KDE values
+
+The following code chunk rescale the KDE value of hotelsSG_ppp using rescale function of spatstat from meter to kilometer.
+
+```{r}
+hotelsSG_ppp.km <- rescale(hotelsSG_ppp, 1000, "km")
+```
+
+##### 5.1.1.2.2 KDE Map and Point Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+5. plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side
+
+```{r}
+kde_hotelsSG_bw.km <- density(hotelsSG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+par(mfrow=c(1,2))
+plot(kde_hotelsSG_bw.km, main = "KDE Map")
+plot(hotelsSG_ppp, main="Point Map")
+```
+
+##### 5.1.1.2.3 Convert KDE output into grid object
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_hotelsSG_bw <- as.SpatialGridDataFrame.im(kde_hotelsSG_bw.km)
+spplot(gridded_kde_hotelsSG_bw)
+```
+
+##### 5.1.1.2.4 Convert grid object into raster and assign project system
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_hotelsSG_bw_raster <- raster(gridded_kde_hotelsSG_bw)
+projection(kde_hotelsSG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_hotelsSG_bw_raster
+```
+
+#### 5.1.1.3 MRTLRT
+
+##### 5.1.1.3.1 Rescale KDE values
+
+The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.
+
+```{r}
+mrtlrtSG_ppp.km <- rescale(mrtlrtSG_ppp, 1000, "km")
+```
+
+##### 5.1.1.3.2 KDE Map and Point Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+5. plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side
+
+```{r}
+kde_mrtlrtSG_bw.km <- density(mrtlrtSG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+par(mfrow=c(1,2))
+plot(kde_mrtlrtSG_bw.km, main = "KDE Map")
+plot(mrtlrtSG_ppp, main="Point Map")
+```
+
+##### 5.1.1.3.3 Convert KDE output into grid object
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_mrtlrtSG_bw <- as.SpatialGridDataFrame.im(kde_mrtlrtSG_bw.km)
+spplot(gridded_kde_mrtlrtSG_bw)
+```
+
+##### 5.1.1.3.4 Convert grid object into raster and assign project system
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_mrtlrtSG_bw_raster <- raster(gridded_kde_mrtlrtSG_bw)
+projection(kde_mrtlrtSG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_mrtlrtSG_bw_raster
+```
+
+#### 5.1.1.4 Tourist Attractions
+
+##### 5.1.1.4.1 Rescale KDE values
+
+The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.
+
+```{r}
+tourismSG_ppp.km <- rescale(tourismSG_ppp, 1000, "km")
+```
+
+##### 5.1.1.4.2 KDE Map and Point Map
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method 
+5. plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side
+
+```{r}
+kde_tourismSG_bw.km <- density(tourismSG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+par(mfrow=c(1,2))
+plot(kde_tourismSG_bw.km, main = "KDE Map")
+plot(tourismSG_ppp, main="Point Map")
+```
+
+##### 5.1.1.4.3 Convert KDE output into grid object
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_tourismSG_bw <- as.SpatialGridDataFrame.im(kde_tourismSG_bw.km)
+spplot(gridded_kde_tourismSG_bw)
+```
+
+##### 5.1.1.4.4 Convert grid object into raster and assign project system
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_tourismSG_bw_raster <- raster(gridded_kde_tourismSG_bw)
+projection(kde_tourismSG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_tourismSG_bw_raster
+```
+
+
+#### 5.1.1.5 Comparison between Airbnb0619, Hotels, MRTLRT and Tourist Attractions
+
+##### 5.1.1.5.1 KDE Map Comparison
+
+The following code chunk plots all the KDE map of Airbnb0619, Hotels, MRTLRT and Tourist Attractions side by side using par functions of graphics package
+
+```{r}
+par(mfrow=c(2,2))
+plot(kde_airbnb0619SG_bw.km, main = "Airbnb 2019")
+plot(kde_hotelsSG_bw.km, main = "Hotel")
+plot(kde_mrtlrtSG_bw.km, main = "Mrt")
+plot(kde_tourismSG_bw.km, main = "Tourist Attraction")
+```
+
+From the above, we can see that the higher density (in red and yellow) for airbnb, hotel, mrt and tourish attraction are concentrated around the south east area below central region.
+
+##### 5.1.1.5.2 Central Region
+
+We will look into the central region
+
+###### 5.1.1.5.2.1 Exploration with OpenStreetMap
+
+The following code chunk first extract airbnb in the central region from airbnb0619_sf region.
+
+tmap_mode is set to "view" for interaction mode and tm_basemap is set to "OpenStreetMap"
+
+tm_shape of centralairbnb0619, hotels_sf, mrtlrt_sf and tourism_sf were plotted using tm_shape and tm_dots of tmap packages.
+
+colour of dots using tm_dots and the following are the color representation:
+
+- black: Airbnb listings in central region
+
+- green: hotels
+
+- blue: mrtlrt
+
+- red: tourist attractions.
+
+
+```{r}
+centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central Region",]
+
+tmap_mode("view")
+tm_basemap("OpenStreetMap") +
+tm_shape(centralairbnb0619) + 
+  tm_dots(col="black", size = 0.02)+
+tm_shape(hotels_sf) + 
+  tm_dots(col="green", size = 0.02)+
+tm_shape(mrtlrt_sf) + 
+  tm_dots(col="blue", size = 0.02)+
+tm_shape(tourism_sf) + 
+  tm_dots(col="red", size = 0.02)
+```
+
+From the map above, we can see that there are many Airbnbs located in Kallang, River Valley, Novena an Rochor.
+
+```{r}
+tmap_mode("plot")
+```
+
+###### 5.1.1.5.2.2 Comparing Spatial Point Patterns using KDE
+
+Extract Study Area
+
+The following code chunk extracts the target areas.
+
+```{r}
+kl = mpsz[mpsz@data$PLN_AREA_N == "KALLANG",]
+rv = mpsz[mpsz@data$PLN_AREA_N == "RIVER VALLEY",]
+nv = mpsz[mpsz@data$PLN_AREA_N == "NOVENA",]
+rc = mpsz[mpsz@data$PLN_AREA_N == "ROCHOR",]
+```
+
+Plot target areas
+
+The following code chunk plots the target areas side by side in 2x2 using par function of graphics package and plot functions of base R package. 
+
+```{r}
+par(mfrow=c(2,2))
+plot(kl, main = "Kallang")
+plot(rv, main = "River Valley")
+plot(nv, main = "Novena")
+plot(rc, main = "Rochor")
+```
+
+Convert Spatial Polygons Data Fraeme into generic SP format
+
+The following code chunk converts the four SpatialPolygonsDataFrame layers into generic spatialpolygons layers.
+
+```{r}
+kl_sp = as(kl, "SpatialPolygons")
+rv_sp = as(rv, "SpatialPolygons")
+nv_sp = as(nv, "SpatialPolygons")
+rc_sp = as(rc, "SpatialPolygons")
+```
+
+Create owin object for each target area
+
+The following code chunk converst the SpatialPolygons objects into owin objects required by spatstat.
+
+```{r}
+kl_owin = as(kl_sp, "owin")
+rv_owin = as(rv_sp, "owin")
+nv_owin = as(nv_sp, "owin")
+rc_owin = as(rc_sp, "owin")
+```
+
+Combine airnbnb0619, hotels, mrt, tourist attractions points with owin of each target area
+
+The following code chunk extracts airnbnb0619, hotels, mrt and tourist attractions within each specific region.
+
+```{r}
+airbnb0619_kl_ppp = airbnb0619_ppp_jit[kl_owin]
+airbnb0619_rv_ppp = airbnb0619_ppp_jit[rv_owin]
+airbnb0619_nv_ppp = airbnb0619_ppp_jit[nv_owin]
+airbnb0619_rc_ppp = airbnb0619_ppp_jit[rc_owin]
+
+hotels_kl_ppp = hotels_ppp_jit[kl_owin]
+hotels_rv_ppp = hotels_ppp_jit[rv_owin]
+hotels_nv_ppp = hotels_ppp_jit[nv_owin]
+hotels_rc_ppp = hotels_ppp_jit[rc_owin]
+
+mrtlrt_kl_ppp = mrtlrt_ppp[kl_owin]
+mrtlrt_rv_ppp = mrtlrt_ppp[rv_owin]
+mrtlrt_nv_ppp = mrtlrt_ppp[nv_owin]
+mrtlrt_rc_ppp = mrtlrt_ppp[rc_owin]
+
+tourism_kl_ppp = tourism_ppp_jit[kl_owin]
+tourism_rv_ppp = tourism_ppp_jit[rv_owin]
+tourism_nv_ppp = tourism_ppp_jit[nv_owin]
+tourism_rc_ppp = tourism_ppp_jit[rc_owin]
+```
+
+Rescale from m to km
+
+The following code chunk transform the unit from m to km using rescale function.
+
+```{r}
+airbnb0619_kl_ppp.km = rescale(airbnb0619_kl_ppp, 1000, "km")
+airbnb0619_rv_ppp.km = rescale(airbnb0619_rv_ppp, 1000, "km")
+airbnb0619_nv_ppp.km = rescale(airbnb0619_nv_ppp, 1000, "km")
+airbnb0619_rc_ppp.km = rescale(airbnb0619_rc_ppp, 1000, "km")
+
+hotels_kl_ppp.km = rescale(hotels_kl_ppp, 1000, "km")
+hotels_rv_ppp.km = rescale(hotels_rv_ppp, 1000, "km")
+hotels_nv_ppp.km = rescale(hotels_nv_ppp, 1000, "km")
+hotels_rc_ppp.km = rescale(hotels_rc_ppp, 1000, "km")
+
+mrtlrt_kl_ppp.km = rescale(mrtlrt_kl_ppp, 1000, "km")
+mrtlrt_rv_ppp.km = rescale(mrtlrt_rv_ppp, 1000, "km")
+mrtlrt_nv_ppp.km = rescale(mrtlrt_nv_ppp, 1000, "km")
+mrtlrt_rc_ppp.km = rescale(mrtlrt_rc_ppp, 1000, "km")
+
+tourism_kl_ppp.km = rescale(tourism_kl_ppp, 1000, "km")
+tourism_rv_ppp.km = rescale(tourism_rv_ppp, 1000, "km")
+tourism_nv_ppp.km = rescale(tourism_nv_ppp, 1000, "km")
+tourism_rc_ppp.km = rescale(tourism_rc_ppp, 1000, "km")
+```
+
+Airbnb comparison by neighbourhood
+
+The following code chunk plots airbnb within each neigbourhood using plot and density functions with sigma set to bw.diggle and kernel set to gaussian.
+
+```{r}
+par(mfrow=c(2,2))
+plot(density(airbnb0619_kl_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Kallang")
+plot(density(airbnb0619_rv_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="River Valley")
+plot(density(airbnb0619_nv_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Novena")
+plot(density(airbnb0619_rc_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Rochor")
+```
+
+Analysis: 
+
+Comparison within Kallang
+
+The following code chunk plots airbnb, hotel, mrt and tourist attraction in Kallang.
+
+```{r}
+par(mfrow=c(2,2))
+plot(airbnb0619_kl_ppp.km, main = "Airbnb")
+plot(hotels_kl_ppp.km, main = "Hotel")
+plot(mrtlrt_kl_ppp.km, main = "Mrt")
+plot(tourism_kl_ppp.km, main = "Tourist Attraction")
+```
+
+Analysis: Even though there are no tourist attraction and hotels, there are still many airbnb in Kallang. There are a few MRT stations in Kallang, which may be the reason to the large number of airbnb.
+
+Comparison within River Valley
+
+The following code chunk plots airbnb, hotel, mrt and tourist attraction in River Valley.
+
+```{r}
+par(mfrow=c(2,2))
+plot(airbnb0619_rv_ppp.km, main = "Airbnb")
+plot(hotels_rv_ppp.km, main = "Hotel")
+plot(mrtlrt_rv_ppp.km, main = "Mrt")
+plot(tourism_rv_ppp.km, main = "Tourist Attraction")
+```
+
+Analysis: Even though there are no tourist attraction and Mrt in River Valley, there are still many airbnb. There are only one hotel and it may be the reason for the large number of airbnb in the area.
+
+Comparison within Novena
+
+The following code chunk plots airbnb, hotel, mrt and tourist attraction in Novena.
+
+```{r}
+par(mfrow=c(2,2))
+plot(airbnb0619_nv_ppp.km, main = "Airbnb")
+plot(hotels_nv_ppp.km, main = "Hotel")
+plot(mrtlrt_nv_ppp.km, main = "Mrt")
+plot(tourism_nv_ppp.km, main = "Tourist Attraction")
+```
+Analysis: Even though there are a few hotel in Novena, the number of airbnb are large. The accessibility of the two MRT and one tourist attraction can be the reason to the large number of airbnb in Novena.
+
+Comparison within Rochor
+
+The following code chunk plots airbnb, hotel, mrt and tourist attraction in Rochor.
+
+```{r}
+par(mfrow=c(2,2))
+plot(airbnb0619_rc_ppp.km, main = "Airbnb")
+plot(hotels_rc_ppp.km, main = "Hotel")
+plot(mrtlrt_rc_ppp.km, main = "Mrt")
+plot(tourism_rc_ppp.km, main = "Tourist Attraction")
+```
+
+Analysis: In Rochor, there are still many airbnb even though many hotels are already available. The accessilibty to a few MRTs and tourist attractions may be the reason that leads to a large number of airbnb in Rochor.
+
+Overall, we can conclude that there are no direct relationship between airbnb and hotel, mrt and tourist attraction.
+
+## 5.2 Second-order Spatial Point Patterns Analysis
+
+### 5.2.1 Nearest Neighbour Analysis
+
+#### 5.2.1.1 Hypothesis
+
+we will perform the Clark-Evans test of aggregation for a spatial point pattern by using clarkevans.test() of statspat.
+
+Test Hypothesis:
+
+H0 = The distribution of airbnb are randomly distributed.
+
+H1 = The distribution of airbnb are not randomly distributed.
+
+The 95% confident interval will be used.
+
+#### 5.2.1.2 Testing and Analysis
+
+##### 5.2.1.2.1 Testing spatial point patterns using Clark and Evans Test
+
+```{r}
+clarkevans.test(airbnb0619SG_ppp,
+                correction="none",
+                clipregion="sg_owin",
+                alternative=c("clustered"),
+                nsim=99)
+```
+
+  Clark-Evans test
+	No edge correction
+	Monte Carlo test based on 99 simulations of CSR with fixed n
+
+data:  airbnb0619SG_ppp
+R = 0.36169, p-value = 0.01
+alternative hypothesis: clustered (R < 1)
+
+##### 5.2.1.2.2 Clark and Evans Test: Kallang planning area
+
+```{r}
+clarkevans.test(airbnb0619_kl_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+Analysis: 
+
+##### 5.2.1.2.3 Clark and Evans Test: River Valley planning area
+
+```{r}
+clarkevans.test(airbnb0619_rv_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+Analysis: 
+
+##### 5.2.1.2.4 Clark and Evans Test: Novena planning area
+
+```{r}
+clarkevans.test(airbnb0619_nv_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+Analysis: 
+
+##### 5.2.1.2.5 Clark and Evans Test: Rochor planning area
+
+```{r}
+clarkevans.test(airbnb0619_rc_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+Analysis: 
+
+
+### G-FUNCTION
+
+#### Hypothesis
+
+#### Testing and Analysis
+
+### F-FUNCTION
+
+#### Hypothesis
+
+#### Testing and Analysis
+
+### K-FUNCTION
+
+#### Hypothesis
+
+#### Testing and Analysis
+
+### L-FUNCTION
+
+#### Hypothesis
+
+#### Testing and Analysis
+
