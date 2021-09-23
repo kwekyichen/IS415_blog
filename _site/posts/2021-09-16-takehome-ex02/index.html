@@ -3638,8 +3638,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>   sigma 
-6.032376 </code></pre>
+<pre><code>  sigma 
+5.95604 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3652,7 +3652,7 @@ Show code
 </div>
 </details>
 <pre><code>  sigma.x   sigma.y 
-1.0748172 0.7425788 </code></pre>
+1.0748348 0.7425923 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3664,8 +3664,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>    sigma 
-0.2671697 </code></pre>
+<pre><code>   sigma 
+0.257155 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3744,7 +3744,7 @@ extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
 crs        : NA 
 source     : memory
 names      : v 
-values     : -2.223008e-13, 1793.305  (min, max)</code></pre>
+values     : -2.084118e-13, 1766.134  (min, max)</code></pre>
 </div>
 <p>From the result above, the crs is NA</p>
 <h5 id="assign-project-system">5.1.1.1.7 Assign project system</h5>
@@ -3767,9 +3767,246 @@ extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
 crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
 source     : memory
 names      : v 
-values     : -2.223008e-13, 1793.305  (min, max)</code></pre>
+values     : -2.084118e-13, 1766.134  (min, max)</code></pre>
 </div>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h4 id="hotels">5.1.1.2 Hotels</h4>
+<h5 id="rescale-kde-values">5.1.1.2.1 Rescale KDE values</h5>
+<p>The following code chunk rescale the KDE value of hotelsSG_ppp using rescale function of spatstat from meter to kilometer.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hotelsSG_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>hotelsSG_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h5 id="kde-map-and-point-map-1">5.1.1.2.2 KDE Map and Point Map</h5>
+<ol type="1">
+<li>The following code chunk computes kernel density using density function of spatstat package.</li>
+<li>The code first takes in the ppp object variable in km.</li>
+<li>bw.diggle automatic bandwidth method to detect a tight cluster</li>
+<li>smoothing kernel is set to default gaussian method</li>
+<li>plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_hotelsSG_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>hotelsSG_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_hotelsSG_bw.km</span>, main <span class='op'>=</span> <span class='st'>"KDE Map"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hotelsSG_ppp</span>, main<span class='op'>=</span><span class='st'>"Point Map"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-75-1.png" width="624" /></p>
+</div>
+<h5 id="convert-kde-output-into-grid-object-1">5.1.1.2.3 Convert KDE output into grid object</h5>
+<p>The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gridded_kde_hotelsSG_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_hotelsSG_bw.km</span><span class='op'>)</span>
+<span class='fu'>spplot</span><span class='op'>(</span><span class='va'>gridded_kde_hotelsSG_bw</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-76-1.png" width="624" /></p>
+</div>
+<h5 id="convert-grid-object-into-raster-and-assign-project-system">5.1.1.2.4 Convert grid object into raster and assign project system</h5>
+<p>The following code chunk converts grid object into raster using raster function of raster package</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_hotelsSG_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_hotelsSG_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_hotelsSG_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+<span class='va'>kde_hotelsSG_bw_raster</span>
+</code></pre>
+</div>
+</details>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 0.4170614, 0.2647348  (x, y)
+extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
+crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
+source     : memory
+names      : v 
+values     : -1.677689e-14, 177.238  (min, max)</code></pre>
+</div>
+<h4 id="mrtlrt-1">5.1.1.3 MRTLRT</h4>
+<h5 id="rescale-kde-values-1">5.1.1.3.1 Rescale KDE values</h5>
+<p>The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mrtlrtSG_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>mrtlrtSG_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h5 id="kde-map-and-point-map-2">5.1.1.3.2 KDE Map and Point Map</h5>
+<ol type="1">
+<li>The following code chunk computes kernel density using density function of spatstat package.</li>
+<li>The code first takes in the ppp object variable in km.</li>
+<li>bw.diggle automatic bandwidth method to detect a tight cluster</li>
+<li>smoothing kernel is set to default gaussian method</li>
+<li>plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_mrtlrtSG_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>mrtlrtSG_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_mrtlrtSG_bw.km</span>, main <span class='op'>=</span> <span class='st'>"KDE Map"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>mrtlrtSG_ppp</span>, main<span class='op'>=</span><span class='st'>"Point Map"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-79-1.png" width="624" /></p>
+</div>
+<h5 id="convert-kde-output-into-grid-object-2">5.1.1.3.3 Convert KDE output into grid object</h5>
+<p>The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gridded_kde_mrtlrtSG_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_mrtlrtSG_bw.km</span><span class='op'>)</span>
+<span class='fu'>spplot</span><span class='op'>(</span><span class='va'>gridded_kde_mrtlrtSG_bw</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-80-1.png" width="624" /></p>
+</div>
+<h5 id="convert-grid-object-into-raster-and-assign-project-system-1">5.1.1.3.4 Convert grid object into raster and assign project system</h5>
+<p>The following code chunk converts grid object into raster using raster function of raster package</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_mrtlrtSG_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_mrtlrtSG_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_mrtlrtSG_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+<span class='va'>kde_mrtlrtSG_bw_raster</span>
+</code></pre>
+</div>
+</details>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 0.4170614, 0.2647348  (x, y)
+extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
+crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
+source     : memory
+names      : v 
+values     : -1.443225e-15, 3.580091  (min, max)</code></pre>
+</div>
+<h4 id="tourist-attractions">5.1.1.4 Tourist Attractions</h4>
+<h5 id="rescale-kde-values-2">5.1.1.4.1 Rescale KDE values</h5>
+<p>The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tourismSG_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>tourismSG_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h5 id="kde-map-and-point-map-3">5.1.1.4.2 KDE Map and Point Map</h5>
+<ol type="1">
+<li>The following code chunk computes kernel density using density function of spatstat package.</li>
+<li>The code first takes in the ppp object variable in km.</li>
+<li>bw.diggle automatic bandwidth method to detect a tight cluster</li>
+<li>smoothing kernel is set to default gaussian method</li>
+<li>plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_tourismSG_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>tourismSG_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_tourismSG_bw.km</span>, main <span class='op'>=</span> <span class='st'>"KDE Map"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>tourismSG_ppp</span>, main<span class='op'>=</span><span class='st'>"Point Map"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-83-1.png" width="624" /></p>
+</div>
+<h5 id="convert-kde-output-into-grid-object-3">5.1.1.4.3 Convert KDE output into grid object</h5>
+<p>The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gridded_kde_tourismSG_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_tourismSG_bw.km</span><span class='op'>)</span>
+<span class='fu'>spplot</span><span class='op'>(</span><span class='va'>gridded_kde_tourismSG_bw</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-84-1.png" width="624" /></p>
+</div>
+<h5 id="convert-grid-object-into-raster-and-assign-project-system-2">5.1.1.4.4 Convert grid object into raster and assign project system</h5>
+<p>The following code chunk converts grid object into raster using raster function of raster package</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_tourismSG_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_tourismSG_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_tourismSG_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+<span class='va'>kde_tourismSG_bw_raster</span>
+</code></pre>
+</div>
+</details>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 0.4170614, 0.2647348  (x, y)
+extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
+crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
+source     : memory
+names      : v 
+values     : -1.953276e-15, 25.72382  (min, max)</code></pre>
+</div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
