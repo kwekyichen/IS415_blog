@@ -919,7 +919,7 @@ colour of dots using tm_dots and the following are the color representation:
 - red: tourist attractions.
 
 
-```{r}
+```{r eval=FALSE}
 centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central Region",]
 
 tmap_mode("view")
