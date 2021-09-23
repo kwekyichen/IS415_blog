@@ -919,7 +919,7 @@ colour of dots using tm_dots and the following are the color representation:
 - red: tourist attractions.
 
 
-```{r eval=FALSE}
+```{r}
 centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central Region",]
 
 tmap_mode("view")
@@ -931,8 +931,7 @@ tm_shape(hotels_sf) +
 tm_shape(mrtlrt_sf) + 
   tm_dots(col="blue", size = 0.02)+
 tm_shape(tourism_sf) + 
-  tm_dots(col="red", size = 0.02)+
-tm_basemap(leaflet::providers$OpenStreetMap)
+  tm_dots(col="red", size = 0.02)
 ```
 
 From the map above, we can see that there are many Airbnbs located in Kallang, River Valley, Novena an Rochor.
