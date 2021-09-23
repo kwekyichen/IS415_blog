@@ -730,16 +730,21 @@ kde_airbnb0619SG_bw_raster
 
 From the result above, the crs is NA.
 
-##### 5.1.1.1.7 Assign project system
+##### 5.1.1.1.7 Assign project system and plot raster using tmap
 
-The following code chunk assign CRS to kde_airbnb0619SG_bw_raster
+The following code chunk assign CRS to kde_airbnb0619SG_bw_raster and plot the raster using tmap package
 
 ```{r}
 projection(kde_airbnb0619SG_bw_raster) <- CRS("+init=EPSG:3414")
 kde_airbnb0619SG_bw_raster
+
+tmap_mode("plot")
+tm_shape(kde_airbnb0619SG_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
 ```
 
-We have successful set the crs as shown above.
+Analysis: From the raster map, we can confirm that the south-east area near the central have the highest density of airbnb as shown by the green spot on the map.
 
 #### 5.1.1.2 Hotels
 
@@ -783,15 +788,21 @@ spplot(gridded_kde_hotelsSG_bw)
 
 Analysis: The above density map shows a clearer visualization of the density of hotels using grid. We can see that south-east area near the central have higher density as seen on the pink grid on the map, and there are also many light blue grid at the south-east region near central area. There are some hotels (individual blue grid) scatter near east and west area as well.
 
-##### 5.1.1.2.4 Convert grid object into raster and assign project system
+##### 5.1.1.2.4 Convert grid object into raster, assign project system and plot raster
 
-The following code chunk converts grid object into raster using raster function of raster package
+The following code chunk converts grid object into raster using raster function of raster package, and plot raster with tmap.
 
 ```{r}
 kde_hotelsSG_bw_raster <- raster(gridded_kde_hotelsSG_bw)
 projection(kde_hotelsSG_bw_raster) <- CRS("+init=EPSG:3414")
-kde_hotelsSG_bw_raster
+
+tmap_mode("plot")
+tm_shape(kde_hotelsSG_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
 ```
+
+Analysis: From the raster map, we can confirm that the south-east area near the central have the highest density of hotels as shown by the green spot on the map.
 
 #### 5.1.1.3 MRTLRT
 
@@ -833,17 +844,23 @@ gridded_kde_mrtlrtSG_bw <- as.SpatialGridDataFrame.im(kde_mrtlrtSG_bw.km)
 spplot(gridded_kde_mrtlrtSG_bw)
 ```
 
-Analysis: The above density map shows a clearer visualization of the density of Mrt and Lrt using grid. We can see that the Mrt and Lrt are available almost everyin Singapore as represented by the light blue grid on the map. The north-east, north-west and central south area have higher density of Mrt and Lrt as seen by the pink to yellow grid cluster on the map.
+Analysis: The above density map shows a clearer visualization of the density of Mrt and Lrt using grid. We can see that the Mrt and Lrt are available almost every region in Singapore as represented by the light blue grid on the map. The north-east, north-west and central south area have higher density of Mrt and Lrt as seen by the pink to yellow grid cluster on the map.
 
-##### 5.1.1.3.4 Convert grid object into raster and assign project system
+##### 5.1.1.3.4 Convert grid object into raster, assign project system and plot raster
 
-The following code chunk converts grid object into raster using raster function of raster package
+The following code chunk converts grid object into raster using raster function of raster package, and plot raster using tmap.
 
 ```{r}
 kde_mrtlrtSG_bw_raster <- raster(gridded_kde_mrtlrtSG_bw)
 projection(kde_mrtlrtSG_bw_raster) <- CRS("+init=EPSG:3414")
-kde_mrtlrtSG_bw_raster
+
+tmap_mode("plot")
+tm_shape(kde_mrtlrtSG_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
 ```
+
+Analysis: From the raster map above, we can confirm that north-east, north-west and central south area have higher density of Mrt and Lrt as shown by the green spots on the map.
 
 #### 5.1.1.4 Tourist Attractions
 
@@ -885,17 +902,23 @@ gridded_kde_tourismSG_bw <- as.SpatialGridDataFrame.im(kde_tourismSG_bw.km)
 spplot(gridded_kde_tourismSG_bw)
 ```
 
-Analysis: The above density map shows a clearer visualization of the density of tourist attraction in Singapore using grid. We can see that there are a few attractions in the north, west and east as seen by the light blue grid on the map. The south central areaa have high density of tourist attractions as seen by the pink yellow grid on the map.
+Analysis: The above density map shows a clearer visualization of the density of tourist attraction in Singapore using grid. We can see that there are a few attractions in the north, west and east as seen by the light blue grid on the map. The south central area have high density of tourist attractions as seen by the pink yellow grid on the map.
 
-##### 5.1.1.4.4 Convert grid object into raster and assign project system
+##### 5.1.1.4.4 Convert grid object into raster, assign project system and plot raster
 
-The following code chunk converts grid object into raster using raster function of raster package
+The following code chunk converts grid object into raster using raster function of raster package, and plot raster using tmap.
 
 ```{r}
 kde_tourismSG_bw_raster <- raster(gridded_kde_tourismSG_bw)
 projection(kde_tourismSG_bw_raster) <- CRS("+init=EPSG:3414")
-kde_tourismSG_bw_raster
+
+tmap_mode("plot")
+tm_shape(kde_tourismSG_bw_raster) + 
+  tm_raster("v") +
+  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
 ```
+
+Analysis: From the raster map above, we can confirm the the south-east area near central region have highest density of tourist attraction as shown by the green spots on the map.
 
 #### 5.1.1.5 Comparison between Airbnb0619, Hotels, MRTLRT and Tourist Attractions
 
@@ -941,7 +964,13 @@ centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central
 tmap_mode("view")
 
 tm_shape(centralairbnb0619) + 
-  tm_dots() +
+  tm_dots(col="black", size = 0.02)+
+tm_shape(hotels_sf) + 
+  tm_dots(col="green", size = 0.02)+
+tm_shape(mrtlrt_sf) + 
+  tm_dots(col="blue", size = 0.02)+
+tm_shape(tourism_sf) + 
+  tm_dots(col="red", size = 0.02)+
 tm_basemap(leaflet::providers$OpenStreetMap)
 ```
 
