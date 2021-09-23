@@ -1516,6 +1516,29 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <ul>
 <li><a href="#kernel-density-maps">5.1.1 Kernel density maps</a></li>
 </ul></li>
+<li><a href="#second-order-spatial-point-patterns-analysis">5.2 Second-order Spatial Point Patterns Analysis</a>
+<ul>
+<li><a href="#nearest-neighbour-analysis">5.2.1 Nearest Neighbour Analysis</a></li>
+<li><a href="#g-function">G-FUNCTION</a></li>
+<li><a href="#f-function">F-FUNCTION</a></li>
+<li><a href="#k-function">K-FUNCTION</a></li>
+<li><a href="#l-function">L-FUNCTION</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#section-b-impact-of-covid-19">6 Section B: Impact of COVID-19</a>
+<ul>
+<li><a href="#exploratory-spatial-data-analysis-1">6.1 Exploratory Spatial Data Analysis</a>
+<ul>
+<li><a href="#kernel-density-maps-1">6.1.1 Kernel density maps</a></li>
+</ul></li>
+<li><a href="#second-order-spatial-point-patterns-analysis-1">6.2 Second-order Spatial Point Patterns Analysis</a>
+<ul>
+<li><a href="#nearest-neighbour-analysis-continue-from-here">6.2.1 Nearest Neighbour Analysis (CONTINUE FROM HERE)</a></li>
+<li><a href="#g-function-1">G-FUNCTION</a></li>
+<li><a href="#f-function-1">F-FUNCTION</a></li>
+<li><a href="#k-function-1">K-FUNCTION</a></li>
+<li><a href="#l-function-1">L-FUNCTION</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -2980,8 +3003,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>   sigma 
-5.780609 </code></pre>
+<pre><code>  sigma 
+5.97972 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2993,8 +3016,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code> sigma.x  sigma.y 
-1.074865 0.742580 </code></pre>
+<pre><code>  sigma.x   sigma.y 
+1.0749686 0.7425681 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3007,7 +3030,7 @@ Show code
 </div>
 </details>
 <pre><code>    sigma 
-0.2350946 </code></pre>
+0.2602343 </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3019,8 +3042,8 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>     sigma 
-0.04196627 </code></pre>
+<pre><code>    sigma 
+0.0419688 </code></pre>
 </div>
 <p>From the result above, since bw.diggle has the lowest sigma, we will be using it for the other ppp object in order to detect close cluster.</p>
 <h5 id="kde-map-and-point-map">5.1.1.1.4 KDE Map and Point Map</h5>
@@ -3086,7 +3109,7 @@ extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
 crs        : NA 
 source     : memory
 names      : v 
-values     : -2.099692e-13, 1784.248  (min, max)</code></pre>
+values     : -2.134572e-13, 1802.362  (min, max)</code></pre>
 </div>
 <p>From the result above, the crs is NA</p>
 <h5 id="assign-project-system">5.1.1.1.7 Assign project system</h5>
@@ -3109,7 +3132,7 @@ extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
 crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
 source     : memory
 names      : v 
-values     : -2.099692e-13, 1784.248  (min, max)</code></pre>
+values     : -2.134572e-13, 1802.362  (min, max)</code></pre>
 </div>
 <h4 id="hotels">5.1.1.2 Hotels</h4>
 <h5 id="rescale-kde-values">5.1.1.2.1 Rescale KDE values</h5>
@@ -3188,7 +3211,7 @@ extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
 crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
 source     : memory
 names      : v 
-values     : -2.582874e-14, 203.1084  (min, max)</code></pre>
+values     : -2.23259e-14, 189.6169  (min, max)</code></pre>
 </div>
 <h4 id="mrtlrt-1">5.1.1.3 MRTLRT</h4>
 <h5 id="rescale-kde-values-1">5.1.1.3.1 Rescale KDE values</h5>
@@ -3346,7 +3369,7 @@ extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
 crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
 source     : memory
 names      : v 
-values     : -9.02187e-16, 17.8084  (min, max)</code></pre>
+values     : -5.74178e-16, 14.71922  (min, max)</code></pre>
 </div>
 <h4 id="comparison-between-airbnb0619-hotels-mrtlrt-and-tourist-attractions">5.1.1.5 Comparison between Airbnb0619, Hotels, MRTLRT and Tourist Attractions</h4>
 <h5 id="kde-map-comparison">5.1.1.5.1 KDE Map Comparison</h5>
@@ -3415,7 +3438,1318 @@ Show code
 </div>
 </details>
 </div>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h6 id="comparing-spatial-point-patterns-using-kde">5.1.1.5.2.2 Comparing Spatial Point Patterns using KDE</h6>
+<p>Extract Study Area</p>
+<p>The following code chunk extracts the target areas.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kl</span> <span class='op'>=</span> <span class='va'>mpsz</span><span class='op'>[</span><span class='va'>mpsz</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>PLN_AREA_N</span> <span class='op'>==</span> <span class='st'>"KALLANG"</span>,<span class='op'>]</span>
+<span class='va'>rv</span> <span class='op'>=</span> <span class='va'>mpsz</span><span class='op'>[</span><span class='va'>mpsz</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>PLN_AREA_N</span> <span class='op'>==</span> <span class='st'>"RIVER VALLEY"</span>,<span class='op'>]</span>
+<span class='va'>nv</span> <span class='op'>=</span> <span class='va'>mpsz</span><span class='op'>[</span><span class='va'>mpsz</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>PLN_AREA_N</span> <span class='op'>==</span> <span class='st'>"NOVENA"</span>,<span class='op'>]</span>
+<span class='va'>rc</span> <span class='op'>=</span> <span class='va'>mpsz</span><span class='op'>[</span><span class='va'>mpsz</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>PLN_AREA_N</span> <span class='op'>==</span> <span class='st'>"ROCHOR"</span>,<span class='op'>]</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Plot target areas</p>
+<p>The following code chunk plots the target areas side by side in 2x2 using par function of graphics package and plot functions of base R package.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kl</span>, main <span class='op'>=</span> <span class='st'>"Kallang"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>rv</span>, main <span class='op'>=</span> <span class='st'>"River Valley"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>nv</span>, main <span class='op'>=</span> <span class='st'>"Novena"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>rc</span>, main <span class='op'>=</span> <span class='st'>"Rochor"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-90-1.png" width="624" /></p>
+</div>
+<p>Convert Spatial Polygons Data Fraeme into generic SP format</p>
+<p>The following code chunk converts the four SpatialPolygonsDataFrame layers into generic spatialpolygons layers.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kl_sp</span> <span class='op'>=</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>kl</span>, <span class='st'>"SpatialPolygons"</span><span class='op'>)</span>
+<span class='va'>rv_sp</span> <span class='op'>=</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>rv</span>, <span class='st'>"SpatialPolygons"</span><span class='op'>)</span>
+<span class='va'>nv_sp</span> <span class='op'>=</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>nv</span>, <span class='st'>"SpatialPolygons"</span><span class='op'>)</span>
+<span class='va'>rc_sp</span> <span class='op'>=</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>rc</span>, <span class='st'>"SpatialPolygons"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Create owin object for each target area</p>
+<p>The following code chunk converst the SpatialPolygons objects into owin objects required by spatstat.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kl_owin</span> <span class='op'>=</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>kl_sp</span>, <span class='st'>"owin"</span><span class='op'>)</span>
+<span class='va'>rv_owin</span> <span class='op'>=</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>rv_sp</span>, <span class='st'>"owin"</span><span class='op'>)</span>
+<span class='va'>nv_owin</span> <span class='op'>=</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>nv_sp</span>, <span class='st'>"owin"</span><span class='op'>)</span>
+<span class='va'>rc_owin</span> <span class='op'>=</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>rc_sp</span>, <span class='st'>"owin"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Combine airnbnb0619, hotels, mrt, tourist attractions points with owin of each target area</p>
+<p>The following code chunk extracts airnbnb0619, hotels, mrt and tourist attractions within each specific region.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0619_kl_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0619_ppp_jit</span><span class='op'>[</span><span class='va'>kl_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0619_rv_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0619_ppp_jit</span><span class='op'>[</span><span class='va'>rv_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0619_nv_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0619_ppp_jit</span><span class='op'>[</span><span class='va'>nv_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0619_rc_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0619_ppp_jit</span><span class='op'>[</span><span class='va'>rc_owin</span><span class='op'>]</span>
+
+<span class='va'>hotels_kl_ppp</span> <span class='op'>=</span> <span class='va'>hotels_ppp_jit</span><span class='op'>[</span><span class='va'>kl_owin</span><span class='op'>]</span>
+<span class='va'>hotels_rv_ppp</span> <span class='op'>=</span> <span class='va'>hotels_ppp_jit</span><span class='op'>[</span><span class='va'>rv_owin</span><span class='op'>]</span>
+<span class='va'>hotels_nv_ppp</span> <span class='op'>=</span> <span class='va'>hotels_ppp_jit</span><span class='op'>[</span><span class='va'>nv_owin</span><span class='op'>]</span>
+<span class='va'>hotels_rc_ppp</span> <span class='op'>=</span> <span class='va'>hotels_ppp_jit</span><span class='op'>[</span><span class='va'>rc_owin</span><span class='op'>]</span>
+
+<span class='va'>mrtlrt_kl_ppp</span> <span class='op'>=</span> <span class='va'>mrtlrt_ppp</span><span class='op'>[</span><span class='va'>kl_owin</span><span class='op'>]</span>
+<span class='va'>mrtlrt_rv_ppp</span> <span class='op'>=</span> <span class='va'>mrtlrt_ppp</span><span class='op'>[</span><span class='va'>rv_owin</span><span class='op'>]</span>
+<span class='va'>mrtlrt_nv_ppp</span> <span class='op'>=</span> <span class='va'>mrtlrt_ppp</span><span class='op'>[</span><span class='va'>nv_owin</span><span class='op'>]</span>
+<span class='va'>mrtlrt_rc_ppp</span> <span class='op'>=</span> <span class='va'>mrtlrt_ppp</span><span class='op'>[</span><span class='va'>rc_owin</span><span class='op'>]</span>
+
+<span class='va'>tourism_kl_ppp</span> <span class='op'>=</span> <span class='va'>tourism_ppp_jit</span><span class='op'>[</span><span class='va'>kl_owin</span><span class='op'>]</span>
+<span class='va'>tourism_rv_ppp</span> <span class='op'>=</span> <span class='va'>tourism_ppp_jit</span><span class='op'>[</span><span class='va'>rv_owin</span><span class='op'>]</span>
+<span class='va'>tourism_nv_ppp</span> <span class='op'>=</span> <span class='va'>tourism_ppp_jit</span><span class='op'>[</span><span class='va'>nv_owin</span><span class='op'>]</span>
+<span class='va'>tourism_rc_ppp</span> <span class='op'>=</span> <span class='va'>tourism_ppp_jit</span><span class='op'>[</span><span class='va'>rc_owin</span><span class='op'>]</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Rescale from m to km</p>
+<p>The following code chunk transform the unit from m to km using rescale function.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0619_kl_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0619_kl_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0619_rv_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0619_rv_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0619_nv_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0619_nv_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0619_rc_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0619_rc_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+
+<span class='va'>hotels_kl_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>hotels_kl_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>hotels_rv_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>hotels_rv_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>hotels_nv_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>hotels_nv_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>hotels_rc_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>hotels_rc_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+
+<span class='va'>mrtlrt_kl_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>mrtlrt_kl_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>mrtlrt_rv_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>mrtlrt_rv_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>mrtlrt_nv_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>mrtlrt_nv_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>mrtlrt_rc_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>mrtlrt_rc_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+
+<span class='va'>tourism_kl_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>tourism_kl_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>tourism_rv_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>tourism_rv_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>tourism_nv_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>tourism_nv_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>tourism_rc_ppp.km</span> <span class='op'>=</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>tourism_rc_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Airbnb comparison by neighbourhood</p>
+<p>The following code chunk plots airbnb within each neigbourhood using plot and density functions with sigma set to bw.diggle and kernel set to gaussian.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0619_kl_ppp.km</span>, 
+             sigma<span class='op'>=</span><span class='va'>bw.diggle</span>, 
+             edge<span class='op'>=</span><span class='cn'>TRUE</span>, 
+             kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>,
+     main<span class='op'>=</span><span class='st'>"Kallang"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0619_rv_ppp.km</span>, 
+             sigma<span class='op'>=</span><span class='va'>bw.diggle</span>, 
+             edge<span class='op'>=</span><span class='cn'>TRUE</span>, 
+             kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>,
+     main<span class='op'>=</span><span class='st'>"River Valley"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0619_nv_ppp.km</span>, 
+             sigma<span class='op'>=</span><span class='va'>bw.diggle</span>, 
+             edge<span class='op'>=</span><span class='cn'>TRUE</span>, 
+             kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>,
+     main<span class='op'>=</span><span class='st'>"Novena"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0619_rc_ppp.km</span>, 
+             sigma<span class='op'>=</span><span class='va'>bw.diggle</span>, 
+             edge<span class='op'>=</span><span class='cn'>TRUE</span>, 
+             kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>,
+     main<span class='op'>=</span><span class='st'>"Rochor"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-95-1.png" width="624" /></p>
+</div>
+<p>Analysis:</p>
+<p>Comparison within Kallang</p>
+<p>The following code chunk plots airbnb, hotel, mrt and tourist attraction in Kallang.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>airbnb0619_kl_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hotels_kl_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Hotel"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>mrtlrt_kl_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Mrt"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>tourism_kl_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Tourist Attraction"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-96-1.png" width="624" /></p>
+</div>
+<p>Analysis: Even though there are no tourist attraction and hotels, there are still many airbnb in Kallang. There are a few MRT stations in Kallang, which may be the reason to the large number of airbnb.</p>
+<p>Comparison within River Valley</p>
+<p>The following code chunk plots airbnb, hotel, mrt and tourist attraction in River Valley.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>airbnb0619_rv_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hotels_rv_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Hotel"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>mrtlrt_rv_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Mrt"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>tourism_rv_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Tourist Attraction"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-97-1.png" width="624" /></p>
+</div>
+<p>Analysis: Even though there are no tourist attraction and Mrt in River Valley, there are still many airbnb. There are only one hotel and it may be the reason for the large number of airbnb in the area.</p>
+<p>Comparison within Novena</p>
+<p>The following code chunk plots airbnb, hotel, mrt and tourist attraction in Novena.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>airbnb0619_nv_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hotels_nv_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Hotel"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>mrtlrt_nv_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Mrt"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>tourism_nv_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Tourist Attraction"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-98-1.png" width="624" /></p>
+</div>
+<p>Analysis: Even though there are a few hotel in Novena, the number of airbnb are large. The accessibility of the two MRT and one tourist attraction can be the reason to the large number of airbnb in Novena.</p>
+<p>Comparison within Rochor</p>
+<p>The following code chunk plots airbnb, hotel, mrt and tourist attraction in Rochor.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>airbnb0619_rc_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hotels_rc_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Hotel"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>mrtlrt_rc_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Mrt"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>tourism_rc_ppp.km</span>, main <span class='op'>=</span> <span class='st'>"Tourist Attraction"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-99-1.png" width="624" /></p>
+</div>
+<p>Analysis: In Rochor, there are still many airbnb even though many hotels are already available. The accessilibty to a few MRTs and tourist attractions may be the reason that leads to a large number of airbnb in Rochor.</p>
+<p>Overall, we can conclude that there are no direct relationship between airbnb and hotel, mrt and tourist attraction.</p>
+<h2 id="second-order-spatial-point-patterns-analysis">5.2 Second-order Spatial Point Patterns Analysis</h2>
+<h3 id="nearest-neighbour-analysis">5.2.1 Nearest Neighbour Analysis</h3>
+<h4 id="hypothesis">5.2.1.1 Hypothesis</h4>
+<p>we will perform the Clark-Evans test of aggregation for a spatial point pattern by using clarkevans.test() of statspat.</p>
+<p>Test Hypothesis:</p>
+<p>H0 = The distribution of airbnb are randomly distributed.</p>
+<p>H1 = The distribution of airbnb are not randomly distributed.</p>
+<p>The 95% confident interval will be used.</p>
+<h4 id="testing-and-analysis">5.2.1.2 Testing and Analysis</h4>
+<h5 id="testing-spatial-point-patterns-using-clark-and-evans-test">5.2.1.2.1 Testing spatial point patterns using Clark and Evans Test</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619SG_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='st'>"sg_owin"</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clustered"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>99</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 99 simulations of CSR with fixed n
+
+data:  airbnb0619SG_ppp
+R = 0.36063, p-value = 0.01
+alternative hypothesis: clustered (R &lt; 1)</code></pre>
+</div>
+<p>Clark-Evans test No edge correction Monte Carlo test based on 99 simulations of CSR with fixed n</p>
+<p>data: airbnb0619SG_ppp R = 0.36169, p-value = 0.01 alternative hypothesis: clustered (R &lt; 1)</p>
+<h5 id="clark-and-evans-test-kallang-planning-area">5.2.1.2.2 Clark and Evans Test: Kallang planning area</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619_kl_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='cn'>NULL</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>999</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 999 simulations of CSR with fixed n
+
+data:  airbnb0619_kl_ppp
+R = 0.57971, p-value = 0.002
+alternative hypothesis: two-sided</code></pre>
+</div>
+<p>Analysis:</p>
+<h5 id="clark-and-evans-test-river-valley-planning-area">5.2.1.2.3 Clark and Evans Test: River Valley planning area</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619_rv_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='cn'>NULL</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>999</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 999 simulations of CSR with fixed n
+
+data:  airbnb0619_rv_ppp
+R = 0.82407, p-value = 0.002
+alternative hypothesis: two-sided</code></pre>
+</div>
+<p>Analysis:</p>
+<h5 id="clark-and-evans-test-novena-planning-area">5.2.1.2.4 Clark and Evans Test: Novena planning area</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619_nv_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='cn'>NULL</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>999</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 999 simulations of CSR with fixed n
+
+data:  airbnb0619_nv_ppp
+R = 0.56052, p-value = 0.002
+alternative hypothesis: two-sided</code></pre>
+</div>
+<p>Analysis:</p>
+<h5 id="clark-and-evans-test-rochor-planning-area">5.2.1.2.5 Clark and Evans Test: Rochor planning area</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619_rc_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='cn'>NULL</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>999</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 999 simulations of CSR with fixed n
+
+data:  airbnb0619_rc_ppp
+R = 0.91337, p-value = 0.002
+alternative hypothesis: two-sided</code></pre>
+</div>
+<p>Analysis:</p>
+<h3 id="g-function">G-FUNCTION</h3>
+<h4 id="hypothesis-1">Hypothesis</h4>
+<h4 id="testing-and-analysis-1">Testing and Analysis</h4>
+<h3 id="f-function">F-FUNCTION</h3>
+<h4 id="hypothesis-2">Hypothesis</h4>
+<h4 id="testing-and-analysis-2">Testing and Analysis</h4>
+<h3 id="k-function">K-FUNCTION</h3>
+<h4 id="hypothesis-3">Hypothesis</h4>
+<h4 id="testing-and-analysis-3">Testing and Analysis</h4>
+<h3 id="l-function">L-FUNCTION</h3>
+<h4 id="hypothesis-4">Hypothesis</h4>
+<h4 id="testing-and-analysis-4">Testing and Analysis</h4>
+<h1 id="section-b-impact-of-covid-19">6 Section B: Impact of COVID-19</h1>
+<h2 id="exploratory-spatial-data-analysis-1">6.1 Exploratory Spatial Data Analysis</h2>
+<h3 id="kernel-density-maps-1">6.1.1 Kernel density maps</h3>
+<h4 id="airbnb0721-listings">6.1.1.1 Airbnb0721 listings</h4>
+<h5 id="rescale-kde-values-3">6.1.1.2.1 Rescale KDE values</h5>
+<p>The following code chunk rescale the KDE value of airbnb0721SG_ppp using rescale function of spatstat from meter to kilometer.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0721SG_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0721SG_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h5 id="kde-map">6.1.1.2.2 KDE Map</h5>
+<ol type="1">
+<li>The following code chunk computes kernel density using density function of spatstat package.</li>
+<li>The code first takes in the ppp object variable in km.</li>
+<li>bw.diggle automatic bandwidth method to detect a tight cluster</li>
+<li>smoothing kernel is set to default gaussian method</li>
+<li>plot function of base R package to plot the kde map</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_airbnb0721SG_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0721SG_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_bw.km</span>, main <span class='op'>=</span> <span class='st'>"KDE Map"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-106-1.png" width="624" /></p>
+</div>
+<h5 id="convert-kde-output-into-grid-object.">6.1.1.2.3 Convert KDE output into grid object.</h5>
+<p>The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gridded_kde_airbnb0721SG_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_bw.km</span><span class='op'>)</span>
+<span class='fu'>spplot</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0721SG_bw</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-107-1.png" width="624" /></p>
+</div>
+<h5 id="convert-grid-object-into-raster-and-assign-project-system-3">6.1.1.2.4 Convert grid object into raster and assign project system</h5>
+<p>The following code chunk converts grid object into raster using raster function of raster package</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_airbnb0721SG_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0721SG_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+<span class='va'>kde_airbnb0721SG_bw_raster</span>
+</code></pre>
+</div>
+</details>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 0.4170614, 0.2647348  (x, y)
+extent     : 2.663926, 56.04779, 16.35798, 50.24403  (xmin, xmax, ymin, ymax)
+crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
+source     : memory
+names      : v 
+values     : -2.120449e-13, 1041.566  (min, max)</code></pre>
+</div>
+<h4 id="comparison-between-airbnb0619-and-airbnb0721">6.1.1.2 Comparison between Airbnb0619 and Airbnb0721</h4>
+<h5 id="kde-map-comparison-1">6.1.1.2.1 KDE Map Comparison</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2019"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2021"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-109-1.png" width="624" /></p>
+</div>
+<p>From the KDE map, the south-east region still have higher density in 2021. However, we notice the density of Airbnb have reduced as seen from the scale. It reduced from range 0-1500 in 2019 to range 0-1000 in 2021. We can conclude that Covid-19 did impact the Airbnb listing in Singapore from 2019 to 2021.</p>
+<h4 id="comparison-between-airbnb0619-and-airbnb0721-by-room-type">6.1.1.3 Comparison between Airbnb0619 and Airbnb0721 by Room Type</h4>
+<h5 id="data-wrangling">6.1.1.3.1 Data Wrangling</h5>
+<h6 id="determine-the-unique-room-type">6.1.1.3.1.1 Determine the unique room type</h6>
+<p>The following code checks the unique room type using unique features of base R</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>airbnb0619_sf</span><span class='op'>$</span><span class='va'>room_type</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] &quot;Private room&quot;    &quot;Entire home/apt&quot; &quot;Shared room&quot;    </code></pre>
+</div>
+<p>We have determined that the unique room types are Private room, Entire home/apt and Shared room for Airbnb 2021.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>airbnb0721_sf</span><span class='op'>$</span><span class='va'>room_type</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] &quot;Private room&quot;    &quot;Entire home/apt&quot; &quot;Shared room&quot;    
+[4] &quot;Hotel room&quot;     </code></pre>
+</div>
+<p>We have determined that the unique room types are Private room, Entire home/apt, Shared room and Hotel room for Airbnb 2021.</p>
+<h6 id="filter-each-room-type-from-spatialpointsdata-frama">6.1.1.3.1.2 Filter each room type from SpatialPointsData Frama</h6>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0619_pte</span> <span class='op'>=</span> <span class='va'>airbnb0619</span><span class='op'>[</span><span class='va'>airbnb0619</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>room_type</span> <span class='op'>==</span> <span class='st'>"Private room"</span>,<span class='op'>]</span>
+<span class='va'>airbnb0619_ent</span> <span class='op'>=</span> <span class='va'>airbnb0619</span><span class='op'>[</span><span class='va'>airbnb0619</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>room_type</span> <span class='op'>==</span> <span class='st'>"Entire home/apt"</span>,<span class='op'>]</span>
+<span class='va'>airbnb0619_sh</span> <span class='op'>=</span> <span class='va'>airbnb0619</span><span class='op'>[</span><span class='va'>airbnb0619</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>room_type</span> <span class='op'>==</span> <span class='st'>"Shared room"</span>,<span class='op'>]</span>
+<span class='va'>airbnb0721_pte</span> <span class='op'>=</span> <span class='va'>airbnb0721</span><span class='op'>[</span><span class='va'>airbnb0721</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>room_type</span> <span class='op'>==</span> <span class='st'>"Private room"</span>,<span class='op'>]</span>
+<span class='va'>airbnb0721_ent</span> <span class='op'>=</span> <span class='va'>airbnb0721</span><span class='op'>[</span><span class='va'>airbnb0721</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>room_type</span> <span class='op'>==</span> <span class='st'>"Entire home/apt"</span>,<span class='op'>]</span>
+<span class='va'>airbnb0721_sh</span> <span class='op'>=</span> <span class='va'>airbnb0721</span><span class='op'>[</span><span class='va'>airbnb0721</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>room_type</span> <span class='op'>==</span> <span class='st'>"Shared room"</span>,<span class='op'>]</span>
+<span class='va'>airbnb0721_ht</span> <span class='op'>=</span> <span class='va'>airbnb0721</span><span class='op'>[</span><span class='va'>airbnb0721</span><span class='op'>@</span><span class='va'>data</span><span class='op'>$</span><span class='va'>room_type</span> <span class='op'>==</span> <span class='st'>"Hotel room"</span>,<span class='op'>]</span>
+</code></pre>
+</div>
+</details>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0721_sh</span>
+</code></pre>
+</div>
+</details>
+<pre><code>class       : SpatialPointsDataFrame 
+features    : 172 
+extent      : 12801.45, 42673.57, 28189.47, 47475.94  (xmin, xmax, ymin, ymax)
+crs         : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs 
+variables   : 14
+names       :       id,                                            name,   host_id,                                            host_name, neighbourhood_group, neighbourhood,   room_type, price, minimum_nights, number_of_reviews, last_review, reviews_per_month, calculated_host_listings_count, availability_365 
+min values  :  1277919, (Close to MRT) Single Mixed Dorm with Breakfast,    581033, &lt;U+8BA4&gt;&lt;U+8BC1&gt;&lt;U+624B&gt;&lt;U+673A&gt;&lt;U+7528&gt;&lt;U+6237&gt;9873,      Central Region,    Ang Mo Kio, Shared room,    15,              1,                 0,       16618,              0.01,                              1,                0 
+max values  : 50989011,           Your Private Pod Outside The City (2), 374499296,                                                 Zuzu,         West Region,        Yishun, Shared room,  3770,            240,               150,       18793,              2.11,                            165,              365 </code></pre>
+</div>
+<p>Notice that the data are in SpatialPointsData Frame format</p>
+<h6 id="converting-the-spatial-class-into-generic-sp-format-1">6.1.1.3.1.3 Converting the Spatial* class into generic sp format</h6>
+<p>Next, we will convert Spatial* classes into Spatial object so that we can convert it into ppp object.</p>
+<p>The following code chunk converts Spatial* classes into generic sp format using as function which sets the classes to their respective sp format.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0619_pte_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0619_pte</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>airbnb0619_ent_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0619_ent</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>airbnb0619_sh_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0619_sh</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>airbnb0721_pte_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0721_pte</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>airbnb0721_ent_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0721_ent</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>airbnb0721_sh_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0721_sh</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>airbnb0721_ht_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0721_ht</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h6 id="converting-the-generic-sp-format-into-spatstats-ppp-format-1">6.1.1.3.1.4 Converting the generic sp format into spatstat’s ppp format</h6>
+<p>We will next convert the spatial data into spatstat’s ppp format.</p>
+<p>The following code chunk converts spatial data into spatstat’s ppp format using as function.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0619_pte_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0619_pte_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>airbnb0619_ent_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0619_ent_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>airbnb0619_sh_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0619_sh_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>airbnb0721_pte_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0721_pte_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>airbnb0721_ent_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0721_ent_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>airbnb0721_sh_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0721_sh_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>airbnb0721_ht_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>airbnb0721_ht_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h6 id="check-for-duplicates-in-each-ppps-objects">6.1.1.3.1.5 Check for duplicates in each ppp’s objects</h6>
+<p>The following code chunk use any and duplicated function of base R package to check for duplicates, and sum up the count of duplicated points using sum function of base R package and multiplicity function of spatstat package.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0619_pte_ppp</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] FALSE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0619_pte_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0619_ent_ppp</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] TRUE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0619_ent_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0619_sh_ppp</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] TRUE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0619_sh_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0721_pte_ppp</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] TRUE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0721_pte_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 126</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0721_ent_ppp</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] TRUE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0721_ent_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 40</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0721_sh_ppp</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] TRUE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0721_sh_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 16</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0721_ht_ppp</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] TRUE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0721_ht_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 35</code></pre>
+</div>
+<h6 id="handling-duplicates-1">6.1.1.3.1.6 Handling Duplicates</h6>
+<p>We will use jittering to handle duplicates so that we will not lose useful points. Jittering adds a small perturbation to the duplicated points so that they do not occupy the exact same space.</p>
+<p>The following code chunk uses rjitter function of spatstat to jitter the ppp object with duplicates.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0619_ent_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>airbnb0619_ent_ppp</span>, 
+                             retry<span class='op'>=</span><span class='cn'>TRUE</span>, 
+                             nsim<span class='op'>=</span><span class='fl'>1</span>, 
+                             drop<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='va'>airbnb0619_sh_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>airbnb0619_sh_ppp</span>, 
+                             retry<span class='op'>=</span><span class='cn'>TRUE</span>, 
+                             nsim<span class='op'>=</span><span class='fl'>1</span>, 
+                             drop<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='va'>airbnb0721_pte_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>airbnb0721_pte_ppp</span>, 
+                             retry<span class='op'>=</span><span class='cn'>TRUE</span>, 
+                             nsim<span class='op'>=</span><span class='fl'>1</span>, 
+                             drop<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='va'>airbnb0721_ent_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>airbnb0721_ent_ppp</span>, 
+                             retry<span class='op'>=</span><span class='cn'>TRUE</span>, 
+                             nsim<span class='op'>=</span><span class='fl'>1</span>, 
+                             drop<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='va'>airbnb0721_sh_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>airbnb0721_sh_ppp</span>, 
+                             retry<span class='op'>=</span><span class='cn'>TRUE</span>, 
+                             nsim<span class='op'>=</span><span class='fl'>1</span>, 
+                             drop<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='va'>airbnb0721_ht_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>airbnb0721_ht_ppp</span>, 
+                             retry<span class='op'>=</span><span class='cn'>TRUE</span>, 
+                             nsim<span class='op'>=</span><span class='fl'>1</span>, 
+                             drop<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h6 id="check-if-duplicates-still-exist-1">6.1.1.3.1.7 Check if duplicates still exist</h6>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0619_ent_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] FALSE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0619_ent_ppp_jit</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0619_sh_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] FALSE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0619_sh_ppp_jit</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0721_pte_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] FALSE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0721_pte_ppp_jit</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0721_ent_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] FALSE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0721_ent_ppp_jit</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0721_sh_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] FALSE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0721_sh_ppp_jit</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>airbnb0721_ht_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] FALSE</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>airbnb0721_ht_ppp_jit</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>[1] 0</code></pre>
+</div>
+<p>We can confirm that there are no duplicated points after jittering.</p>
+<h6 id="combining-point-events-object-and-owin-object-1">6.1.1.3.1.8 Combining point events object and owin object</h6>
+<p>The following code chunk combines the point objects with the owin object into one ppp object class.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0619SG_pte_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0619_pte_ppp</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0619SG_ent_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0619_ent_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0619SG_sh_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0619_sh_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0721SG_pte_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0721_pte_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0721SG_ent_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0721_ent_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0721SG_sh_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0721_sh_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>airbnb0721SG_ht_ppp</span> <span class='op'>=</span> <span class='va'>airbnb0721_ht_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h6 id="rescale-kde-values-4">6.1.1.3.1.9 Rescale KDE values</h6>
+<p>The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>airbnb0619SG_pte_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0619SG_pte_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0619SG_ent_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0619SG_ent_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0619SG_sh_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0619SG_sh_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0721SG_pte_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0721SG_pte_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0721SG_ent_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0721SG_ent_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0721SG_sh_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0721SG_sh_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>airbnb0721SG_ht_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>airbnb0721SG_ht_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h6 id="kde">6.1.1.3.1.9 KDE</h6>
+<ol type="1">
+<li>The following code chunk computes kernel density using density function of spatstat package.</li>
+<li>The code first takes in the ppp object variable in km.</li>
+<li>bw.diggle automatic bandwidth method to detect a tight cluster</li>
+<li>smoothing kernel is set to default gaussian method</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_airbnb0619SG_pte_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0619SG_pte_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0619SG_ent_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0619SG_ent_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0619SG_sh_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0619SG_sh_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0721SG_pte_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0721SG_pte_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0721SG_ent_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0721SG_ent_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0721SG_sh_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0721SG_sh_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0721SG_ht_bw.km</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>airbnb0721SG_ht_ppp.km</span>,
+                              sigma<span class='op'>=</span><span class='va'>bw.diggle</span>,
+                              edge<span class='op'>=</span><span class='cn'>TRUE</span>,
+                            kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h6 id="convert-kde-output-into-grid-object-4">6.1.1.3.1.10 Convert KDE output into grid object</h6>
+<p>The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gridded_kde_airbnb0619SG_pte_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_pte_bw.km</span><span class='op'>)</span>
+<span class='va'>gridded_kde_airbnb0619SG_ent_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_ent_bw.km</span><span class='op'>)</span>
+<span class='va'>gridded_kde_airbnb0619SG_sh_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_sh_bw.km</span><span class='op'>)</span>
+<span class='va'>gridded_kde_airbnb0721SG_pte_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_pte_bw.km</span><span class='op'>)</span>
+<span class='va'>gridded_kde_airbnb0721SG_ent_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_ent_bw.km</span><span class='op'>)</span>
+<span class='va'>gridded_kde_airbnb0721SG_sh_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_sh_bw.km</span><span class='op'>)</span>
+<span class='va'>gridded_kde_airbnb0721SG_ht_bw</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_ht_bw.km</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h6 id="convert-grid-object-into-raster-and-assign-project-system-4">6.1.1.3.1.11 Convert grid object into raster and assign project system</h6>
+<p>The following code chunk converts grid object into raster using raster function of raster package</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_airbnb0619SG_pte_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0619SG_pte_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_pte_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0619SG_ent_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0619SG_ent_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_ent_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0619SG_sh_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0619SG_sh_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_sh_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0721SG_pte_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0721SG_pte_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_pte_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0721SG_ent_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0721SG_ent_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_ent_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0721SG_sh_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0721SG_sh_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_sh_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+
+<span class='va'>kde_airbnb0721SG_ht_bw_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_airbnb0721SG_ht_bw</span><span class='op'>)</span>
+<span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_ht_bw_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h5 id="kde-map-comparison-by-room-type-and-year">6.1.1.3.2 KDE Map Comparison by Room type and Year</h5>
+<p>The following code chunks plot KDE map of Airbnb 2019 and 2021 by each room types side by side.</p>
+<h6 id="private-room">6.1.1.3.2.1 Private Room</h6>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_pte_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2019 Private Room"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_pte_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2021 Private Room"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-135-1.png" width="624" /></p>
+</div>
+<p>Analysis: There is a slight decrease in private room airbnb from 2019 to 2021 as seen in 2021 that there are lesser red point. The scale of 2019 to 2021 descreased slightly.</p>
+<h6 id="entire-homeapt">6.1.1.3.2.2 Entire Home/Apt</h6>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_ent_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2019 Entire Home/Apt"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_ent_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2021 Entire Home/Apt"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-136-1.png" width="624" /></p>
+</div>
+<p>Analysis: The map shows high density of airbnb in south-east region near central for both 2019 and 2021 as seen from the red marks on both map. However, there is a huge decrease in the number of Entire Home/Apt airbnb from 2019 to 2021 as seen on the scale. It decreased from 0-1000 in 2019 to 0-250 in 2021.</p>
+<h6 id="shared-room">6.1.1.3.2.3 Shared Room</h6>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0619SG_sh_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2019 Shared Room"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_sh_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2021 Shared Room"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-137-1.png" width="624" /></p>
+</div>
+<p>Analysis: The map shows high density of airbnb in south-east region near central for both 2019 and 2021 as seen from the red marks on both map. However, there is a significant decrease in the number of Shared Room from 2019 to 2021 as seen on the scale. It ranges from 0-400 in 2019 and decrease to 0-80 in 2021.</p>
+<h6 id="hotel-room">6.1.1.3.2.4 Hotel Room</h6>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>kde_airbnb0721SG_ht_bw.km</span>, main <span class='op'>=</span> <span class='st'>"Airbnb 2021 Hotel Room"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<p><img src="takehome-ex02_files/figure-html5/unnamed-chunk-138-1.png" width="624" /></p>
+</div>
+<p>Analyis: Hotel room is a new room type in 2021.</p>
+<p>Overall, we can conclude that Covid-19 are likely to have impact on the type of Airbnb room listed in Singapore from 2019 to 2021. It is seen from the significant decrease in Entire Home/Apt and Shared Room type, and this is likely because the owner do not wish to rent out the house anymore, or that there are lesser to no tourist. In addition, there is a new room type which is the Hotel Room, and this because hotel are required for quarantine purpose.</p>
+<h5 id="exploration-with-openstreetmap-1">6.1.1.3.3 Exploration with Openstreetmap</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"view"</span><span class='op'>)</span>
+
+<span class='va'>airbnb0619map</span> <span class='op'>&lt;-</span> <span class='fu'>tm_basemap</span><span class='op'>(</span><span class='st'>"OpenStreetMap"</span><span class='op'>)</span><span class='op'>+</span>
+                  <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>airbnb0619_sf</span><span class='op'>)</span> <span class='op'>+</span>
+                  <span class='fu'>tm_dots</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>'room_type'</span>, palette<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>entire<span class='op'>=</span><span class='st'>'blue'</span>, private<span class='op'>=</span><span class='st'>'red'</span>, shared<span class='op'>=</span><span class='st'>'green'</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>0.02</span><span class='op'>)</span>
+
+<span class='va'>airbnb0721map</span> <span class='op'>&lt;-</span> <span class='fu'>tm_basemap</span><span class='op'>(</span><span class='st'>"OpenStreetMap"</span><span class='op'>)</span><span class='op'>+</span>
+                  <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>airbnb0721_sf</span><span class='op'>)</span> <span class='op'>+</span>
+                  <span class='fu'>tm_dots</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>'room_type'</span>, palette<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>entire<span class='op'>=</span><span class='st'>'blue'</span>, hotel<span class='op'>=</span><span class='st'>'yellow'</span>, private<span class='op'>=</span><span class='st'>'red'</span>, shared<span class='op'>=</span><span class='st'>'green'</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>0.02</span><span class='op'>)</span>
+
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>airbnb0619map</span>, <span class='va'>airbnb0721map</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h2 id="second-order-spatial-point-patterns-analysis-1">6.2 Second-order Spatial Point Patterns Analysis</h2>
+<h3 id="nearest-neighbour-analysis-continue-from-here">6.2.1 Nearest Neighbour Analysis (CONTINUE FROM HERE)</h3>
+<h4 id="hypothesis-5">6.2.1.1 Hypothesis</h4>
+<p>we will perform the Clark-Evans test of aggregation for a spatial point pattern by using clarkevans.test() of statspat.</p>
+<p>Test Hypothesis:</p>
+<p>H0 = The distribution of airbnb are randomly distributed.</p>
+<p>H1 = The distribution of airbnb are not randomly distributed.</p>
+<p>The 95% confident interval will be used.</p>
+<h4 id="testing-and-analysis-5">6.2.1.2 Testing and Analysis</h4>
+<h5 id="testing-spatial-point-patterns-using-clark-and-evans-test-1">6.2.1.2.1 Testing spatial point patterns using Clark and Evans Test</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619SG_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='st'>"sg_owin"</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"clustered"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>99</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 99 simulations of CSR with fixed n
+
+data:  airbnb0619SG_ppp
+R = 0.36063, p-value = 0.01
+alternative hypothesis: clustered (R &lt; 1)</code></pre>
+</div>
+<p>Clark-Evans test No edge correction Monte Carlo test based on 99 simulations of CSR with fixed n</p>
+<p>data: airbnb0619SG_ppp R = 0.36169, p-value = 0.01 alternative hypothesis: clustered (R &lt; 1)</p>
+<h5 id="clark-and-evans-test-kallang-planning-area-1">5.2.1.2.2 Clark and Evans Test: Kallang planning area</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619_kl_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='cn'>NULL</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>999</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 999 simulations of CSR with fixed n
+
+data:  airbnb0619_kl_ppp
+R = 0.57971, p-value = 0.002
+alternative hypothesis: two-sided</code></pre>
+</div>
+<p>Analysis:</p>
+<h5 id="clark-and-evans-test-river-valley-planning-area-1">5.2.1.2.3 Clark and Evans Test: River Valley planning area</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619_rv_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='cn'>NULL</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>999</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 999 simulations of CSR with fixed n
+
+data:  airbnb0619_rv_ppp
+R = 0.82407, p-value = 0.002
+alternative hypothesis: two-sided</code></pre>
+</div>
+<p>Analysis:</p>
+<h5 id="clark-and-evans-test-novena-planning-area-1">5.2.1.2.4 Clark and Evans Test: Novena planning area</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619_nv_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='cn'>NULL</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>999</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 999 simulations of CSR with fixed n
+
+data:  airbnb0619_nv_ppp
+R = 0.56052, p-value = 0.002
+alternative hypothesis: two-sided</code></pre>
+</div>
+<p>Analysis:</p>
+<h5 id="clark-and-evans-test-rochor-planning-area-1">5.2.1.2.5 Clark and Evans Test: Rochor planning area</h5>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clarkevans.test</span><span class='op'>(</span><span class='va'>airbnb0619_rc_ppp</span>,
+                correction<span class='op'>=</span><span class='st'>"none"</span>,
+                clipregion<span class='op'>=</span><span class='cn'>NULL</span>,
+                alternative<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span><span class='op'>)</span>,
+                nsim<span class='op'>=</span><span class='fl'>999</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>
+    Clark-Evans test
+    No edge correction
+    Monte Carlo test based on 999 simulations of CSR with fixed n
+
+data:  airbnb0619_rc_ppp
+R = 0.91337, p-value = 0.002
+alternative hypothesis: two-sided</code></pre>
+</div>
+<p>Analysis:</p>
+<h3 id="g-function-1">G-FUNCTION</h3>
+<h4 id="hypothesis-6">Hypothesis</h4>
+<h4 id="testing-and-analysis-6">Testing and Analysis</h4>
+<h3 id="f-function-1">F-FUNCTION</h3>
+<h4 id="hypothesis-7">Hypothesis</h4>
+<h4 id="testing-and-analysis-7">Testing and Analysis</h4>
+<h3 id="k-function-1">K-FUNCTION</h3>
+<h4 id="hypothesis-8">Hypothesis</h4>
+<h4 id="testing-and-analysis-8">Testing and Analysis</h4>
+<h3 id="l-function-1">L-FUNCTION</h3>
+<h4 id="hypothesis-9">Hypothesis</h4>
+<h4 id="testing-and-analysis-9">Testing and Analysis</h4>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
