@@ -706,6 +706,7 @@ plot(kde_airbnb0619SG_bw.km)
 plot(airbnb0619SG_ppp)
 ```
 
+Analysis: From the kde map and point map above, we can see that the south-east region near the central area have higher density of airbnb in 2019 as shown by the pink spots on kde map and the black patches on the point map. The kde map better visualised the density as compared to the point map because it uses different colour tone to represent the density, for example, purple means no/low density, pink represents density of 1000 and yellow means density of around 1500. The point map on the other hand is not a very good visualization because we cannot determine if an area is denser with one colour tone (black, grey and white).   
 
 ##### 5.1.1.1.5 Convert KDE output into grid object
 
@@ -716,6 +717,8 @@ gridded_kde_airbnb0619SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_bw.km
 spplot(gridded_kde_airbnb0619SG_bw)
 ```
 
+Analysis: The above density map shows a clearer visualization of the density of airbnb in 2019 using grid. We can see that the airbnb are scattered all around as seen on the lighter blue grid on the map. The south-east area near the central have high density as seen on the pink to yellow grid on the map.
+
 ##### 5.1.1.1.6 Convert grid object into raster
 
 The following code chunk converts grid object into raster using raster function of raster package
@@ -725,7 +728,7 @@ kde_airbnb0619SG_bw_raster <- raster(gridded_kde_airbnb0619SG_bw)
 kde_airbnb0619SG_bw_raster
 ```
 
-From the result above, the crs is NA
+From the result above, the crs is NA.
 
 ##### 5.1.1.1.7 Assign project system
 
@@ -735,6 +738,8 @@ The following code chunk assign CRS to kde_airbnb0619SG_bw_raster
 projection(kde_airbnb0619SG_bw_raster) <- CRS("+init=EPSG:3414")
 kde_airbnb0619SG_bw_raster
 ```
+
+We have successful set the crs as shown above.
 
 #### 5.1.1.2 Hotels
 
@@ -765,6 +770,8 @@ plot(kde_hotelsSG_bw.km, main = "KDE Map")
 plot(hotelsSG_ppp, main="Point Map")
 ```
 
+Analysis: From the kde map and point map above, we can see that the south-east region near the central area have higher density of hotels as shown by the pink orange spots on kde map and the black patch on the point map. 
+
 ##### 5.1.1.2.3 Convert KDE output into grid object
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
@@ -773,6 +780,8 @@ The following code chunk converts KDE output into grid object using as.SpatialGr
 gridded_kde_hotelsSG_bw <- as.SpatialGridDataFrame.im(kde_hotelsSG_bw.km)
 spplot(gridded_kde_hotelsSG_bw)
 ```
+
+Analysis: The above density map shows a clearer visualization of the density of hotels using grid. We can see that south-east area near the central have higher density as seen on the pink grid on the map, and there are also many light blue grid at the south-east region near central area. There are some hotels (individual blue grid) scatter near east and west area as well.
 
 ##### 5.1.1.2.4 Convert grid object into raster and assign project system
 
@@ -813,6 +822,8 @@ plot(kde_mrtlrtSG_bw.km, main = "KDE Map")
 plot(mrtlrtSG_ppp, main="Point Map")
 ```
 
+Analysis: From the kde map and point map above, we can see that the mrt and lrt are available at almost every region. Area with higher density of mrt and lrt are North-East, North-West and Central South region as shown by the pink orange patch on the kde map and the black patches on the point map. 
+
 ##### 5.1.1.3.3 Convert KDE output into grid object
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
@@ -821,6 +832,8 @@ The following code chunk converts KDE output into grid object using as.SpatialGr
 gridded_kde_mrtlrtSG_bw <- as.SpatialGridDataFrame.im(kde_mrtlrtSG_bw.km)
 spplot(gridded_kde_mrtlrtSG_bw)
 ```
+
+Analysis: The above density map shows a clearer visualization of the density of Mrt and Lrt using grid. We can see that the Mrt and Lrt are available almost everyin Singapore as represented by the light blue grid on the map. The north-east, north-west and central south area have higher density of Mrt and Lrt as seen by the pink to yellow grid cluster on the map.
 
 ##### 5.1.1.3.4 Convert grid object into raster and assign project system
 
@@ -861,6 +874,8 @@ plot(kde_tourismSG_bw.km, main = "KDE Map")
 plot(tourismSG_ppp, main="Point Map")
 ```
 
+Analysis: From the kde map and point map above, we can see that the south-east region near the central area have higher density of tourist attraction as shown on the pink spots in kde map and the black patches in the point map. In addition, there are some tourist attractions in north, west and east as shown by the individual point on the point map.
+
 ##### 5.1.1.4.3 Convert KDE output into grid object
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
@@ -869,6 +884,8 @@ The following code chunk converts KDE output into grid object using as.SpatialGr
 gridded_kde_tourismSG_bw <- as.SpatialGridDataFrame.im(kde_tourismSG_bw.km)
 spplot(gridded_kde_tourismSG_bw)
 ```
+
+Analysis: The above density map shows a clearer visualization of the density of tourist attraction in Singapore using grid. We can see that there are a few attractions in the north, west and east as seen by the light blue grid on the map. The south central areaa have high density of tourist attractions as seen by the pink yellow grid on the map.
 
 ##### 5.1.1.4.4 Convert grid object into raster and assign project system
 
@@ -884,7 +901,7 @@ kde_tourismSG_bw_raster
 
 ##### 5.1.1.5.1 KDE Map Comparison
 
-The following code chunk plots all the KDE map of Airbnb0619, Hotels, MRTLRT and Tourist Attractions side by side using par functions of graphics package
+The following code chunk plots all the KDE map of Airbnb 2019, Hotel, MRTLRT and Tourist Attractions side by side using par functions of graphics package
 
 ```{r}
 par(mfrow=c(2,2))
@@ -894,7 +911,7 @@ plot(kde_mrtlrtSG_bw.km, main = "Mrt")
 plot(kde_tourismSG_bw.km, main = "Tourist Attraction")
 ```
 
-From the above, we can see that the higher density (in red and yellow) for airbnb, hotel, mrt and tourish attraction are concentrated around the south east area below central region.
+From the above, we can see that the common area with high density (in red and yellow) of airbnb, hotel, mrt and tourish attraction are concentrated around the south east area near the central region.
 
 ##### 5.1.1.5.2 Central Region
 
@@ -916,8 +933,7 @@ colour of dots using tm_dots and the following are the color representation:
 
 - blue: mrtlrt
 
-- red: tourist attractions.
-
+- red: tourist attractions
 
 ```{r}
 centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central Region",]
@@ -925,16 +941,11 @@ centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central
 tmap_mode("view")
 
 tm_shape(centralairbnb0619) + 
-  tm_dots(col="black", size = 0.02)+
-tm_shape(hotels_sf) + 
-  tm_dots(col="green", size = 0.02)+
-tm_shape(mrtlrt_sf) + 
-  tm_dots(col="blue", size = 0.02)+
-tm_shape(tourism_sf) + 
-  tm_dots(col="red", size = 0.02)
+  tm_dots() +
+tm_basemap(leaflet::providers$OpenStreetMap)
 ```
 
-From the map above, we can see that there are many Airbnbs located in Kallang, River Valley, Novena an Rochor.
+From the map above, we can see that there are many Airbnbs located in Kallang, River Valley, Novena and Rochor.
 
 ```{r}
 tmap_mode("plot")
