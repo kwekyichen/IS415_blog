@@ -15,8 +15,6 @@ output:
     code_folding: true
 ---
 
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
@@ -54,7 +52,7 @@ The following code chunk install the following packages:
 - tidyr to tidy messy data
 - readr to import csv
 
-```{r}
+```{r eval=FALSE}
 packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'tidyr', 'readr')
 for (p in packages){
   if(!require(p, character.only = T)){
@@ -75,7 +73,7 @@ for (p in packages){
 
 The following code uses st_read function of sf package to import MrtLrt geospatial data sets.
 
-```{r}
+```{r eval=FALSE}
 mrtlrt_sf <- st_read(dsn = "data/geospatial", layer="MRTLRTStnPtt")
 ```
 
@@ -85,7 +83,7 @@ The MrtLrt data have 185 features with 3 fields. The projected CRS is SVY21. The
 
 Next, we use st_crs function of sf to check the CRS.
 
-```{r}
+```{r eval=FALSE}
 st_crs(mrtlrt_sf)
 ```
 
@@ -95,7 +93,7 @@ From the result above, even though the mrtlrt_sf is projected in svy21, the last
 
 The following code chunk will assign the correct EPSG code to mrtlrt_sf using st_set_crs function of sf package
 
-```{r}
+```{r eval=FALSE}
 mrtlrt_sf <- st_set_crs(mrtlrt_sf, 3414)
 ```
 
@@ -103,7 +101,7 @@ Now that we have assign the correct EPSG code to mrtlrt_sf, we will check the CR
 
 #### 4.1.1.4 Check CRS again
 
-```{r}
+```{r eval=FALSE}
 st_crs(mrtlrt_sf)
 ```
 
@@ -115,7 +113,7 @@ From the result above, we have successfully assign EPSG 3414 to mrtlrt_sf.
 
 The following code uses st_read function of sf package to import CostalOutline geospatial data sets.
 
-```{r}
+```{r eval=FALSE}
 sg_sf <- st_read(dsn = "data/geospatial", layer="CostalOutline")
 ```
 
@@ -123,7 +121,7 @@ The CostalOutline data have 60 features with 4 fields. The projected CRS is SVY2
 
 #### 4.1.2.2 Check CRS
 
-```{r}
+```{r eval=FALSE}
 st_crs(sg_sf)
 ```
 
@@ -133,7 +131,7 @@ Similarly, even though the sg_sf is projected in svy21, the last line indicates 
 
 The following code chunk will assign the correct EPSG code to sg_sf using st_set_crs function of sf package
 
-```{r}
+```{r eval=FALSE}
 sg_sf <- st_set_crs(sg_sf, 3414)
 ```
 
@@ -141,7 +139,7 @@ Now that we have assign the correct EPSG code to sg_sf, we will check the CRS ag
 
 #### 4.1.2.4 Check CRS again
 
-```{r}
+```{r eval=FALSE}
 st_crs(sg_sf)
 ```
 We have successfully set the EPSG to 3414 for sg_sf.
@@ -149,9 +147,10 @@ We have successfully set the EPSG to 3414 for sg_sf.
 ### 4.1.3 MPSZ
 
 #### 4.1.3.1 Importing
+
 The following code uses st_read function of sf package to import MP14_SUBZONE_WEB_PL geospatial data sets.
 
-```{r}
+```{r eval=FALSE}
 mpsz_sf <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
 ```
 
@@ -159,7 +158,7 @@ The mpsz data have 323 features with 15 fields. The projected CRS is SVY21. The 
 
 #### 4.1.3.2 Check CRS
 
-```{r}
+```{r eval=FALSE}
 st_crs(mpsz_sf)
 ```
 
@@ -169,7 +168,7 @@ Similarly, even though the mpsz_sf is projected in svy21, the last line indicate
 
 The following code chunk will assign the correct EPSG code to mpsz_sf using st_set_crs function of sf package
 
-```{r}
+```{r eval=FALSE}
 mpsz_sf <- st_set_crs(mpsz_sf, 3414)
 ```
 
@@ -177,7 +176,7 @@ Now that we have assign the correct EPSG code to mpsz_sf, we will check the CRS 
 
 #### 4.1.3.4 Check CRS again
 
-```{r}
+```{r eval=FALSE}
 st_crs(mpsz_sf)
 ```
 
@@ -191,7 +190,7 @@ We have successfully assign ESPG 3414 to mpsz_sf.
 
 The following code uses read_csv function of readr package to import Hotel aspatial data sets.
 
-```{r}
+```{r eval=FALSE}
 hotels <- read_csv("data/aspatial/hotels.csv")
 ```
 
@@ -199,7 +198,7 @@ hotels <- read_csv("data/aspatial/hotels.csv")
 
 The following code uses list function of base R to examine the imported file
 
-```{r}
+```{r eval=FALSE}
 list(hotels)
 ```
 
@@ -207,11 +206,11 @@ The data contains 422 rows and 9 columns. There are 'Lat' and 'Lng' column for c
 
 We will next check if there are any NA value in 'Lat' and 'Lng' using is.na function of base R package.
 
-```{r}
+```{r eval=FALSE}
 any(is.na(hotels$Lat))
 ```
 
-```{r}
+```{r eval=FALSE}
 any(is.na(hotels$Lng))
 ```
 
@@ -226,7 +225,7 @@ The following code
 4. st_transform function of sf package then helps to transform the newly created simple feature data frame into svy21
 5. tm_shape and tm_dots function of tmap plots the transformed hotels_sf
 
-```{r}
+```{r eval=FALSE}
 hotels_sf <- st_as_sf(hotels,
                     coords = c("Lng", 
                                "Lat"),
@@ -243,7 +242,7 @@ tm_shape(hotels_sf)+
 
 The following code uses read_csv function of readr package to import Tourism aspatial data sets.
 
-```{r}
+```{r eval=FALSE}
 tourism <- read_csv("data/aspatial/tourism.csv")
 ```
 
@@ -251,7 +250,7 @@ tourism <- read_csv("data/aspatial/tourism.csv")
 
 The following code uses list function of base R to examine the imported file
 
-```{r}
+```{r eval=FALSE}
 list(tourism)
 ```
 
@@ -259,11 +258,11 @@ The tourism data contains 107 rows and 17 columns. There are 'LATITUDE' and 'LON
 
 We will next check if there are any NA value in 'LATITUDE' and 'LONGTITUDE' using is.na function of base R package.
 
-```{r}
+```{r eval=FALSE}
 any(is.na(tourism$LATITUDE))
 ```
 
-```{r}
+```{r eval=FALSE}
 any(is.na(tourism$LATITUDE))
 ```
 
@@ -271,7 +270,7 @@ There are NA values and we will need to drop them before creating a simple featu
 
 The following code chunk drop rows of data as long as the LATITUDE is NA.
 
-```{r}
+```{r eval=FALSE}
 tourism <- tourism %>%
             drop_na("LATITUDE")
 ```
@@ -286,7 +285,7 @@ The following code
 4. st_transform function of sf package then helps to transform the newly created simple feature data frame into svy21
 5. tm_shape and tm_dots function of tmap plots the transformed tourism_sf
 
-```{r}
+```{r eval=FALSE}
 
 tourism_sf <- st_as_sf(tourism,
                     coords = c("LONGTITUDE", 
@@ -304,7 +303,7 @@ tm_shape(tourism_sf)+
 
 The following code uses read_csv function of readr package to import Airbnb listings30062019.csv aspatial data sets.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619 <- read_csv("data/aspatial/listings30062019.csv")
 ```
 
@@ -312,7 +311,7 @@ airbnb0619 <- read_csv("data/aspatial/listings30062019.csv")
 
 The following code uses list function of base R to examine the imported file
 
-```{r}
+```{r eval=FALSE}
 list(airbnb0619)
 ```
 
@@ -320,11 +319,11 @@ The airbnb0619 data contains 8293 rows and 16 columns. There are 'latitude' and 
 
 We will next check if there are any NA value in 'latitude' and 'longitude' using is.na function of base R package.
 
-```{r}
+```{r eval=FALSE}
 any(is.na(airbnb0619$latitude))
 ```
 
-```{r}
+```{r eval=FALSE}
 any(is.na(airbnb0619$longitude))
 ```
 
@@ -339,7 +338,7 @@ The following code
 4. st_transform function of sf package then helps to transform the newly created simple feature data frame into svy21
 5. tm_shape and tm_dots function of tmap plots the transformed airbnb0619_sf
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_sf <- st_as_sf(airbnb0619,
                     coords = c("longitude", 
                                "latitude"),
@@ -356,7 +355,7 @@ tm_shape(airbnb0619_sf)+
 
 The following code uses read_csv function of readr package to import Airbnb listings19072021.csv aspatial data sets.
 
-```{r}
+```{r eval=FALSE}
 airbnb0721 <- read_csv("data/aspatial/listings19072021.csv")
 ```
 
@@ -364,7 +363,7 @@ airbnb0721 <- read_csv("data/aspatial/listings19072021.csv")
 
 The following code uses list function of base R to examine the imported file
 
-```{r}
+```{r eval=FALSE}
 list(airbnb0721)
 ```
 
@@ -372,11 +371,11 @@ The airbnb0721 data contains 4252 rows and 16 columns, lesser than airbnb0619. T
 
 We will next check if there are any NA value in 'latitude' and 'longitude' using is.na function of base R package.
 
-```{r}
+```{r eval=FALSE}
 any(is.na(airbnb0721$latitude))
 ```
 
-```{r}
+```{r eval=FALSE}
 any(is.na(airbnb0721$longitude))
 ```
 
@@ -391,7 +390,7 @@ The following code
 4. st_transform function of sf package then helps to transform the newly created simple feature data frame into svy21
 5. tm_shape and tm_dots function of tmap plots the transformed airbnb0721_sf
 
-```{r}
+```{r eval=FALSE}
 airbnb0721_sf <- st_as_sf(airbnb0721,
                     coords = c("longitude", 
                                "latitude"),
@@ -410,7 +409,7 @@ After importing geospatial and aspatial data, we will convert the simple feature
 
 The following code chunk converts all the geospatial data from simple feature data frame to sp’s Spatial* class using as_Spatial functions of sf package.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619 <- as_Spatial(airbnb0619_sf)
 airbnb0721 <- as_Spatial(airbnb0721_sf)
 hotels <- as_Spatial(hotels_sf)
@@ -422,31 +421,31 @@ mpsz <- as_Spatial(mpsz_sf)
 
 Check each Spatial* class
 
-```{r}
+```{r eval=FALSE}
 airbnb0619
 ```
 
-```{r}
+```{r eval=FALSE}
 airbnb0721
 ```
 
-```{r}
+```{r eval=FALSE}
 hotels
 ```
 
-```{r}
+```{r eval=FALSE}
 tourism
 ```
 
-```{r}
+```{r eval=FALSE}
 mrtlrt
 ```
 
-```{r}
+```{r eval=FALSE}
 sg
 ```
 
-```{r}
+```{r eval=FALSE}
 mpsz
 ```
 
@@ -458,7 +457,7 @@ Next, we will convert Spatial* classes into Spatial object so that we can conver
 
 The following code chunk converts Spatial* classes into generic sp format using as function which sets the classes to their respective sp format. 
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_sp <- as(airbnb0619, "SpatialPoints")
 airbnb0721_sp <- as(airbnb0721, "SpatialPoints")
 hotels_sp <- as(hotels, "SpatialPoints")
@@ -474,7 +473,7 @@ We will next convert the spatial data into spatstat's ppp format.
 
 The following code chunk converts spatial data into spatstat's ppp format using as function. 
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_ppp <- as(airbnb0619_sp, "ppp")
 airbnb0721_ppp <- as(airbnb0721_sp, "ppp")
 hotels_ppp <- as(hotels_sp, "ppp")
@@ -488,35 +487,35 @@ mrtlrt_ppp <- as(mrtlrt_sp, "ppp")
 
 The following code chunk use any and duplicated function of base R package to check for duplicates, and sum up the count of duplicated points using sum function of base R package and multiplicity function of spatstat package.
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0619_ppp))
 sum(multiplicity(airbnb0619_ppp) > 1)
 ```
 
 From the result above, there are 6 duplicates in airbnb0619_ppp object. 
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_ppp))
 sum(multiplicity(airbnb0721_ppp) > 1)
 ```
 
 From the result above, there are 224 duplicates in airbnb0721_ppp object. 
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(hotels_ppp))
 sum(multiplicity(hotels_ppp) > 1)
 ```
 
 From the result above, there are 10 duplicates in hotels_ppp object.
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(tourism_ppp))
 sum(multiplicity(tourism_ppp) > 1)
 ```
 
 From the result above, there are 7 duplicates in tourism_ppp object.
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(mrtlrt_ppp))
 sum(multiplicity(mrtlrt_ppp) > 1)
 ```
@@ -529,7 +528,7 @@ We will use jittering to handle duplicates so that we will not lose useful point
 
 The following code chunk uses rjitter function of spatstat to jitter the ppp object with duplicates.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_ppp_jit <- rjitter(airbnb0619_ppp, 
                              retry=TRUE, 
                              nsim=1, 
@@ -553,22 +552,22 @@ tourism_ppp_jit <- rjitter(tourism_ppp,
 
 #### 4.3.4.3 Check if duplicates still exist
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0619_ppp_jit))
 sum(multiplicity(airbnb0619_ppp_jit) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_ppp_jit))
 sum(multiplicity(airbnb0721_ppp_jit) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(hotels_ppp_jit))
 sum(multiplicity(hotels_ppp_jit) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(tourism_ppp_jit))
 sum(multiplicity(tourism_ppp_jit) > 1)
 ```
@@ -581,13 +580,13 @@ We will next create owin object to represent the Singapore boundary.
 
 The following code chunk converts sg SpatialPolygon objects into owin object of spatstat using as function. 
 
-```{r}
+```{r eval=FALSE}
 sg_owin <- as(sg_sp, "owin")
 ```
 
 The following code chunk plots sg_owin using plot function of base R package.
 
-```{r}
+```{r eval=FALSE}
 plot(sg_owin)
 ```
 
@@ -595,7 +594,7 @@ plot(sg_owin)
 
 The following code chunk combines the point objects of airbnb0619, airbnb0721, hotels, tourism and mrtlrt with the owin object into one ppp object class.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619SG_ppp = airbnb0619_ppp_jit[sg_owin]
 airbnb0721SG_ppp = airbnb0721_ppp_jit[sg_owin]
 hotelsSG_ppp = hotels_ppp_jit[sg_owin]
@@ -605,23 +604,23 @@ mrtlrtSG_ppp = mrtlrt_ppp[sg_owin]
 
 The following code chunk plots the ppp object class using plot function of base R package.
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0619SG_ppp)
 ```
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0721SG_ppp)
 ```
 
-```{r}
+```{r eval=FALSE}
 plot(hotelsSG_ppp)
 ```
 
-```{r}
+```{r eval=FALSE}
 plot(tourismSG_ppp)
 ```
 
-```{r}
+```{r eval=FALSE}
 plot(mrtlrtSG_ppp)
 ```
 
@@ -641,7 +640,7 @@ plot(mrtlrtSG_ppp)
 3. bw.diggle automatic bandwidth method to detect a tight cluster
 4. smoothing kernel is set to default gaussian method 
 
-```{r}
+```{r eval=FALSE}
 kde_airbnb0619SG_bw <- density(airbnb0619SG_ppp,
                               sigma=bw.diggle,
                               edge=TRUE,
@@ -650,7 +649,7 @@ kde_airbnb0619SG_bw <- density(airbnb0619SG_ppp,
 
 The following code chunk plots the kde_airbnb0619SG_bw using plot function of base R
 
-```{r}
+```{r eval=FALSE}
 plot(kde_airbnb0619SG_bw)
 ```
 
@@ -660,7 +659,7 @@ The density values of the output range is  too small because the default unit of
 
 The following code chunk rescale the KDE value of airbnb0619SG_ppp using rescale function of spatstat from meter to kilometer.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619SG_ppp.km <- rescale(airbnb0619SG_ppp, 1000, "km")
 ```
 
@@ -668,19 +667,19 @@ airbnb0619SG_ppp.km <- rescale(airbnb0619SG_ppp, 1000, "km")
 
 The following code chunk calculate the bandwidth using different methods
 
-```{r}
+```{r eval=FALSE}
 bw.CvL(airbnb0619SG_ppp.km)
 ```
 
-```{r}
+```{r eval=FALSE}
 bw.scott(airbnb0619SG_ppp.km)
 ```
 
-```{r}
+```{r eval=FALSE}
 bw.ppl(airbnb0619SG_ppp.km)
 ```
 
-```{r}
+```{r eval=FALSE}
 bw.diggle(airbnb0619SG_ppp.km)
 ```
 
@@ -694,7 +693,7 @@ From the result above, since bw.diggle has the lowest sigma, we will be using it
 4. smoothing kernel is set to default gaussian method
 5. plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side
 
-```{r}
+```{r eval=FALSE}
 kde_airbnb0619SG_bw.km <- density(airbnb0619SG_ppp.km,
                               sigma=bw.diggle,
                               edge=TRUE,
@@ -711,7 +710,7 @@ plot(airbnb0619SG_ppp)
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
 
-```{r}
+```{r eval=FALSE}
 gridded_kde_airbnb0619SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_bw.km)
 spplot(gridded_kde_airbnb0619SG_bw)
 ```
@@ -720,7 +719,7 @@ spplot(gridded_kde_airbnb0619SG_bw)
 
 The following code chunk converts grid object into raster using raster function of raster package
 
-```{r}
+```{r eval=FALSE}
 kde_airbnb0619SG_bw_raster <- raster(gridded_kde_airbnb0619SG_bw)
 kde_airbnb0619SG_bw_raster
 ```
@@ -731,7 +730,7 @@ From the result above, the crs is NA
 
 The following code chunk assign CRS to kde_airbnb0619SG_bw_raster
 
-```{r}
+```{r eval=FALSE}
 projection(kde_airbnb0619SG_bw_raster) <- CRS("+init=EPSG:3414")
 kde_airbnb0619SG_bw_raster
 ```
@@ -742,7 +741,7 @@ kde_airbnb0619SG_bw_raster
 
 The following code chunk rescale the KDE value of hotelsSG_ppp using rescale function of spatstat from meter to kilometer.
 
-```{r}
+```{r eval=FALSE}
 hotelsSG_ppp.km <- rescale(hotelsSG_ppp, 1000, "km")
 ```
 
@@ -754,7 +753,7 @@ hotelsSG_ppp.km <- rescale(hotelsSG_ppp, 1000, "km")
 4. smoothing kernel is set to default gaussian method 
 5. plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side
 
-```{r}
+```{r eval=FALSE}
 kde_hotelsSG_bw.km <- density(hotelsSG_ppp.km,
                               sigma=bw.diggle,
                               edge=TRUE,
@@ -769,7 +768,7 @@ plot(hotelsSG_ppp, main="Point Map")
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
 
-```{r}
+```{r eval=FALSE}
 gridded_kde_hotelsSG_bw <- as.SpatialGridDataFrame.im(kde_hotelsSG_bw.km)
 spplot(gridded_kde_hotelsSG_bw)
 ```
@@ -778,7 +777,7 @@ spplot(gridded_kde_hotelsSG_bw)
 
 The following code chunk converts grid object into raster using raster function of raster package
 
-```{r}
+```{r eval=FALSE}
 kde_hotelsSG_bw_raster <- raster(gridded_kde_hotelsSG_bw)
 projection(kde_hotelsSG_bw_raster) <- CRS("+init=EPSG:3414")
 kde_hotelsSG_bw_raster
@@ -790,7 +789,7 @@ kde_hotelsSG_bw_raster
 
 The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.
 
-```{r}
+```{r eval=FALSE}
 mrtlrtSG_ppp.km <- rescale(mrtlrtSG_ppp, 1000, "km")
 ```
 
@@ -802,7 +801,7 @@ mrtlrtSG_ppp.km <- rescale(mrtlrtSG_ppp, 1000, "km")
 4. smoothing kernel is set to default gaussian method 
 5. plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side
 
-```{r}
+```{r eval=FALSE}
 kde_mrtlrtSG_bw.km <- density(mrtlrtSG_ppp.km,
                               sigma=bw.diggle,
                               edge=TRUE,
@@ -817,7 +816,7 @@ plot(mrtlrtSG_ppp, main="Point Map")
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
 
-```{r}
+```{r eval=FALSE}
 gridded_kde_mrtlrtSG_bw <- as.SpatialGridDataFrame.im(kde_mrtlrtSG_bw.km)
 spplot(gridded_kde_mrtlrtSG_bw)
 ```
@@ -826,7 +825,7 @@ spplot(gridded_kde_mrtlrtSG_bw)
 
 The following code chunk converts grid object into raster using raster function of raster package
 
-```{r}
+```{r eval=FALSE}
 kde_mrtlrtSG_bw_raster <- raster(gridded_kde_mrtlrtSG_bw)
 projection(kde_mrtlrtSG_bw_raster) <- CRS("+init=EPSG:3414")
 kde_mrtlrtSG_bw_raster
@@ -838,7 +837,7 @@ kde_mrtlrtSG_bw_raster
 
 The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.
 
-```{r}
+```{r eval=FALSE}
 tourismSG_ppp.km <- rescale(tourismSG_ppp, 1000, "km")
 ```
 
@@ -850,7 +849,7 @@ tourismSG_ppp.km <- rescale(tourismSG_ppp, 1000, "km")
 4. smoothing kernel is set to default gaussian method 
 5. plot function of base R package and par function of graphics package is used to plot kde map and ppp point map side by side
 
-```{r}
+```{r eval=FALSE}
 kde_tourismSG_bw.km <- density(tourismSG_ppp.km,
                               sigma=bw.diggle,
                               edge=TRUE,
@@ -865,7 +864,7 @@ plot(tourismSG_ppp, main="Point Map")
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
 
-```{r}
+```{r eval=FALSE}
 gridded_kde_tourismSG_bw <- as.SpatialGridDataFrame.im(kde_tourismSG_bw.km)
 spplot(gridded_kde_tourismSG_bw)
 ```
@@ -874,7 +873,7 @@ spplot(gridded_kde_tourismSG_bw)
 
 The following code chunk converts grid object into raster using raster function of raster package
 
-```{r}
+```{r eval=FALSE}
 kde_tourismSG_bw_raster <- raster(gridded_kde_tourismSG_bw)
 projection(kde_tourismSG_bw_raster) <- CRS("+init=EPSG:3414")
 kde_tourismSG_bw_raster
@@ -887,7 +886,7 @@ kde_tourismSG_bw_raster
 
 The following code chunk plots all the KDE map of Airbnb0619, Hotels, MRTLRT and Tourist Attractions side by side using par functions of graphics package
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(2,2))
 plot(kde_airbnb0619SG_bw.km, main = "Airbnb 2019")
 plot(kde_hotelsSG_bw.km, main = "Hotel")
@@ -920,7 +919,7 @@ colour of dots using tm_dots and the following are the color representation:
 - red: tourist attractions.
 
 
-```{r}
+```{r eval=FALSE}
 centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central Region",]
 
 tmap_mode("view")
@@ -937,7 +936,7 @@ tm_shape(tourism_sf) +
 
 From the map above, we can see that there are many Airbnbs located in Kallang, River Valley, Novena an Rochor.
 
-```{r}
+```{r eval=FALSE}
 tmap_mode("plot")
 ```
 
@@ -947,7 +946,7 @@ Extract Study Area
 
 The following code chunk extracts the target areas.
 
-```{r}
+```{r eval=FALSE}
 kl = mpsz[mpsz@data$PLN_AREA_N == "KALLANG",]
 rv = mpsz[mpsz@data$PLN_AREA_N == "RIVER VALLEY",]
 nv = mpsz[mpsz@data$PLN_AREA_N == "NOVENA",]
@@ -958,7 +957,7 @@ Plot target areas
 
 The following code chunk plots the target areas side by side in 2x2 using par function of graphics package and plot functions of base R package. 
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(2,2))
 plot(kl, main = "Kallang")
 plot(rv, main = "River Valley")
@@ -970,7 +969,7 @@ Convert Spatial Polygons Data Fraeme into generic SP format
 
 The following code chunk converts the four SpatialPolygonsDataFrame layers into generic spatialpolygons layers.
 
-```{r}
+```{r eval=FALSE}
 kl_sp = as(kl, "SpatialPolygons")
 rv_sp = as(rv, "SpatialPolygons")
 nv_sp = as(nv, "SpatialPolygons")
@@ -981,7 +980,7 @@ Create owin object for each target area
 
 The following code chunk converst the SpatialPolygons objects into owin objects required by spatstat.
 
-```{r}
+```{r eval=FALSE}
 kl_owin = as(kl_sp, "owin")
 rv_owin = as(rv_sp, "owin")
 nv_owin = as(nv_sp, "owin")
@@ -992,7 +991,7 @@ Combine airnbnb0619, hotels, mrt, tourist attractions points with owin of each t
 
 The following code chunk extracts airnbnb0619, hotels, mrt and tourist attractions within each specific region.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_kl_ppp = airbnb0619_ppp_jit[kl_owin]
 airbnb0619_rv_ppp = airbnb0619_ppp_jit[rv_owin]
 airbnb0619_nv_ppp = airbnb0619_ppp_jit[nv_owin]
@@ -1018,7 +1017,7 @@ Rescale from m to km
 
 The following code chunk transform the unit from m to km using rescale function.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_kl_ppp.km = rescale(airbnb0619_kl_ppp, 1000, "km")
 airbnb0619_rv_ppp.km = rescale(airbnb0619_rv_ppp, 1000, "km")
 airbnb0619_nv_ppp.km = rescale(airbnb0619_nv_ppp, 1000, "km")
@@ -1044,7 +1043,7 @@ Airbnb comparison by neighbourhood
 
 The following code chunk plots airbnb within each neigbourhood using plot and density functions with sigma set to bw.diggle and kernel set to gaussian.
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(2,2))
 plot(density(airbnb0619_kl_ppp.km, 
              sigma=bw.diggle, 
@@ -1074,7 +1073,7 @@ Comparison within Kallang
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Kallang.
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(2,2))
 plot(airbnb0619_kl_ppp.km, main = "Airbnb")
 plot(hotels_kl_ppp.km, main = "Hotel")
@@ -1088,7 +1087,7 @@ Comparison within River Valley
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in River Valley.
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(2,2))
 plot(airbnb0619_rv_ppp.km, main = "Airbnb")
 plot(hotels_rv_ppp.km, main = "Hotel")
@@ -1102,7 +1101,7 @@ Comparison within Novena
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Novena.
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(2,2))
 plot(airbnb0619_nv_ppp.km, main = "Airbnb")
 plot(hotels_nv_ppp.km, main = "Hotel")
@@ -1115,7 +1114,7 @@ Comparison within Rochor
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Rochor.
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(2,2))
 plot(airbnb0619_rc_ppp.km, main = "Airbnb")
 plot(hotels_rc_ppp.km, main = "Hotel")
@@ -1147,7 +1146,7 @@ The 95% confident interval will be used.
 
 ##### 5.2.1.2.1 Testing spatial point patterns using Clark and Evans Test
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619SG_ppp,
                 correction="none",
                 clipregion="sg_owin",
@@ -1165,7 +1164,7 @@ alternative hypothesis: clustered (R < 1)
 
 ##### 5.2.1.2.2 Clark and Evans Test: Kallang planning area
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619_kl_ppp,
                 correction="none",
                 clipregion=NULL,
@@ -1177,7 +1176,7 @@ Analysis:
 
 ##### 5.2.1.2.3 Clark and Evans Test: River Valley planning area
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619_rv_ppp,
                 correction="none",
                 clipregion=NULL,
@@ -1189,7 +1188,7 @@ Analysis:
 
 ##### 5.2.1.2.4 Clark and Evans Test: Novena planning area
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619_nv_ppp,
                 correction="none",
                 clipregion=NULL,
@@ -1201,7 +1200,7 @@ Analysis:
 
 ##### 5.2.1.2.5 Clark and Evans Test: Rochor planning area
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619_rc_ppp,
                 correction="none",
                 clipregion=NULL,
@@ -1249,7 +1248,7 @@ Analysis:
 
 The following code chunk rescale the KDE value of airbnb0721SG_ppp using rescale function of spatstat from meter to kilometer.
 
-```{r}
+```{r eval=FALSE}
 airbnb0721SG_ppp.km <- rescale(airbnb0721SG_ppp, 1000, "km")
 ```
 
@@ -1261,7 +1260,7 @@ airbnb0721SG_ppp.km <- rescale(airbnb0721SG_ppp, 1000, "km")
 4. smoothing kernel is set to default gaussian method
 5. plot function of base R package to plot the kde map
 
-```{r}
+```{r eval=FALSE}
 kde_airbnb0721SG_bw.km <- density(airbnb0721SG_ppp.km,
                               sigma=bw.diggle,
                               edge=TRUE,
@@ -1274,7 +1273,7 @@ plot(kde_airbnb0721SG_bw.km, main = "KDE Map")
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
 
-```{r}
+```{r eval=FALSE}
 gridded_kde_airbnb0721SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_bw.km)
 spplot(gridded_kde_airbnb0721SG_bw)
 ```
@@ -1283,7 +1282,7 @@ spplot(gridded_kde_airbnb0721SG_bw)
 
 The following code chunk converts grid object into raster using raster function of raster package
 
-```{r}
+```{r eval=FALSE}
 kde_airbnb0721SG_bw_raster <- raster(gridded_kde_airbnb0721SG_bw)
 projection(kde_airbnb0721SG_bw_raster) <- CRS("+init=EPSG:3414")
 kde_airbnb0721SG_bw_raster
@@ -1294,7 +1293,7 @@ kde_airbnb0721SG_bw_raster
 
 ##### 6.1.1.2.1 KDE Map Comparison
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(1,2))
 plot(kde_airbnb0619SG_bw.km, main = "Airbnb 2019")
 plot(kde_airbnb0721SG_bw.km, main = "Airbnb 2021")
@@ -1310,14 +1309,14 @@ From the KDE map, the south-east region still have higher density in 2021. Howev
 
 The following code checks the unique room type using unique features of base R
 
-```{r}
+```{r eval=FALSE}
 unique(airbnb0619_sf$room_type)
 ```
 
 We have determined that the unique room types are Private room, Entire home/apt and Shared room for Airbnb 2021.
 
 
-```{r}
+```{r eval=FALSE}
 unique(airbnb0721_sf$room_type)
 ```
 
@@ -1325,7 +1324,7 @@ We have determined that the unique room types are Private room, Entire home/apt,
 
 ###### 6.1.1.3.1.2 Filter each room type from SpatialPointsData Frama
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_pte = airbnb0619[airbnb0619@data$room_type == "Private room",]
 airbnb0619_ent = airbnb0619[airbnb0619@data$room_type == "Entire home/apt",]
 airbnb0619_sh = airbnb0619[airbnb0619@data$room_type == "Shared room",]
@@ -1336,7 +1335,7 @@ airbnb0721_ht = airbnb0721[airbnb0721@data$room_type == "Hotel room",]
 ```
 
 
-```{r}
+```{r eval=FALSE}
 airbnb0721_sh
 ```
 
@@ -1348,7 +1347,7 @@ Next, we will convert Spatial* classes into Spatial object so that we can conver
 
 The following code chunk converts Spatial* classes into generic sp format using as function which sets the classes to their respective sp format. 
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_pte_sp <- as(airbnb0619_pte, "SpatialPoints")
 airbnb0619_ent_sp <- as(airbnb0619_ent, "SpatialPoints")
 airbnb0619_sh_sp <- as(airbnb0619_sh, "SpatialPoints")
@@ -1365,7 +1364,7 @@ We will next convert the spatial data into spatstat's ppp format.
 
 The following code chunk converts spatial data into spatstat's ppp format using as function. 
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_pte_ppp <- as(airbnb0619_pte_sp, "ppp")
 airbnb0619_ent_ppp <- as(airbnb0619_ent_sp, "ppp")
 airbnb0619_sh_ppp <- as(airbnb0619_sh_sp, "ppp")
@@ -1379,37 +1378,37 @@ airbnb0721_ht_ppp <- as(airbnb0721_ht_sp, "ppp")
 
 The following code chunk use any and duplicated function of base R package to check for duplicates, and sum up the count of duplicated points using sum function of base R package and multiplicity function of spatstat package.
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0619_pte_ppp))
 sum(multiplicity(airbnb0619_pte_ppp) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0619_ent_ppp))
 sum(multiplicity(airbnb0619_ent_ppp) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0619_sh_ppp))
 sum(multiplicity(airbnb0619_sh_ppp) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_pte_ppp))
 sum(multiplicity(airbnb0721_pte_ppp) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_ent_ppp))
 sum(multiplicity(airbnb0721_ent_ppp) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_sh_ppp))
 sum(multiplicity(airbnb0721_sh_ppp) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_ht_ppp))
 sum(multiplicity(airbnb0721_ht_ppp) > 1)
 ```
@@ -1420,7 +1419,7 @@ We will use jittering to handle duplicates so that we will not lose useful point
 
 The following code chunk uses rjitter function of spatstat to jitter the ppp object with duplicates.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619_ent_ppp_jit <- rjitter(airbnb0619_ent_ppp, 
                              retry=TRUE, 
                              nsim=1, 
@@ -1454,32 +1453,32 @@ airbnb0721_ht_ppp_jit <- rjitter(airbnb0721_ht_ppp,
 
 ###### 6.1.1.3.1.7 Check if duplicates still exist
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0619_ent_ppp_jit))
 sum(multiplicity(airbnb0619_ent_ppp_jit) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0619_sh_ppp_jit))
 sum(multiplicity(airbnb0619_sh_ppp_jit) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_pte_ppp_jit))
 sum(multiplicity(airbnb0721_pte_ppp_jit) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_ent_ppp_jit))
 sum(multiplicity(airbnb0721_ent_ppp_jit) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_sh_ppp_jit))
 sum(multiplicity(airbnb0721_sh_ppp_jit) > 1)
 ```
 
-```{r}
+```{r eval=FALSE}
 any(duplicated(airbnb0721_ht_ppp_jit))
 sum(multiplicity(airbnb0721_ht_ppp_jit) > 1)
 ```
@@ -1491,7 +1490,7 @@ We can confirm that there are no duplicated points after jittering.
 
 The following code chunk combines the point objects with the owin object into one ppp object class.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619SG_pte_ppp = airbnb0619_pte_ppp[sg_owin]
 airbnb0619SG_ent_ppp = airbnb0619_ent_ppp_jit[sg_owin]
 airbnb0619SG_sh_ppp = airbnb0619_sh_ppp_jit[sg_owin]
@@ -1505,7 +1504,7 @@ airbnb0721SG_ht_ppp = airbnb0721_ht_ppp_jit[sg_owin]
 
 The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.
 
-```{r}
+```{r eval=FALSE}
 airbnb0619SG_pte_ppp.km <- rescale(airbnb0619SG_pte_ppp, 1000, "km")
 airbnb0619SG_ent_ppp.km <- rescale(airbnb0619SG_ent_ppp, 1000, "km")
 airbnb0619SG_sh_ppp.km <- rescale(airbnb0619SG_sh_ppp, 1000, "km")
@@ -1522,7 +1521,7 @@ airbnb0721SG_ht_ppp.km <- rescale(airbnb0721SG_ht_ppp, 1000, "km")
 3. bw.diggle automatic bandwidth method to detect a tight cluster
 4. smoothing kernel is set to default gaussian method
 
-```{r}
+```{r eval=FALSE}
 kde_airbnb0619SG_pte_bw.km <- density(airbnb0619SG_pte_ppp.km,
                               sigma=bw.diggle,
                               edge=TRUE,
@@ -1563,7 +1562,7 @@ kde_airbnb0721SG_ht_bw.km <- density(airbnb0721SG_ht_ppp.km,
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools
 
-```{r}
+```{r eval=FALSE}
 gridded_kde_airbnb0619SG_pte_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_pte_bw.km)
 gridded_kde_airbnb0619SG_ent_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_ent_bw.km)
 gridded_kde_airbnb0619SG_sh_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_sh_bw.km)
@@ -1577,7 +1576,7 @@ gridded_kde_airbnb0721SG_ht_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_ht
 
 The following code chunk converts grid object into raster using raster function of raster package
 
-```{r}
+```{r eval=FALSE}
 kde_airbnb0619SG_pte_bw_raster <- raster(gridded_kde_airbnb0619SG_pte_bw)
 projection(kde_airbnb0619SG_pte_bw_raster) <- CRS("+init=EPSG:3414")
 
@@ -1608,7 +1607,7 @@ The following code chunks plot KDE map of Airbnb 2019 and 2021 by each room type
 
 ###### 6.1.1.3.2.1 Private Room
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(1,2))
 plot(kde_airbnb0619SG_pte_bw.km, main = "Airbnb 2019 Private Room")
 plot(kde_airbnb0721SG_pte_bw.km, main = "Airbnb 2021 Private Room")
@@ -1618,7 +1617,7 @@ Analysis: There is a slight decrease in private room airbnb from 2019 to 2021 as
 
 ###### 6.1.1.3.2.2 Entire Home/Apt
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(1,2))
 plot(kde_airbnb0619SG_ent_bw.km, main = "Airbnb 2019 Entire Home/Apt")
 plot(kde_airbnb0721SG_ent_bw.km, main = "Airbnb 2021 Entire Home/Apt")
@@ -1628,7 +1627,7 @@ Analysis: The map shows high density of airbnb in south-east region near central
 
 ###### 6.1.1.3.2.3 Shared Room
 
-```{r}
+```{r eval=FALSE}
 par(mfrow=c(1,2))
 plot(kde_airbnb0619SG_sh_bw.km, main = "Airbnb 2019 Shared Room")
 plot(kde_airbnb0721SG_sh_bw.km, main = "Airbnb 2021 Shared Room")
@@ -1638,7 +1637,7 @@ Analysis: The map shows high density of airbnb in south-east region near central
 
 ###### 6.1.1.3.2.4 Hotel Room
 
-```{r}
+```{r eval=FALSE}
 plot(kde_airbnb0721SG_ht_bw.km, main = "Airbnb 2021 Hotel Room")
 ```
 
@@ -1648,7 +1647,7 @@ Overall, we can conclude that Covid-19 are likely to have impact on the type of 
 
 ##### 6.1.1.3.3 Exploration with Openstreetmap
 
-```{r}
+```{r eval=FALSE}
 tmap_mode("view")
 
 airbnb0619map <- tm_basemap("OpenStreetMap")+
@@ -1662,7 +1661,7 @@ airbnb0721map <- tm_basemap("OpenStreetMap")+
 tmap_arrange(airbnb0619map, airbnb0721map)
 ```
 
-```{r}
+```{r eval=FALSE}
 tmap_mode("plot")
 ```
 
@@ -1686,7 +1685,7 @@ The 95% confident interval will be used.
 
 ##### 6.2.1.2.1 Testing spatial point patterns using Clark and Evans Test
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619SG_ppp,
                 correction="none",
                 clipregion="sg_owin",
@@ -1704,7 +1703,7 @@ alternative hypothesis: clustered (R < 1)
 
 ##### 5.2.1.2.2 Clark and Evans Test: Kallang planning area
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619_kl_ppp,
                 correction="none",
                 clipregion=NULL,
@@ -1716,7 +1715,7 @@ Analysis:
 
 ##### 5.2.1.2.3 Clark and Evans Test: River Valley planning area
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619_rv_ppp,
                 correction="none",
                 clipregion=NULL,
@@ -1728,7 +1727,7 @@ Analysis:
 
 ##### 5.2.1.2.4 Clark and Evans Test: Novena planning area
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619_nv_ppp,
                 correction="none",
                 clipregion=NULL,
@@ -1740,7 +1739,7 @@ Analysis:
 
 ##### 5.2.1.2.5 Clark and Evans Test: Rochor planning area
 
-```{r}
+```{r eval=FALSE}
 clarkevans.test(airbnb0619_rc_ppp,
                 correction="none",
                 clipregion=NULL,
@@ -1785,13 +1784,13 @@ Analysis:
 TBC... NOT SURE
 ### 5.1.2 Kernel density maps analysis on Openstreetmap of Singapore to see possible relationship
 
-```{r}
+```{r eval=FALSE}
 tmap_mode("plot")
 ```
 
 Airbnb0619 and Hotel
 
-```{r}
+```{r eval=FALSE}
 airbnb0619map <- tm_shape(kde_airbnb0619SG_bw_raster) +
                   tm_raster("v", palette="Purples", colorNA = NULL) +
                   tm_basemap("OpenStreetMap")
@@ -1806,7 +1805,7 @@ tmap_arrange(airbnb0619map, hotelsmap)
 
 Airbnb0619 and MrtLrt
 
-```{r}
+```{r eval=FALSE}
 airbnb0619map <- tm_shape(kde_airbnb0619SG_bw_raster) +
                   tm_raster("v", palette="Purples", colorNA = NULL) +
                   tm_basemap("OpenStreetMap")
@@ -1821,7 +1820,7 @@ tmap_arrange(airbnb0619map, mrtlrtmap)
 
 Airbnb0619 and Tourist Attractions
 
-```{r}
+```{r eval=FALSE}
 airbnb0619map <- tm_shape(kde_airbnb0619SG_bw_raster) +
                   tm_raster("v", palette="Purples", colorNA = NULL) +
                   tm_basemap("OpenStreetMap")
@@ -1834,6 +1833,6 @@ tourismmap <- tm_shape(kde_tourismSG_bw_raster) +
 tmap_arrange(airbnb0619map, tourismmap)
 ```
 
-```{r}
+```{r eval=FALSE}
 tmap_mode("plot")
 ```
