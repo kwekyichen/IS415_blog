@@ -964,13 +964,7 @@ centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central
 tmap_mode("view")
 
 tm_shape(centralairbnb0619) + 
-  tm_dots(col="black", size = 0.02)+
-tm_shape(hotels_sf) + 
-  tm_dots(col="green", size = 0.02)+
-tm_shape(mrtlrt_sf) + 
-  tm_dots(col="blue", size = 0.02)+
-tm_shape(tourism_sf) + 
-  tm_dots(col="red", size = 0.02)+
+  tm_dots() +
 tm_basemap(leaflet::providers$OpenStreetMap)
 ```
 
