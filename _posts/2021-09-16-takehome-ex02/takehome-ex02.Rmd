@@ -880,3 +880,62 @@ projection(kde_tourismSG_bw_raster) <- CRS("+init=EPSG:3414")
 kde_tourismSG_bw_raster
 ```
 
+#### 5.1.1.5 Comparison between Airbnb0619, Hotels, MRTLRT and Tourist Attractions
+
+##### 5.1.1.5.1 KDE Map Comparison
+
+The following code chunk plots all the KDE map of Airbnb0619, Hotels, MRTLRT and Tourist Attractions side by side using par functions of graphics package
+
+```{r}
+par(mfrow=c(2,2))
+plot(kde_airbnb0619SG_bw.km, main = "Airbnb 2019")
+plot(kde_hotelsSG_bw.km, main = "Hotel")
+plot(kde_mrtlrtSG_bw.km, main = "Mrt")
+plot(kde_tourismSG_bw.km, main = "Tourist Attraction")
+```
+
+From the above, we can see that the higher density (in red and yellow) for airbnb, hotel, mrt and tourish attraction are concentrated around the south east area below central region.
+
+##### 5.1.1.5.2 Central Region
+
+We will look into the central region
+
+###### 5.1.1.5.2.1 Exploration with OpenStreetMap
+
+The following code chunk first extract airbnb in the central region from airbnb0619_sf region.
+
+tmap_mode is set to "view" for interaction mode and tm_basemap is set to "OpenStreetMap"
+
+tm_shape of centralairbnb0619, hotels_sf, mrtlrt_sf and tourism_sf were plotted using tm_shape and tm_dots of tmap packages.
+
+colour of dots using tm_dots and the following are the color representation:
+
+- black: Airbnb listings in central region
+
+- green: hotels
+
+- blue: mrtlrt
+
+- red: tourist attractions.
+
+
+```{r}
+centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central Region",]
+
+tmap_mode("view")
+tm_basemap("OpenStreetMap") +
+tm_shape(centralairbnb0619) + 
+  tm_dots(col="black", size = 0.02)+
+tm_shape(hotels_sf) + 
+  tm_dots(col="green", size = 0.02)+
+tm_shape(mrtlrt_sf) + 
+  tm_dots(col="blue", size = 0.02)+
+tm_shape(tourism_sf) + 
+  tm_dots(col="red", size = 0.02)
+```
+
+From the map above, we can see that there are many Airbnbs located in Kallang, River Valley, Novena an Rochor.
+
+```{r}
+tmap_mode("plot")
+```
