@@ -930,8 +930,7 @@ tm_shape(hotels_sf) +
 tm_shape(mrtlrt_sf) + 
   tm_dots(col="blue", size = 0.02)+
 tm_shape(tourism_sf) + 
-  tm_dots(col="red", size = 0.02) +
-tm_basemap(leaflet::providers$OpenStreetMap)
+  tm_dots(col="red", size = 0.02)
 ```
 
 From the map above, we can see that there are many Airbnbs located in Kallang, River Valley, Novena an Rochor.
