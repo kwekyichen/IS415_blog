@@ -1749,7 +1749,6 @@ clarkevans.test(airbnb0619_rc_ppp,
 
 Analysis: 
 
-
 ### G-FUNCTION
 
 #### Hypothesis
@@ -1773,66 +1772,3 @@ Analysis:
 #### Hypothesis
 
 #### Testing and Analysis
-
-
-
-
-
-
-
-
-TBC... NOT SURE
-### 5.1.2 Kernel density maps analysis on Openstreetmap of Singapore to see possible relationship
-
-```{r}
-tmap_mode("plot")
-```
-
-Airbnb0619 and Hotel
-
-```{r}
-airbnb0619map <- tm_shape(kde_airbnb0619SG_bw_raster) +
-                  tm_raster("v", palette="Purples", colorNA = NULL) +
-                  tm_basemap("OpenStreetMap")
-
-
-hotelsmap <- tm_shape(kde_hotelsSG_bw_raster) +
-                  tm_raster("v", palette="Purples", colorNA = NULL, showNA = NA) +
-                  tm_basemap("OpenStreetMap") 
-
-tmap_arrange(airbnb0619map, hotelsmap)
-```
-
-Airbnb0619 and MrtLrt
-
-```{r}
-airbnb0619map <- tm_shape(kde_airbnb0619SG_bw_raster) +
-                  tm_raster("v", palette="Purples", colorNA = NULL) +
-                  tm_basemap("OpenStreetMap")
-
-
-mrtlrtmap <- tm_shape(kde_mrtlrtSG_bw_raster) +
-                  tm_raster("v", palette="Purples", colorNA = NULL, showNA = NA) +
-                  tm_basemap("OpenStreetMap") 
-
-tmap_arrange(airbnb0619map, mrtlrtmap)
-```
-
-Airbnb0619 and Tourist Attractions
-
-```{r}
-airbnb0619map <- tm_shape(kde_airbnb0619SG_bw_raster) +
-                  tm_raster("v", palette="Purples", colorNA = NULL) +
-                  tm_basemap("OpenStreetMap")
-
-
-tourismmap <- tm_shape(kde_tourismSG_bw_raster) +
-                  tm_raster("v", palette="Purples", colorNA = NULL, showNA = NA) +
-                  tm_basemap("OpenStreetMap") 
-
-tmap_arrange(airbnb0619map, tourismmap)
-```
-
-```{r}
-tmap_mode("plot")
-```
