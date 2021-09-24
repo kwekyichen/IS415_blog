@@ -51,6 +51,8 @@ The following code chunk install the following packages:
 - tmap to create choropleth maps
 - tidyr to tidy messy data
 - readr to import csv
+- osmdata to get bounding box of a given location name
+- tmaptools to read open street map data
 
 ```{r}
 packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'tidyr', 'readr', 'osmdata', 'tmaptools')
@@ -706,29 +708,31 @@ plot(airbnb0619SG_ppp)
 
 Analysis: From the kde map and point map above, we can see that the south-east region near the central area have higher density of airbnb in 2019 as shown by the pink spots on kde map and the black patches on the point map. The kde map better visualised the density as compared to the point map because it uses different colour tone to represent the density, for example, purple means no/low density, pink represents density of 1000 and yellow means density of around 1500. The point map on the other hand is not a very good visualization because we cannot determine if an area is denser with one colour tone (black, grey and white).   
 
-##### 5.1.1.1.5 Convert KDE output into grid object
+##### 5.1.1.1.5 Convert KDE output into grid object in km
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
 
+
 ```{r}
-gridded_kde_airbnb0619SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_bw)
-spplot(gridded_kde_airbnb0619SG_bw)
+gridded_kde_airbnb0619SG_bw.km <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_bw.km)
+spplot(gridded_kde_airbnb0619SG_bw.km)
 ```
 
 Analysis: The above density map shows a clearer visualization of the density of airbnb in 2019 using grid. We can see that the airbnb are scattered all around as seen on the lighter blue grid on the map. The south-east area near the central have high density as seen on the pink to yellow grid on the map.
 
 ##### 5.1.1.1.6 Convert grid object into raster
 
-The following code chunk converts grid object into raster using raster function of raster package
+The following code chunk converts grid object into raster using raster function of raster package. Note that we will be using the non-rescaled gridded_kde_airbnb0619SG_bw.
 
 ```{r}
+gridded_kde_airbnb0619SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_bw)
 kde_airbnb0619SG_bw_raster <- raster(gridded_kde_airbnb0619SG_bw)
 kde_airbnb0619SG_bw_raster
 ```
 
 From the result above, the crs is NA.
 
-##### 5.1.1.1.7 Assign project system and plot raster using tmap
+##### 5.1.1.1.7 Assign project system and plot raster on osm
 
 The following code chunk assign CRS to kde_airbnb0619SG_bw_raster and plot the raster using tmap package
 
@@ -778,9 +782,20 @@ plot(hotelsSG_ppp, main="Point Map")
 
 Analysis: From the kde map and point map above, we can see that the south-east region near the central area have higher density of hotels as shown by the pink orange spots on kde map and the black patch on the point map. 
 
-##### 5.1.1.2.3 Convert KDE output into grid object
+##### 5.1.1.2.3 Convert KDE output into grid object in km
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_hotelsSG_bw.km <- as.SpatialGridDataFrame.im(kde_hotelsSG_bw.km)
+spplot(gridded_kde_hotelsSG_bw.km)
+```
+
+Analysis: The above density map shows a clearer visualization of the density of hotels using grid. We can see that south-east area near the central have higher density as seen on the pink grid on the map, and there are also many light blue grid at the south-east region near central area. There are some hotels (individual blue grid) scatter near east and west area as well.
+
+##### 5.1.1.2.4 Plot raster on osm
+
+The following code chunk converts grid object into raster using raster function of raster package, and plot raster with tmap.
 
 ```{r}
 kde_hotelsSG_bw <- density(hotelsSG_ppp,
@@ -789,16 +804,7 @@ kde_hotelsSG_bw <- density(hotelsSG_ppp,
                             kernel="gaussian")
 
 gridded_kde_hotelsSG_bw <- as.SpatialGridDataFrame.im(kde_hotelsSG_bw)
-spplot(gridded_kde_hotelsSG_bw)
-```
 
-Analysis: The above density map shows a clearer visualization of the density of hotels using grid. We can see that south-east area near the central have higher density as seen on the pink grid on the map, and there are also many light blue grid at the south-east region near central area. There are some hotels (individual blue grid) scatter near east and west area as well.
-
-##### 5.1.1.2.4 Convert grid object into raster, assign project system and plot raster
-
-The following code chunk converts grid object into raster using raster function of raster package, and plot raster with tmap.
-
-```{r}
 kde_hotelsSG_bw_raster <- raster(gridded_kde_hotelsSG_bw)
 projection(kde_hotelsSG_bw_raster) <- CRS("+init=EPSG:3414")
 
@@ -844,9 +850,20 @@ plot(mrtlrtSG_ppp, main="Point Map")
 
 Analysis: From the kde map and point map above, we can see that the mrt and lrt are available at almost every region. Area with higher density of mrt and lrt are North-East, North-West and Central South region as shown by the pink orange patch on the kde map and the black patches on the point map. 
 
-##### 5.1.1.3.3 Convert KDE output into grid object
+##### 5.1.1.3.3 Convert KDE output into grid object in km
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_mrtlrtSG_bw.km <- as.SpatialGridDataFrame.im(kde_mrtlrtSG_bw.km)
+spplot(gridded_kde_mrtlrtSG_bw.km)
+```
+
+Analysis: The above density map shows a clearer visualization of the density of Mrt and Lrt using grid. We can see that the Mrt and Lrt are available almost every region in Singapore as represented by the light blue grid on the map. The north-east, north-west and central south area have higher density of Mrt and Lrt as seen by the pink to yellow grid cluster on the map.
+
+##### 5.1.1.3.4 Plot raster on osm
+
+The following code chunk converts grid object into raster using raster function of raster package, and plot raster using tmap.
 
 ```{r}
 kde_mrtlrtSG_bw <- density(mrtlrtSG_ppp,
@@ -855,16 +872,7 @@ kde_mrtlrtSG_bw <- density(mrtlrtSG_ppp,
                             kernel="gaussian")
 
 gridded_kde_mrtlrtSG_bw <- as.SpatialGridDataFrame.im(kde_mrtlrtSG_bw)
-spplot(gridded_kde_mrtlrtSG_bw)
-```
 
-Analysis: The above density map shows a clearer visualization of the density of Mrt and Lrt using grid. We can see that the Mrt and Lrt are available almost every region in Singapore as represented by the light blue grid on the map. The north-east, north-west and central south area have higher density of Mrt and Lrt as seen by the pink to yellow grid cluster on the map.
-
-##### 5.1.1.3.4 Convert grid object into raster, assign project system and plot raster
-
-The following code chunk converts grid object into raster using raster function of raster package, and plot raster using tmap.
-
-```{r}
 kde_mrtlrtSG_bw_raster <- raster(gridded_kde_mrtlrtSG_bw)
 projection(kde_mrtlrtSG_bw_raster) <- CRS("+init=EPSG:3414")
 
@@ -910,9 +918,20 @@ plot(tourismSG_ppp, main="Point Map")
 
 Analysis: From the kde map and point map above, we can see that the south-east region near the central area have higher density of tourist attraction as shown on the pink spots in kde map and the black patches in the point map. In addition, there are some tourist attractions in north, west and east as shown by the individual point on the point map.
 
-##### 5.1.1.4.3 Convert KDE output into grid object
+##### 5.1.1.4.3 Convert KDE output into grid object in km
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_tourismSG_bw.km <- as.SpatialGridDataFrame.im(kde_tourismSG_bw.km)
+spplot(gridded_kde_tourismSG_bw.km)
+```
+
+Analysis: The above density map shows a clearer visualization of the density of tourist attraction in Singapore using grid. We can see that there are a few attractions in the north, west and east as seen by the light blue grid on the map. The south central area have high density of tourist attractions as seen by the pink yellow grid on the map.
+
+##### 5.1.1.4.4 Plot raster on osm
+
+The following code chunk converts grid object into raster using raster function of raster package, and plot raster using tmap.
 
 ```{r}
 kde_tourismSG_bw <- density(tourismSG_ppp,
@@ -921,16 +940,7 @@ kde_tourismSG_bw <- density(tourismSG_ppp,
                             kernel="gaussian")
 
 gridded_kde_tourismSG_bw <- as.SpatialGridDataFrame.im(kde_tourismSG_bw)
-spplot(gridded_kde_tourismSG_bw)
-```
 
-Analysis: The above density map shows a clearer visualization of the density of tourist attraction in Singapore using grid. We can see that there are a few attractions in the north, west and east as seen by the light blue grid on the map. The south central area have high density of tourist attractions as seen by the pink yellow grid on the map.
-
-##### 5.1.1.4.4 Convert grid object into raster, assign project system and plot raster
-
-The following code chunk converts grid object into raster using raster function of raster package, and plot raster using tmap.
-
-```{r}
 kde_tourismSG_bw_raster <- raster(gridded_kde_tourismSG_bw)
 projection(kde_tourismSG_bw_raster) <- CRS("+init=EPSG:3414")
 
@@ -961,11 +971,13 @@ plot(kde_tourismSG_bw.km, main = "Tourist Attraction")
 
 From the above, we can see that the common area with high density (in red and yellow) of airbnb, hotel, mrt and tourist attraction are concentrated around the south east area near the central region.
 
-###### 5.1.1.5.2.2 Comparing Spatial Point Patterns using KDE
+#### 5.1.1.6 Comparing Spatial Point Patterns using KDE
 
-Extract Study Area
+From the Airbnb kde map above, we noticed that areas such as Kallang, Geylang, Outram and Downtown Core have a higher density as shown by the darker purple. Hence, we will look into these areas.
 
-The following code chunk extracts the target areas (Kallang, River Valley, Novena, Rochor).
+##### 5.1.1.6.1 Extract Study Area
+
+The following code chunk extracts the target areas (Kallang, Geylang, Outram, Downtown Core).
 
 ```{r}
 kl = mpsz[mpsz@data$PLN_AREA_N == "KALLANG",]
@@ -974,7 +986,7 @@ ot = mpsz[mpsz@data$PLN_AREA_N == "OUTRAM",]
 dc = mpsz[mpsz@data$PLN_AREA_N == "DOWNTOWN CORE",]
 ```
 
-Plot target areas
+##### 5.1.1.6.2 Plot target areas
 
 The following code chunk plots the target areas side by side in 2x2 using par function of graphics package and plot functions of base R package. 
 
@@ -986,7 +998,7 @@ plot(ot, main = "OUTRAM")
 plot(dc, main = "DOWNTOWN CORE")
 ```
 
-Convert Spatial Polygons Data Fraeme into generic SP format
+##### 5.1.1.6.3 Convert Spatial Polygons Data Fraeme into generic SP format
 
 The following code chunk converts the four SpatialPolygonsDataFrame layers into generic spatialpolygons layers.
 
@@ -997,9 +1009,9 @@ ot_sp = as(ot, "SpatialPolygons")
 dc_sp = as(dc, "SpatialPolygons")
 ```
 
-Create owin object for each target area
+##### 5.1.1.6.4 Create owin object for each target area
 
-The following code chunk converst the SpatialPolygons objects into owin objects required by spatstat.
+The following code chunk convert the SpatialPolygons objects into owin objects required by spatstat.
 
 ```{r}
 kl_owin = as(kl_sp, "owin")
@@ -1008,7 +1020,7 @@ ot_owin = as(ot_sp, "owin")
 dc_owin = as(dc_sp, "owin")
 ```
 
-Combine airnbnb0619, hotels, mrt, tourist attractions points with owin of each target area
+##### 5.1.1.6.5 Combine airnbnb0619, hotels, mrt, tourist attractions points with owin of each target area
 
 The following code chunk extracts airnbnb0619, hotels, mrt and tourist attractions within each specific region.
 
@@ -1034,7 +1046,7 @@ tourism_ot_ppp = tourism_ppp_jit[ot_owin]
 tourism_dc_ppp = tourism_ppp_jit[dc_owin]
 ```
 
-Rescale from m to km
+##### 5.1.1.6.6 Rescale from m to km
 
 The following code chunk transform the unit from m to km using rescale function.
 
@@ -1060,9 +1072,9 @@ tourism_ot_ppp.km = rescale(tourism_ot_ppp, 1000, "km")
 tourism_dc_ppp.km = rescale(tourism_dc_ppp, 1000, "km")
 ```
 
-Airbnb comparison by neighbourhood
+##### 5.1.1.6.7 Airbnb comparison by area in km
 
-The following code chunk plots airbnb within each neigbourhood using plot and density functions with sigma set to bw.diggle and kernel set to gaussian.
+The following code chunk plots airbnb within each area using plot and density functions with sigma set to bw.diggle and kernel set to gaussian.
 
 ```{r}
 par(mfrow=c(2,2))
@@ -1091,9 +1103,9 @@ plot(density(airbnb0619_dc_ppp.km,
 Analysis: From the comparison, we noticed that the scale range for each region are different. For example, Kallang have a larger scale range from 0 - 2500 as compared to Rochor with a smaller scale range of 100 - 700. In Kallang, Airbnb are denser around the north-west area with high density of around 1500 to 2500. In River Valley, Airbnb are denser at the south-east area with high density of around 600 to 1400. In Novena, the east area have higher density of Airbnb of around 600 to 1200. In Rochor, the outer areas of the region have high density of Airbnb at about 400 to 700.
 
 
-Airbnb raster within neighbourhood
+##### 5.1.1.6.8 Airbnb raster within area
 
-Kallang
+###### 5.1.1.6.8.1 Kallang
 
 ```{r}
 kl_bb <- getbb("kallang singapore", format_out = "sf_polygon")
@@ -1109,8 +1121,6 @@ gridded_kde_airbnb0619_kl_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_kl_bw)
 kde_airbnb0619_kl_bw_raster <- raster(gridded_kde_airbnb0619_kl_bw)
 projection(kde_airbnb0619_kl_bw_raster) <- CRS("+init=EPSG:3414")
 
-tmap_mode("plot")
-
 tm_shape(kl_bb_osm) + 
   tm_rgb() +
   tm_shape(kde_airbnb0619_kl_bw_raster) + 
@@ -1118,7 +1128,7 @@ tm_shape(kl_bb_osm) +
   tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
 ```
 
-Geylang
+###### 5.1.1.6.8.2 Geylang
 
 ```{r}
 gl_bb <- getbb("geylang singapore", format_out = "sf_polygon")
@@ -1134,8 +1144,6 @@ gridded_kde_airbnb0619_gl_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_gl_bw)
 kde_airbnb0619_gl_bw_raster <- raster(gridded_kde_airbnb0619_gl_bw)
 projection(kde_airbnb0619_gl_bw_raster) <- CRS("+init=EPSG:3414")
 
-tmap_mode("plot")
-
 tm_shape(gl_bb_osm) + 
   tm_rgb() +
   tm_shape(kde_airbnb0619_gl_bw_raster) + 
@@ -1143,8 +1151,7 @@ tm_shape(gl_bb_osm) +
   tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
 ```
 
-
-Outram
+###### 5.1.1.6.8.3 Outram
 
 ```{r}
 ot_bb <- getbb("outram singapore", format_out = "sf_polygon")
@@ -1160,8 +1167,6 @@ gridded_kde_airbnb0619_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_ot_bw)
 kde_airbnb0619_ot_bw_raster <- raster(gridded_kde_airbnb0619_ot_bw)
 projection(kde_airbnb0619_ot_bw_raster) <- CRS("+init=EPSG:3414")
 
-tmap_mode("plot")
-
 tm_shape(ot_bb_osm) + 
   tm_rgb() +
   tm_shape(kde_airbnb0619_ot_bw_raster) + 
@@ -1169,7 +1174,7 @@ tm_shape(ot_bb_osm) +
   tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
 ```
 
-Downtown Core
+###### 5.1.1.6.8.4 Downtown Core
 
 ```{r}
 dc_bb <- getbb("downtown core singapore", format_out = "sf_polygon")
@@ -1185,8 +1190,6 @@ gridded_kde_airbnb0619_dc_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_dc_bw)
 kde_airbnb0619_dc_bw_raster <- raster(gridded_kde_airbnb0619_dc_bw)
 projection(kde_airbnb0619_dc_bw_raster) <- CRS("+init=EPSG:3414")
 
-tmap_mode("plot")
-
 tm_shape(dc_bb_osm) + 
   tm_rgb() +
   tm_shape(kde_airbnb0619_dc_bw_raster) + 
@@ -1194,8 +1197,9 @@ tm_shape(dc_bb_osm) +
   tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
 ```
 
+##### 5.1.1.6.9 Airbnb, Hotels, Mrt, Tourist Attraction in each area in km
 
-Comparison within Kallang
+###### 5.1.1.6.9.1 Kallang
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Kallang.
 
@@ -1209,7 +1213,7 @@ plot(tourism_kl_ppp.km, main = "Tourist Attraction")
 
 Analysis: Even though there are some hotels, there are still many airbnb in Kallang. There are a few MRT stations and tourist attrations in Kallang, which may be the reason to the many airbnb located in this area.
 
-Comparison within Geylang
+###### 5.1.1.6.9.2 Geylang
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Geylang.
 
@@ -1223,7 +1227,7 @@ plot(tourism_gl_ppp.km, main = "Tourist Attraction")
 
 Analysis: Even though there are no tourist attraction and Mrt in River Valley, there are still many airbnb. There are only one hotel and it may be the reason for the large number of airbnb in the area since there are lesser competition.
 
-Comparison within Outram
+###### 5.1.1.6.9.3 Outram
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Outram.
 
@@ -1237,7 +1241,7 @@ plot(tourism_ot_ppp.km, main = "Tourist Attraction")
 
 Analysis: Even though there are a few hotel in Novena, there are many airbnb. The accessibility of the two MRT and one tourist attraction can be the reason to the high number of airbnb in Novena.
 
-Comparison within Downtown Core
+###### 5.1.1.6.9.4 Downtown Core
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Downtown Core.
 
@@ -1360,7 +1364,7 @@ clarkevans.test(airbnb0619_dc_ppp,
 Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Rochor are randomly distributed.
 
 
-Overall, we can conclude that airbnb in the four areas are not randomly distributed. For further analysis, we will narrow down to two areas, River valley and Rochor because they have R above 0.8, which is near 1. When R is nearer to 1, the distribution are likely random. Hence, we are interested to further analyse the distribution of airbnb within these two region.
+Overall, we can conclude that airbnb in the four areas are not randomly distributed. For further analysis, we will narrow down to two areas, Kallang and Outram because they have higher R as compared to the other area, with Outram having an R value above 0.7, which is nearer to 1. When R is nearer to 1, the distribution are likely to be random. Hence, we are interested to further analyse the distribution of airbnb within these two region.
 
 ### 5.2.2 G-FUNCTION
 
@@ -1433,7 +1437,7 @@ plot(G_RC.csr)
 ```
 
 
-### F-FUNCTION
+### 5.2.3 F-FUNCTION
 
 The F function estimates the empty space function F(r) or its hazard rate h(r) from a point pattern in a window of arbitrary shape.
 
@@ -1504,7 +1508,7 @@ The following code chunk plots the csr
 plot(F_RC.csr)
 ```
 
-### K-FUNCTION
+### 5.2.4 K-FUNCTION
 
 K-function measures the number of events found up to a given distance of any particular event.
 
@@ -1575,7 +1579,7 @@ The following code chunk plots the csr
 plot(K_RC.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
 ```
 
-### L-FUNCTION
+### 5.2.5 L-FUNCTION
 
 #### River Valley
 
@@ -1642,4 +1646,733 @@ The following code chunk plots the csr
 
 ```{r eval=FALSE}
 plot(L_RC.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+
+# 6 Section B: Impact of COVID-19
+
+## 6.1 Exploratory Spatial Data Analysis
+
+### 6.1.1 Kernel density maps
+
+#### 6.1.1.1 Airbnb0721 listings
+
+##### 6.1.1.2.1 Rescale KDE values
+
+The following code chunk rescale the KDE value of airbnb0721SG_ppp using rescale function of spatstat from meter to kilometer.
+
+```{r}
+airbnb0721SG_ppp.km <- rescale(airbnb0721SG_ppp, 1000, "km")
+```
+
+##### 6.1.1.2.2 KDE Map in km
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method
+5. plot function of base R package to plot the kde map
+
+```{r}
+kde_airbnb0721SG_bw.km <- density(airbnb0721SG_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+plot(kde_airbnb0721SG_bw.km, main = "KDE Map")
+```
+
+##### 6.1.1.2.3 Convert KDE output into grid object in km
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
+
+```{r}
+gridded_kde_airbnb0721SG_bw.km <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_bw.km)
+spplot(gridded_kde_airbnb0721SG_bw.km)
+```
+
+##### 6.1.1.2.4 Convert into raster
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_airbnb0721SG_bw <- density(airbnb0721SG_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+gridded_kde_airbnb0721SG_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_bw)
+
+kde_airbnb0721SG_bw_raster <- raster(gridded_kde_airbnb0721SG_bw)
+projection(kde_airbnb0721SG_bw_raster) <- CRS("+init=EPSG:3414")
+```
+
+
+
+#### 6.1.1.2 Comparison between Airbnb0619 and Airbnb0721
+
+##### 6.1.1.2.1 KDE Map Comparison
+
+```{r}
+par(mfrow=c(1,2))
+plot(kde_airbnb0619SG_bw.km, main = "Airbnb 2019")
+plot(kde_airbnb0721SG_bw.km, main = "Airbnb 2021")
+```
+
+From the KDE map, the south-east region still have higher density in 2021. However, we notice the density of Airbnb have reduced as seen from the scale. It reduced from range 0-1500 in 2019 to range 0-1000 in 2021. We can conclude that Covid-19 did impact the Airbnb listing in Singapore from 2019 to 2021.
+
+#### 6.1.1.3 Comparison between Airbnb0619 and Airbnb0721 by Room Type
+
+##### 6.1.1.3.1 Data Wrangling
+
+###### 6.1.1.3.1.1 Determine the unique room type
+
+The following code checks the unique room type using unique features of base R
+
+```{r}
+unique(airbnb0619_sf$room_type)
+```
+
+We have determined that the unique room types are Private room, Entire home/apt and Shared room for Airbnb 2019.
+
+
+```{r}
+unique(airbnb0721_sf$room_type)
+```
+
+We have determined that the unique room types are Private room, Entire home/apt, Shared room and Hotel room for Airbnb 2021.
+
+###### 6.1.1.3.1.2 Filter each room type from SpatialPointsDataFrame
+
+The following code chunk filters each room type for both year.
+
+```{r}
+airbnb0619_pte = airbnb0619[airbnb0619@data$room_type == "Private room",]
+airbnb0619_ent = airbnb0619[airbnb0619@data$room_type == "Entire home/apt",]
+airbnb0619_sh = airbnb0619[airbnb0619@data$room_type == "Shared room",]
+airbnb0721_pte = airbnb0721[airbnb0721@data$room_type == "Private room",]
+airbnb0721_ent = airbnb0721[airbnb0721@data$room_type == "Entire home/apt",]
+airbnb0721_sh = airbnb0721[airbnb0721@data$room_type == "Shared room",]
+airbnb0721_ht = airbnb0721[airbnb0721@data$room_type == "Hotel room",]
+```
+
+```{r}
+airbnb0721_sh
+```
+
+Notice that the data are in SpatialPointsDataFrame format
+
+###### 6.1.1.3.1.3 Converting the Spatial* class into generic sp format
+
+Next, we will convert Spatial* classes into Spatial object so that we can convert it into ppp object.
+
+The following code chunk converts Spatial* classes into generic sp format using as function which sets the classes to their respective sp format. 
+
+```{r}
+airbnb0619_pte_sp <- as(airbnb0619_pte, "SpatialPoints")
+airbnb0619_ent_sp <- as(airbnb0619_ent, "SpatialPoints")
+airbnb0619_sh_sp <- as(airbnb0619_sh, "SpatialPoints")
+airbnb0721_pte_sp <- as(airbnb0721_pte, "SpatialPoints")
+airbnb0721_ent_sp <- as(airbnb0721_ent, "SpatialPoints")
+airbnb0721_sh_sp <- as(airbnb0721_sh, "SpatialPoints")
+airbnb0721_ht_sp <- as(airbnb0721_ht, "SpatialPoints")
+```
+
+
+###### 6.1.1.3.1.4 Converting the generic sp format into spatstat’s ppp format
+
+We will next convert the spatial data into spatstat's ppp format.
+
+The following code chunk converts spatial data into spatstat's ppp format using as function. 
+
+```{r}
+airbnb0619_pte_ppp <- as(airbnb0619_pte_sp, "ppp")
+airbnb0619_ent_ppp <- as(airbnb0619_ent_sp, "ppp")
+airbnb0619_sh_ppp <- as(airbnb0619_sh_sp, "ppp")
+airbnb0721_pte_ppp <- as(airbnb0721_pte_sp, "ppp")
+airbnb0721_ent_ppp <- as(airbnb0721_ent_sp, "ppp")
+airbnb0721_sh_ppp <- as(airbnb0721_sh_sp, "ppp")
+airbnb0721_ht_ppp <- as(airbnb0721_ht_sp, "ppp")
+```
+
+###### 6.1.1.3.1.5 Check for duplicates in each ppp's objects
+
+The following code chunk use any and duplicated function of base R package to check for duplicates, and sum up the count of duplicated points using sum function of base R package and multiplicity function of spatstat package.
+
+```{r}
+any(duplicated(airbnb0619_pte_ppp))
+sum(multiplicity(airbnb0619_pte_ppp) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0619_ent_ppp))
+sum(multiplicity(airbnb0619_ent_ppp) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0619_sh_ppp))
+sum(multiplicity(airbnb0619_sh_ppp) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0721_pte_ppp))
+sum(multiplicity(airbnb0721_pte_ppp) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0721_ent_ppp))
+sum(multiplicity(airbnb0721_ent_ppp) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0721_sh_ppp))
+sum(multiplicity(airbnb0721_sh_ppp) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0721_ht_ppp))
+sum(multiplicity(airbnb0721_ht_ppp) > 1)
+```
+
+###### 6.1.1.3.1.6 Handling Duplicates
+
+We will use jittering to handle duplicates so that we will not lose useful points. Jittering adds a small perturbation to the duplicated points so that they do not occupy the exact same space.
+
+The following code chunk uses rjitter function of spatstat to jitter the ppp object with duplicates.
+
+```{r}
+airbnb0619_ent_ppp_jit <- rjitter(airbnb0619_ent_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+airbnb0619_sh_ppp_jit <- rjitter(airbnb0619_sh_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+airbnb0721_pte_ppp_jit <- rjitter(airbnb0721_pte_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+airbnb0721_ent_ppp_jit <- rjitter(airbnb0721_ent_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+airbnb0721_sh_ppp_jit <- rjitter(airbnb0721_sh_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+airbnb0721_ht_ppp_jit <- rjitter(airbnb0721_ht_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+```
+
+###### 6.1.1.3.1.7 Check if duplicates still exist
+
+```{r}
+any(duplicated(airbnb0619_ent_ppp_jit))
+sum(multiplicity(airbnb0619_ent_ppp_jit) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0619_sh_ppp_jit))
+sum(multiplicity(airbnb0619_sh_ppp_jit) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0721_pte_ppp_jit))
+sum(multiplicity(airbnb0721_pte_ppp_jit) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0721_ent_ppp_jit))
+sum(multiplicity(airbnb0721_ent_ppp_jit) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0721_sh_ppp_jit))
+sum(multiplicity(airbnb0721_sh_ppp_jit) > 1)
+```
+
+```{r}
+any(duplicated(airbnb0721_ht_ppp_jit))
+sum(multiplicity(airbnb0721_ht_ppp_jit) > 1)
+```
+
+We can confirm that there are no duplicated points after jittering.
+
+###### 6.1.1.3.1.8 Combining point events object and owin object
+
+The following code chunk combines the point objects with the owin object into one ppp object class.
+
+```{r}
+airbnb0619SG_pte_ppp = airbnb0619_pte_ppp[sg_owin]
+airbnb0619SG_ent_ppp = airbnb0619_ent_ppp_jit[sg_owin]
+airbnb0619SG_sh_ppp = airbnb0619_sh_ppp_jit[sg_owin]
+airbnb0721SG_pte_ppp = airbnb0721_pte_ppp_jit[sg_owin]
+airbnb0721SG_ent_ppp = airbnb0721_ent_ppp_jit[sg_owin]
+airbnb0721SG_sh_ppp = airbnb0721_sh_ppp_jit[sg_owin]
+airbnb0721SG_ht_ppp = airbnb0721_ht_ppp_jit[sg_owin]
+```
+
+###### 6.1.1.3.1.9 Rescale KDE values
+
+The following code chunk rescale the KDE value of mrtlrtSG_ppp using rescale function of spatstat from meter to kilometer.
+
+```{r eval=FALSE}
+airbnb0619SG_pte_ppp.km <- rescale(airbnb0619SG_pte_ppp, 1000, "km")
+airbnb0619SG_ent_ppp.km <- rescale(airbnb0619SG_ent_ppp, 1000, "km")
+airbnb0619SG_sh_ppp.km <- rescale(airbnb0619SG_sh_ppp, 1000, "km")
+airbnb0721SG_pte_ppp.km <- rescale(airbnb0721SG_pte_ppp, 1000, "km")
+airbnb0721SG_ent_ppp.km <- rescale(airbnb0721SG_ent_ppp, 1000, "km")
+airbnb0721SG_sh_ppp.km <- rescale(airbnb0721SG_sh_ppp, 1000, "km")
+airbnb0721SG_ht_ppp.km <- rescale(airbnb0721SG_ht_ppp, 1000, "km")
+```
+
+###### 6.1.1.3.1.9 KDE
+
+1. The following code chunk computes kernel density using density function of spatstat package.
+2. The code first takes in the ppp object variable in km.
+3. bw.diggle automatic bandwidth method to detect a tight cluster
+4. smoothing kernel is set to default gaussian method
+
+```{r eval=FALSE}
+kde_airbnb0619SG_pte_bw.km <- density(airbnb0619SG_pte_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0619SG_ent_bw.km <- density(airbnb0619SG_ent_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0619SG_sh_bw.km <- density(airbnb0619SG_sh_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0721SG_pte_bw.km <- density(airbnb0721SG_pte_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0721SG_ent_bw.km <- density(airbnb0721SG_ent_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0721SG_sh_bw.km <- density(airbnb0721SG_sh_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0721SG_ht_bw.km <- density(airbnb0721SG_ht_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+```
+
+```{r}
+kde_airbnb0619SG_pte_bw <- density(airbnb0619SG_pte_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0619SG_ent_bw <- density(airbnb0619SG_ent_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0619SG_sh_bw <- density(airbnb0619SG_sh_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0721SG_pte_bw <- density(airbnb0721SG_pte_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0721SG_ent_bw <- density(airbnb0721SG_ent_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0721SG_sh_bw <- density(airbnb0721SG_sh_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+
+kde_airbnb0721SG_ht_bw <- density(airbnb0721SG_ht_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian")
+```
+
+###### 6.1.1.3.1.10 Convert KDE output into grid object
+
+The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools
+
+```{r eval=FALSE}
+gridded_kde_airbnb0619SG_pte_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_pte_bw.km)
+gridded_kde_airbnb0619SG_ent_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_ent_bw.km)
+gridded_kde_airbnb0619SG_sh_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_sh_bw.km)
+gridded_kde_airbnb0721SG_pte_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_pte_bw.km)
+gridded_kde_airbnb0721SG_ent_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_ent_bw.km)
+gridded_kde_airbnb0721SG_sh_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_sh_bw.km)
+gridded_kde_airbnb0721SG_ht_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_ht_bw.km)
+```
+
+```{r}
+gridded_kde_airbnb0619SG_pte_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_pte_bw)
+gridded_kde_airbnb0619SG_ent_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_ent_bw)
+gridded_kde_airbnb0619SG_sh_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_sh_bw)
+gridded_kde_airbnb0721SG_pte_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_pte_bw)
+gridded_kde_airbnb0721SG_ent_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_ent_bw)
+gridded_kde_airbnb0721SG_sh_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_sh_bw)
+gridded_kde_airbnb0721SG_ht_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_ht_bw)
+```
+
+###### 6.1.1.3.1.11 Convert grid object into raster and assign project system
+
+The following code chunk converts grid object into raster using raster function of raster package
+
+```{r}
+kde_airbnb0619SG_pte_bw_raster <- raster(gridded_kde_airbnb0619SG_pte_bw)
+projection(kde_airbnb0619SG_pte_bw_raster) <- CRS("+init=EPSG:3414")
+
+kde_airbnb0619SG_ent_bw_raster <- raster(gridded_kde_airbnb0619SG_ent_bw)
+projection(kde_airbnb0619SG_ent_bw_raster) <- CRS("+init=EPSG:3414")
+
+kde_airbnb0619SG_sh_bw_raster <- raster(gridded_kde_airbnb0619SG_sh_bw)
+projection(kde_airbnb0619SG_sh_bw_raster) <- CRS("+init=EPSG:3414")
+
+kde_airbnb0721SG_pte_bw_raster <- raster(gridded_kde_airbnb0721SG_pte_bw)
+projection(kde_airbnb0721SG_pte_bw_raster) <- CRS("+init=EPSG:3414")
+
+kde_airbnb0721SG_ent_bw_raster <- raster(gridded_kde_airbnb0721SG_ent_bw)
+projection(kde_airbnb0721SG_ent_bw_raster) <- CRS("+init=EPSG:3414")
+
+kde_airbnb0721SG_sh_bw_raster <- raster(gridded_kde_airbnb0721SG_sh_bw)
+projection(kde_airbnb0721SG_sh_bw_raster) <- CRS("+init=EPSG:3414")
+
+kde_airbnb0721SG_ht_bw_raster <- raster(gridded_kde_airbnb0721SG_ht_bw)
+projection(kde_airbnb0721SG_ht_bw_raster) <- CRS("+init=EPSG:3414")
+```
+
+
+
+##### 6.1.1.3.2 KDE Map Comparison by Room type and Year
+
+The following code chunks plot KDE map of Airbnb 2019 and 2021 by each room types side by side.
+
+###### 6.1.1.3.2.1 Private Room
+
+```{r}
+tmap_mode("view")
+
+airbnb0619_pte_map <- tm_shape(kde_airbnb0619SG_pte_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+airbnb0721_pte_map <- tm_shape(kde_airbnb0721SG_pte_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+tmap_arrange(airbnb0619_pte_map, airbnb0721_pte_map)
+
+tmap_mode("plot")
+```
+
+Analysis: There is a slight decrease in private room airbnb from 2019 to 2021 as seen in 2021 that there are lesser red point. The scale of 2019 to 2021 descreased slightly.
+
+###### 6.1.1.3.2.2 Entire Home/Apt
+
+```{r}
+tmap_mode("view")
+
+airbnb0619_ent_map <- tm_shape(kde_airbnb0619SG_ent_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+airbnb0721_ent_map <- tm_shape(kde_airbnb0721SG_ent_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+tmap_arrange(airbnb0619_ent_map, airbnb0721_ent_map)
+
+tmap_mode("plot")
+```
+
+Analysis: The map shows high density of airbnb in south-east region near central for both 2019 and 2021 as seen from the red marks on both map. However, there is a huge decrease in the number of Entire Home/Apt airbnb from 2019 to 2021 as seen on the scale. It decreased from 0-1000 in 2019 to 0-250 in 2021.
+
+###### 6.1.1.3.2.3 Shared Room
+
+```{r}
+tmap_mode("view")
+
+airbnb0619_sh_map <- tm_shape(kde_airbnb0619SG_sh_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+airbnb0721_sh_map <- tm_shape(kde_airbnb0721SG_sh_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+tmap_arrange(airbnb0619_sh_map, airbnb0721_sh_map)
+
+tmap_mode("plot")
+```
+
+Analysis: The map shows high density of airbnb in south-east region near central for both 2019 and 2021 as seen from the red marks on both map. However, there is a significant decrease in the number of Shared Room from 2019 to 2021 as seen on the scale. It ranges from 0-400 in 2019 and decrease to 0-80 in 2021.
+
+###### 6.1.1.3.2.4 Hotel Room
+
+```{r}
+tmap_mode("view")
+
+tm_shape(kde_airbnb0721SG_ht_bw_raster) + 
+    tm_raster("v", palette = "Purples", alpha = 0.7) +
+    tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+    tm_basemap("OpenStreetMap")
+
+tmap_mode("plot")
+```
+
+Analyis: Hotel room is a new room type in 2021.
+
+Overall, Chinatown has most happening 
+
+##### 6.1.1.3.3 KDE Map Comparison by Room type and Year (Specific Area)
+
+###### 6.1.1.3.3.1 Extract and plot study area
+
+The following code chunk
+
+1. Extracts the target areas (Outram)
+
+2. Convert Spatial Polygons Data Fraeme into generic SP format
+
+3. Create owin object for the target area
+
+```{r}
+ot = mpsz[mpsz@data$PLN_AREA_N == "OUTRAM",]
+ot_sp = as(ot, "SpatialPolygons")
+ot_owin = as(ot_sp, "owin")
+
+airbnb0619SG_pte_ot_ppp = airbnb0619_pte_ppp[ot_owin]
+airbnb0619SG_ent_ot_ppp = airbnb0619_ent_ppp_jit[ot_owin]
+airbnb0619SG_sh_ot_ppp = airbnb0619_sh_ppp_jit[ot_owin]
+airbnb0721SG_pte_ot_ppp = airbnb0721_pte_ppp_jit[ot_owin]
+airbnb0721SG_ent_ot_ppp = airbnb0721_ent_ppp_jit[ot_owin]
+airbnb0721SG_sh_ot_ppp = airbnb0721_sh_ppp_jit[ot_owin]
+airbnb0721SG_ht_ot_ppp = airbnb0721_ht_ppp_jit[ot_owin]
+```
+
+###### 6.1.1.3.3.2 Get bounding box and read osm
+
+The following code chunk 
+
+1. get bounding box of outram using getbb function of osmdata package
+
+2. set the crs to 3414 using st_set_crs function of st package
+
+3. read the OSM data using read_osm function of tmaptools
+
+```{r}
+ot_bb <- getbb("outram singapore", format_out = "sf_polygon")
+st_set_crs(ot_bb, 3414)
+ot_bb_osm <- read_osm(ot_bb, type = "osm")
+```
+
+###### 6.1.1.3.3.3 Calculate KDE
+
+The following code chunk calculates KDE using density function of raster package
+
+```{r}
+kde_airbnb0619_pte_ot_bw <- density(airbnb0619SG_pte_ot_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+kde_airbnb0619_ent_ot_bw <- density(airbnb0619SG_ent_ot_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+kde_airbnb0619_sh_ot_bw <- density(airbnb0619SG_sh_ot_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+kde_airbnb0721_pte_ot_bw <- density(airbnb0721SG_pte_ot_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+kde_airbnb0721_ent_ot_bw <- density(airbnb0721SG_ent_ot_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+kde_airbnb0721_sh_ot_bw <- density(airbnb0721SG_sh_ot_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+kde_airbnb0721_ht_ot_bw <- density(airbnb0721SG_ht_ot_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+```
+
+###### 6.1.1.3.3.4 Create RasterLayer object
+
+The following code chunk:
+
+1. converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools package
+
+2. create a RasterLayer object using raster function of raster package
+
+3. assign CRS of EPSG:3414 to the raster
+
+```{r}
+gridded_kde_airbnb0619_pte_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_pte_ot_bw)
+kde_airbnb0619_pte_ot_bw_raster <- raster(gridded_kde_airbnb0619_pte_ot_bw)
+projection(kde_airbnb0619_pte_ot_bw_raster) <- CRS("+init=EPSG:3414")
+
+gridded_kde_airbnb0619_ent_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_ent_ot_bw)
+kde_airbnb0619_ent_ot_bw_raster <- raster(gridded_kde_airbnb0619_ent_ot_bw)
+projection(kde_airbnb0619_ent_ot_bw_raster) <- CRS("+init=EPSG:3414")
+
+gridded_kde_airbnb0619_sh_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_sh_ot_bw)
+kde_airbnb0619_sh_ot_bw_raster <- raster(gridded_kde_airbnb0619_sh_ot_bw)
+projection(kde_airbnb0619_sh_ot_bw_raster) <- CRS("+init=EPSG:3414")
+
+gridded_kde_airbnb0721_pte_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721_pte_ot_bw)
+kde_airbnb0721_pte_ot_bw_raster <- raster(gridded_kde_airbnb0721_pte_ot_bw)
+projection(kde_airbnb0721_pte_ot_bw_raster) <- CRS("+init=EPSG:3414")
+
+gridded_kde_airbnb0721_ent_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721_ent_ot_bw)
+kde_airbnb0721_ent_ot_bw_raster <- raster(gridded_kde_airbnb0721_ent_ot_bw)
+projection(kde_airbnb0721_ent_ot_bw_raster) <- CRS("+init=EPSG:3414")
+
+gridded_kde_airbnb0721_sh_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721_sh_ot_bw)
+kde_airbnb0721_sh_ot_bw_raster <- raster(gridded_kde_airbnb0721_sh_ot_bw)
+projection(kde_airbnb0721_sh_ot_bw_raster) <- CRS("+init=EPSG:3414")
+
+gridded_kde_airbnb0721_ht_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0721_ht_ot_bw)
+kde_airbnb0721_ht_ot_bw_raster <- raster(gridded_kde_airbnb0721_ht_ot_bw)
+projection(kde_airbnb0721_ht_ot_bw_raster) <- CRS("+init=EPSG:3414")
+```
+
+###### 6.1.1.3.3.5 Private Room
+
+```{r}
+tmap_mode("view")
+
+airbnb0619_pte_ot_map <- tm_shape(kde_airbnb0619_pte_ot_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+airbnb0721_pte_ot_map <- tm_shape(kde_airbnb0721_pte_ot_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+tmap_arrange(airbnb0619_pte_ot_map, airbnb0721_pte_ot_map)
+
+tmap_mode("plot")
+```
+
+###### 6.1.1.3.3.6 Entire Home/Apt
+
+```{r}
+tmap_mode("view")
+
+airbnb0619_ent_ot_map <- tm_shape(kde_airbnb0619_ent_ot_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+airbnb0721_ent_ot_map <- tm_shape(kde_airbnb0721_ent_ot_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+tmap_arrange(airbnb0619_ent_ot_map, airbnb0721_ent_ot_map)
+
+tmap_mode("plot")
+```
+
+###### 6.1.1.3.3.7 Shared Room
+
+```{r}
+tmap_mode("view")
+
+airbnb0619_sh_ot_map <- tm_shape(kde_airbnb0619_sh_ot_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+airbnb0721_sh_ot_map <- tm_shape(kde_airbnb0721_sh_ot_bw_raster) + 
+                  tm_raster("v", palette = "Purples", alpha = 0.7) +
+                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+                  tm_basemap("OpenStreetMap")
+
+tmap_arrange(airbnb0619_sh_ot_map, airbnb0721_sh_ot_map)
+
+tmap_mode("plot")
+```
+
+###### 6.1.1.3.3.8 Hotel Room
+
+```{r}
+tmap_mode("view")
+
+tm_shape(kde_airbnb0721_ht_ot_bw_raster) + 
+  tm_raster("v", palette = "Purples", alpha = 0.7) +
+  tm_layout(legend.position = c("right", "bottom"), frame = FALSE) +
+  tm_basemap("OpenStreetMap")
+
+tmap_mode("plot")
+```
+
+
+
+
+
+## 6.2 Second-order Spatial Point Patterns Analysis
+
+### CONTINUE HERE
+
+# Others to consider...
+
+```{r eval=FALSE}
+intensity(rescale(airbnb0619SG_ot_ppp, 1000))
+```
+
+```{r eval=FALSE}
+intensity(rescale(airbnb0619SG_pte_ot_ppp, 1000))
+intensity(rescale(airbnb0619SG_ent_ot_ppp, 1000))
+intensity(rescale(airbnb0619SG_sh_ot_ppp, 1000))
+intensity(rescale(airbnb0721SG_pte_ot_ppp, 1000))
+intensity(rescale(airbnb0721SG_ent_ot_ppp, 1000))
+intensity(rescale(airbnb0721SG_sh_ot_ppp, 1000))
+intensity(rescale(airbnb0721SG_ht_ot_ppp, 1000))
+```
 ```
