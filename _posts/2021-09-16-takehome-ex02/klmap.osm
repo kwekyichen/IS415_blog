@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="Overpass API 0.7.56.9 76e5016d">
+  <note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>
+  <meta osm_base="2021-09-24T08:28:43Z"/>
+  <node id="512085059" lat="1.2994308" lon="103.8479026">
+    <tag k="addr:city" v="Singapore"/>
+    <tag k="addr:housenumber" v="2"/>
+    <tag k="addr:postcode" v="229233"/>
+    <tag k="addr:street" v="Handy Road"/>
+    <tag k="amenity" v="cinema"/>
+    <tag k="level" v="4;5"/>
+    <tag k="name" v="Cathay Cineplex"/>
+    <tag k="phone" v="+65 6337 8181"/>
+    <tag k="wikidata" v="Q36158682"/>
+  </node>
+  <node id="610738058" lat="1.2997852" lon="103.8541333">
+    <tag k="addr:city" v="Singapore"/>
+    <tag k="amenity" v="cinema"/>
+    <tag k="level" v="4"/>
+    <tag k="name" v="FilmGarde Bugis+"/>
+    <tag k="operator" v="FilmGarde Cineplex"/>
+    <tag k="wheelchair" v="yes"/>
+  </node>
+  <node id="1796770855" lat="1.3254267" lon="103.8510221">
+    <tag k="amenity" v="cinema"/>
+    <tag k="name" v="Shaw Theatres Balestier"/>
+    <tag k="operator" v="Shaw"/>
+    <tag k="temporary:access" v="no"/>
+  </node>
+  <node id="1892842189" lat="1.3046031" lon="103.8499868"/>
+  <node id="1892842198" lat="1.3046663" lon="103.8500294"/>
+  <node id="1892842202" lat="1.3047131" lon="103.8498239"/>
+  <node id="1892842207" lat="1.3047762" lon="103.8498665"/>
+  <node id="1892842216" lat="1.3049602" lon="103.8502279"/>
+  <node id="1892842220" lat="1.3050702" lon="103.8500649"/>
+  <node id="2402539697" lat="1.3009372" lon="103.8448504">
+    <tag k="amenity" v="cinema"/>
+    <tag k="name" v="GV Plaza"/>
+    <tag k="operator" v="Golden Village"/>
+  </node>
+  <node id="2402570389" lat="1.3114818" lon="103.8569550">
+    <tag k="amenity" v="cinema"/>
+    <tag k="level" v="4"/>
+    <tag k="name" v="GV City Square"/>
+    <tag k="operator" v="Golden Village"/>
+  </node>
+  <node id="2402576914" lat="1.3019677" lon="103.8763047">
+    <tag k="amenity" v="cinema"/>
+    <tag k="level" v="2-3"/>
+    <tag k="name" v="Film Garde Kallang Leisure Park"/>
+    <tag k="operator" v="Film Garde Cineplex"/>
+    <tag k="wheelchair" v="yes"/>
+  </node>
+  <node id="4560997433" lat="1.2949702" lon="103.8603172">
+    <tag k="addr:city" v="Singapore"/>
+    <tag k="addr:country" v="SG"/>
+    <tag k="addr:housenumber" v="3"/>
+    <tag k="addr:postcode" v="038983"/>
+    <tag k="addr:street" v="Temasek Boulevard"/>
+    <tag k="addr:unit" v="#03-373"/>
+    <tag k="alt_name" v="Golden Village"/>
+    <tag k="amenity" v="cinema"/>
+    <tag k="level" v="2"/>
+    <tag k="name" v="GV Suntec City"/>
+    <tag k="operator" v="Golden Village"/>
+    <tag k="screen" v="11"/>
+  </node>
+  <way id="178929350">
+    <nd ref="1892842207"/>
+    <nd ref="1892842220"/>
+    <nd ref="1892842216"/>
+    <nd ref="1892842198"/>
+    <nd ref="1892842189"/>
+    <nd ref="1892842202"/>
+    <nd ref="1892842207"/>
+    <tag k="addr:city" v="Singapore"/>
+    <tag k="addr:country" v="SG"/>
+    <tag k="addr:housenumber" v="2"/>
+    <tag k="addr:postcode" v="228673"/>
+    <tag k="addr:street" v="MacKenzie Road"/>
+    <tag k="amenity" v="cinema"/>
+    <tag k="building" v="yes"/>
+    <tag k="name" v="(Closed for Renovation) Rex Digital"/>
+    <tag k="source" v="Bing"/>
+  </way>
+</osm>
