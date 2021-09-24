@@ -53,7 +53,7 @@ The following code chunk install the following packages:
 - readr to import csv
 
 ```{r}
-packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'tidyr', 'readr', 'osmdata', 'prettymapr')
+packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'tidyr', 'readr', 'osmdata', 'tmaptools')
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
@@ -684,7 +684,7 @@ bw.diggle(airbnb0619SG_ppp.km)
 
 From the result above, since bw.diggle has the lowest sigma, we will be using it for the other ppp object in order to detect close cluster.
 
-##### 5.1.1.1.4 KDE Map and Point Map
+##### 5.1.1.1.4 KDE Map and Point Map in km
 
 1. The following code chunk computes kernel density using density function of spatstat package.
 2. The code first takes in the ppp object variable in km.
@@ -961,33 +961,685 @@ plot(kde_tourismSG_bw.km, main = "Tourist Attraction")
 
 From the above, we can see that the common area with high density (in red and yellow) of airbnb, hotel, mrt and tourist attraction are concentrated around the south east area near the central region.
 
-##### 5.1.1.5.2 Central Region
+###### 5.1.1.5.2.2 Comparing Spatial Point Patterns using KDE
 
-We will look into the central region
+Extract Study Area
 
-###### 5.1.1.5.2.1 Exploration with OpenStreetMap
+The following code chunk extracts the target areas (Kallang, River Valley, Novena, Rochor).
 
-The following code chunk first extract airbnb in the central region from airbnb0619_sf region.
+```{r}
+kl = mpsz[mpsz@data$PLN_AREA_N == "KALLANG",]
+gl = mpsz[mpsz@data$PLN_AREA_N == "GEYLANG",]
+ot = mpsz[mpsz@data$PLN_AREA_N == "OUTRAM",]
+dc = mpsz[mpsz@data$PLN_AREA_N == "DOWNTOWN CORE",]
+```
 
-tmap_mode is set to "view" for interaction mode and tm_basemap is set to "OpenStreetMap"
+Plot target areas
 
-centralairbnb0619 are plotted using tm_shape and tm_dots of tmap packages.
+The following code chunk plots the target areas side by side in 2x2 using par function of graphics package and plot functions of base R package. 
 
-tm_basemap function sets OpenStreetMap as the basemap.
+```{r}
+par(mfrow=c(2,2))
+plot(kl, main = "KALLANG")
+plot(gl, main = "GEYLANG")
+plot(ot, main = "OUTRAM")
+plot(dc, main = "DOWNTOWN CORE")
+```
+
+Convert Spatial Polygons Data Fraeme into generic SP format
+
+The following code chunk converts the four SpatialPolygonsDataFrame layers into generic spatialpolygons layers.
+
+```{r}
+kl_sp = as(kl, "SpatialPolygons")
+gl_sp = as(gl, "SpatialPolygons")
+ot_sp = as(ot, "SpatialPolygons")
+dc_sp = as(dc, "SpatialPolygons")
+```
+
+Create owin object for each target area
+
+The following code chunk converst the SpatialPolygons objects into owin objects required by spatstat.
+
+```{r}
+kl_owin = as(kl_sp, "owin")
+gl_owin = as(gl_sp, "owin")
+ot_owin = as(ot_sp, "owin")
+dc_owin = as(dc_sp, "owin")
+```
+
+Combine airnbnb0619, hotels, mrt, tourist attractions points with owin of each target area
+
+The following code chunk extracts airnbnb0619, hotels, mrt and tourist attractions within each specific region.
+
+```{r}
+airbnb0619_kl_ppp = airbnb0619_ppp_jit[kl_owin]
+airbnb0619_gl_ppp = airbnb0619_ppp_jit[gl_owin]
+airbnb0619_ot_ppp = airbnb0619_ppp_jit[ot_owin]
+airbnb0619_dc_ppp = airbnb0619_ppp_jit[dc_owin]
+
+hotels_kl_ppp = hotels_ppp_jit[kl_owin]
+hotels_gl_ppp = hotels_ppp_jit[gl_owin]
+hotels_ot_ppp = hotels_ppp_jit[ot_owin]
+hotels_dc_ppp = hotels_ppp_jit[dc_owin]
+
+mrtlrt_kl_ppp = mrtlrt_ppp[kl_owin]
+mrtlrt_gl_ppp = mrtlrt_ppp[gl_owin]
+mrtlrt_ot_ppp = mrtlrt_ppp[ot_owin]
+mrtlrt_dc_ppp = mrtlrt_ppp[dc_owin]
+
+tourism_kl_ppp = tourism_ppp_jit[kl_owin]
+tourism_gl_ppp = tourism_ppp_jit[gl_owin]
+tourism_ot_ppp = tourism_ppp_jit[ot_owin]
+tourism_dc_ppp = tourism_ppp_jit[dc_owin]
+```
+
+Rescale from m to km
+
+The following code chunk transform the unit from m to km using rescale function.
+
+```{r}
+airbnb0619_kl_ppp.km = rescale(airbnb0619_kl_ppp, 1000, "km")
+airbnb0619_gl_ppp.km = rescale(airbnb0619_gl_ppp, 1000, "km")
+airbnb0619_ot_ppp.km = rescale(airbnb0619_ot_ppp, 1000, "km")
+airbnb0619_dc_ppp.km = rescale(airbnb0619_dc_ppp, 1000, "km")
+
+hotels_kl_ppp.km = rescale(hotels_kl_ppp, 1000, "km")
+hotels_gl_ppp.km = rescale(hotels_gl_ppp, 1000, "km")
+hotels_ot_ppp.km = rescale(hotels_ot_ppp, 1000, "km")
+hotels_dc_ppp.km = rescale(hotels_dc_ppp, 1000, "km")
+
+mrtlrt_kl_ppp.km = rescale(mrtlrt_kl_ppp, 1000, "km")
+mrtlrt_gl_ppp.km = rescale(mrtlrt_gl_ppp, 1000, "km")
+mrtlrt_ot_ppp.km = rescale(mrtlrt_ot_ppp, 1000, "km")
+mrtlrt_dc_ppp.km = rescale(mrtlrt_dc_ppp, 1000, "km")
+
+tourism_kl_ppp.km = rescale(tourism_kl_ppp, 1000, "km")
+tourism_gl_ppp.km = rescale(tourism_gl_ppp, 1000, "km")
+tourism_ot_ppp.km = rescale(tourism_ot_ppp, 1000, "km")
+tourism_dc_ppp.km = rescale(tourism_dc_ppp, 1000, "km")
+```
+
+Airbnb comparison by neighbourhood
+
+The following code chunk plots airbnb within each neigbourhood using plot and density functions with sigma set to bw.diggle and kernel set to gaussian.
+
+```{r}
+par(mfrow=c(2,2))
+plot(density(airbnb0619_kl_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Kallang")
+plot(density(airbnb0619_gl_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Geylang")
+plot(density(airbnb0619_ot_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Outram")
+plot(density(airbnb0619_dc_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Downtown Core")
+```
+
+Analysis: From the comparison, we noticed that the scale range for each region are different. For example, Kallang have a larger scale range from 0 - 2500 as compared to Rochor with a smaller scale range of 100 - 700. In Kallang, Airbnb are denser around the north-west area with high density of around 1500 to 2500. In River Valley, Airbnb are denser at the south-east area with high density of around 600 to 1400. In Novena, the east area have higher density of Airbnb of around 600 to 1200. In Rochor, the outer areas of the region have high density of Airbnb at about 400 to 700.
+
+
+Airbnb raster within neighbourhood
+
+Kallang
+
+```{r}
+kl_bb <- getbb("kallang singapore", format_out = "sf_polygon")
+st_set_crs(kl_bb, 3414)
+kl_bb_osm <- read_osm(kl_bb, type = "osm")
+
+kde_airbnb0619_kl_bw <- density(airbnb0619_kl_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+gridded_kde_airbnb0619_kl_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_kl_bw)
+kde_airbnb0619_kl_bw_raster <- raster(gridded_kde_airbnb0619_kl_bw)
+projection(kde_airbnb0619_kl_bw_raster) <- CRS("+init=EPSG:3414")
+
+tmap_mode("plot")
+
+tm_shape(kl_bb_osm) + 
+  tm_rgb() +
+  tm_shape(kde_airbnb0619_kl_bw_raster) + 
+  tm_raster("v", palette = "Purples", alpha = 0.7) +
+  tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
+```
+
+Geylang
+
+```{r}
+gl_bb <- getbb("geylang singapore", format_out = "sf_polygon")
+st_set_crs(gl_bb, 3414)
+gl_bb_osm <- read_osm(gl_bb, type = "osm")
+
+kde_airbnb0619_gl_bw <- density(airbnb0619_gl_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+gridded_kde_airbnb0619_gl_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_gl_bw)
+kde_airbnb0619_gl_bw_raster <- raster(gridded_kde_airbnb0619_gl_bw)
+projection(kde_airbnb0619_gl_bw_raster) <- CRS("+init=EPSG:3414")
+
+tmap_mode("plot")
+
+tm_shape(gl_bb_osm) + 
+  tm_rgb() +
+  tm_shape(kde_airbnb0619_gl_bw_raster) + 
+  tm_raster("v", palette = "Purples", alpha = 0.7) +
+  tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
+```
+
+
+Outram
+
+```{r}
+ot_bb <- getbb("outram singapore", format_out = "sf_polygon")
+st_set_crs(ot_bb, 3414)
+ot_bb_osm <- read_osm(ot_bb, type = "osm")
+
+kde_airbnb0619_ot_bw <- density(airbnb0619_ot_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+gridded_kde_airbnb0619_ot_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_ot_bw)
+kde_airbnb0619_ot_bw_raster <- raster(gridded_kde_airbnb0619_ot_bw)
+projection(kde_airbnb0619_ot_bw_raster) <- CRS("+init=EPSG:3414")
+
+tmap_mode("plot")
+
+tm_shape(ot_bb_osm) + 
+  tm_rgb() +
+  tm_shape(kde_airbnb0619_ot_bw_raster) + 
+  tm_raster("v", palette = "Purples", alpha = 0.7) +
+  tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
+```
+
+Downtown Core
+
+```{r}
+dc_bb <- getbb("downtown core singapore", format_out = "sf_polygon")
+st_set_crs(dc_bb, 3414)
+dc_bb_osm <- read_osm(dc_bb, type = "osm")
+
+kde_airbnb0619_dc_bw <- density(airbnb0619_dc_ppp, 
+                              sigma=bw.diggle, 
+                               edge=TRUE, 
+                               kernel="gaussian")
+
+gridded_kde_airbnb0619_dc_bw <- as.SpatialGridDataFrame.im(kde_airbnb0619_dc_bw)
+kde_airbnb0619_dc_bw_raster <- raster(gridded_kde_airbnb0619_dc_bw)
+projection(kde_airbnb0619_dc_bw_raster) <- CRS("+init=EPSG:3414")
+
+tmap_mode("plot")
+
+tm_shape(dc_bb_osm) + 
+  tm_rgb() +
+  tm_shape(kde_airbnb0619_dc_bw_raster) + 
+  tm_raster("v", palette = "Purples", alpha = 0.7) +
+  tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
+```
+
+
+Comparison within Kallang
+
+The following code chunk plots airbnb, hotel, mrt and tourist attraction in Kallang.
+
+```{r}
+par(mfrow=c(2,2))
+plot(airbnb0619_kl_ppp.km, main = "Airbnb")
+plot(hotels_kl_ppp.km, main = "Hotel")
+plot(mrtlrt_kl_ppp.km, main = "Mrt")
+plot(tourism_kl_ppp.km, main = "Tourist Attraction")
+```
+
+Analysis: Even though there are some hotels, there are still many airbnb in Kallang. There are a few MRT stations and tourist attrations in Kallang, which may be the reason to the many airbnb located in this area.
+
+Comparison within Geylang
+
+The following code chunk plots airbnb, hotel, mrt and tourist attraction in Geylang.
+
+```{r}
+par(mfrow=c(2,2))
+plot(airbnb0619_gl_ppp.km, main = "Airbnb")
+plot(hotels_gl_ppp.km, main = "Hotel")
+plot(mrtlrt_gl_ppp.km, main = "Mrt")
+plot(tourism_gl_ppp.km, main = "Tourist Attraction")
+```
+
+Analysis: Even though there are no tourist attraction and Mrt in River Valley, there are still many airbnb. There are only one hotel and it may be the reason for the large number of airbnb in the area since there are lesser competition.
+
+Comparison within Outram
+
+The following code chunk plots airbnb, hotel, mrt and tourist attraction in Outram.
+
+```{r}
+par(mfrow=c(2,2))
+plot(airbnb0619_ot_ppp.km, main = "Airbnb")
+plot(hotels_ot_ppp.km, main = "Hotel")
+plot(mrtlrt_ot_ppp.km, main = "Mrt")
+plot(tourism_ot_ppp.km, main = "Tourist Attraction")
+```
+
+Analysis: Even though there are a few hotel in Novena, there are many airbnb. The accessibility of the two MRT and one tourist attraction can be the reason to the high number of airbnb in Novena.
+
+Comparison within Downtown Core
+
+The following code chunk plots airbnb, hotel, mrt and tourist attraction in Downtown Core.
+
+```{r}
+par(mfrow=c(2,2))
+plot(airbnb0619_dc_ppp.km, main = "Airbnb")
+plot(hotels_dc_ppp.km, main = "Hotel")
+plot(mrtlrt_dc_ppp.km, main = "Mrt")
+plot(tourism_dc_ppp.km, main = "Tourist Attraction")
+```
+
+Analysis: In Rochor, there are still many airbnb despite many hotels already available. The accessibility to a few MRTs and multiple tourist attractions may be the reason that many airbnb are located in Rochor.
+
+Overall, we can conclude that there are no direct relationship between airbnb and hotel, mrt and tourist attraction. There are region like River Valley with no tourist attractions and MRT and yet, there are still a high number of airbnb in that area. In addition, regardless of the number of hotel available in a region, we identified that the number of airbnb still remained high in these regions.
+
+
+## 5.2 Second-order Spatial Point Patterns Analysis
+
+### 5.2.1 Nearest Neighbour Analysis
+
+#### 5.2.1.1 Hypothesis
+
+We will perform the Clark-Evans test of aggregation for a spatial point pattern using clarkevans.test() of statspat.
+
+Test Hypothesis:
+
+H0 = The distribution of airbnbs are randomly distributed.
+
+H1 = The distribution of airbnbs are not randomly distributed.
+
+The 95% confident interval will be used.
+
+#### 5.2.1.2 Testing and Analysis
+
+##### 5.2.1.2.1 Testing spatial point patterns using Clark and Evans Test
+
+1. The following code chunk performs Clark-Evans test using clarkevans.test() of statspat.
+2. The spatial point pattern object is airbnb0619SG_ppp, Singapore airbnb listings in Singapore ppp object.
+3. Correction is set to none
+4. The clipping region is set to sg_owin
+5. The type of alternative for the hypothesis is clustered.
+6. The number of simulations is set to 99.
+
+```{r}
+clarkevans.test(airbnb0619SG_ppp,
+                correction="none",
+                clipregion="sg_owin",
+                alternative=c("clustered"),
+                nsim=99)
+```
+
+Analysis: R = 0.36 is less than 1, which means the distribution of airbnb in Singapore are likely clustered. The p-value of 0.01 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Singapore are randomly distributed.
+
+##### 5.2.1.2.2 Clark and Evans Test: Kallang
+
+1. The following code chunk performs Clark-Evans test of aggregation for airbnb in Kallang using clarkevans.test() of spatstat
+2. The clipping region is set to NULL
+3. The type of alternative for the hypothesis is two.sided
+4. The number of simulations is set to 999
+
+```{r}
+clarkevans.test(airbnb0619_kl_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Kallang are randomly distributed.
+
+##### 5.2.1.2.3 Clark and Evans Test: Geylang
+
+1. The following code chunk performs Clark-Evans test of aggregation for airbnb in Geylang using clarkevans.test() of spatstat
+2. The clipping region is set to NULL
+3. The type of alternative for the hypothesis is two.sided
+4. The number of simulations is set to 999
+
+```{r}
+clarkevans.test(airbnb0619_gl_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in River Valley are randomly distributed.
+
+##### 5.2.1.2.4 Clark and Evans Test: Outram
+
+1. The following code chunk performs Clark-Evans test of aggregation for airbnb in Outram using clarkevans.test() of spatstat
+2. The clipping region is set to NULL
+3. The type of alternative for the hypothesis is two.sided
+4. The number of simulations is set to 999
+
+```{r}
+clarkevans.test(airbnb0619_ot_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Novena are randomly distributed.
+
+##### 5.2.1.2.5 Clark and Evans Test: Downtown Core
+
+1. The following code chunk performs Clark-Evans test of aggregation for airbnb in Downtown Core using clarkevans.test() of spatstat
+2. The clipping region is set to NULL
+3. The type of alternative for the hypothesis is two.sided
+4. The number of simulations is set to 999
+
+```{r}
+clarkevans.test(airbnb0619_dc_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Rochor are randomly distributed.
+
+
+Overall, we can conclude that airbnb in the four areas are not randomly distributed. For further analysis, we will narrow down to two areas, River valley and Rochor because they have R above 0.8, which is near 1. When R is nearer to 1, the distribution are likely random. Hence, we are interested to further analyse the distribution of airbnb within these two region.
+
+### 5.2.2 G-FUNCTION
+
+The G function measures the distribution of the distances from an arbitrary event to its nearest event. 
+
+#### River Valley
+
+##### Compute G-Function Estimation
+
+The following code chunk computes G-function using Gest() of spatat package.
 
 ```{r eval=FALSE}
-centralairbnb0619 <- airbnb0619_sf[airbnb0619_sf$neighbourhood_group == "Central Region",]
-
-tmap_mode("view")
-
-tm_shape(centralairbnb0619) + 
-  tm_dots() +
-tm_basemap(leaflet::providers$OpenStreetMap)
+G_RV = Gest(airbnb0619_rv_ppp, correction = "border")
+plot(G_RV, xlim=c(0,150))
 ```
 
-From the map above, we can see that there are many Airbnbs located in Kallang, River Valley, Novena and Rochor.
+##### Complete Spatial Randomness Test
 
-```{r eval==FALSE}
-tmap_mode("plot")
+Hypothesis:
+
+Ho = The distribution of airbnb in River Valley are randomly distributed.
+
+H1= The distribution of airbnb in River Valley are not randomly distributed.
+
+The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+The following code chunk performs monta carlo simulation test using envelope() of spatstat package.
+
+```{r eval=FALSE}
+G_RV.csr <- envelope(airbnb0619_rv_ppp, Gest, nsim = 999)
 ```
 
+The following code chunk plots the csr
+
+```{r eval=FALSE}
+plot(G_RV.csr)
+```
+
+#### Rochor
+
+##### Compute G-Function Estimation
+
+The following code chunk computes G-function using Gest() of spatat package.
+
+```{r eval=FALSE}
+G_RC = Gest(airbnb0619_rc_ppp, correction = "border")
+plot(G_RC, xlim=c(0,150))
+```
+
+##### Complete Spatial Randomness Test
+
+Hypothesis:
+
+Ho = The distribution of airbnb in Rochor are randomly distributed.
+
+H1= The distribution of airbnb in Rochor are not randomly distributed.
+
+The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+The following code chunk performs monta carlo simulation test using envelope() of spatstat package.
+
+```{r eval=FALSE}
+G_RC.csr <- envelope(airbnb0619_rc_ppp, Gest, nsim = 999)
+```
+
+The following code chunk plots the csr
+
+```{r eval=FALSE}
+plot(G_RC.csr)
+```
+
+
+### F-FUNCTION
+
+The F function estimates the empty space function F(r) or its hazard rate h(r) from a point pattern in a window of arbitrary shape.
+
+#### River Valley
+
+##### Compute F-Function Estimation
+
+The following code chunk compute F-function using Fest() of spatat package.
+
+```{r eval=FALSE}
+F_RV = Fest(airbnb0619_rv_ppp)
+plot(F_RV)
+```
+
+##### Complete Spatial Randomness Test
+
+Hypothesis:
+
+Ho = The distribution of airbnb in River Valley are randomly distributed.
+
+H1= The distribution of airbnb in River Valley are not randomly distributed.
+
+The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+The following code chunk performs monta carlo simulation test using envelope() of spatstat package.
+
+```{r eval=FALSE}
+F_RV.csr <- envelope(airbnb0619_rv_ppp, Fest, nsim = 999)
+```
+
+The following code chunk plots the csr
+
+```{r eval=FALSE}
+plot(F_RV.csr)
+```
+
+
+#### Rochor
+
+##### Compute F-Function Estimation
+
+The following code chunk compute F-function using Fest() of spatat package.
+
+```{r eval=FALSE}
+F_RC = Fest(airbnb0619_rc_ppp)
+plot(F_RC)
+```
+
+##### Complete Spatial Randomness Test
+
+Hypothesis:
+
+Ho = The distribution of airbnb in Rochor are randomly distributed.
+
+H1= The distribution of airbnb in Rochor are not randomly distributed.
+
+The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+The following code chunk performs monta carlo simulation test using envelope() of spatstat package.
+
+```{r eval=FALSE}
+F_RC.csr <- envelope(airbnb0619_rc_ppp, Fest, nsim = 999)
+```
+
+The following code chunk plots the csr
+
+```{r eval=FALSE}
+plot(F_RC.csr)
+```
+
+### K-FUNCTION
+
+K-function measures the number of events found up to a given distance of any particular event.
+
+#### River Valley
+
+##### Compute K-Function Estimation
+
+The following code chunk compute K-function using Kest() of spatat package.
+
+```{r eval=FALSE}
+K_RV = Kest(airbnb0619_rv_ppp, correction = "Ripley")
+plot(K_RV, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+```
+
+##### Complete Spatial Randomness Test
+
+Hypothesis:
+
+Ho = The distribution of airbnb in River Valley are randomly distributed.
+
+H1= The distribution of airbnb in River Valley are not randomly distributed.
+
+The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+The following code chunk performs the test using envelope() of spatstat package.
+
+```{r eval=FALSE}
+K_RV.csr <- envelope(airbnb0619_rv_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+The following code chunk plots the csr
+
+```{r eval=FALSE}
+plot(K_RV.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+
+#### Rochor
+
+##### Compute K-Function Estimation
+
+The following code chunk compute K-function using Kest() of spatat package.
+
+```{r eval=FALSE}
+K_RC = Kest(airbnb0619_rc_ppp, correction = "Ripley")
+plot(K_RC, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+```
+
+##### Complete Spatial Randomness Test
+
+Hypothesis:
+
+Ho = The distribution of airbnb in Rochor are randomly distributed.
+
+H1= The distribution of airbnb in Rochor are not randomly distributed.
+
+The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+The following code chunk performs the test using envelope() of spatstat package.
+
+```{r eval=FALSE}
+K_RC.csr <- envelope(airbnb0619_rc_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+The following code chunk plots the csr
+
+```{r eval=FALSE}
+plot(K_RC.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+### L-FUNCTION
+
+#### River Valley
+
+##### Compute L-Function Estimation
+
+The following code chunk compute L-function using Lest() of spatat package.
+
+```{r eval=FALSE}
+L_RV = Lest(airbnb0619_rv_ppp, correction = "Ripley")
+plot(L_RV, . -r ~ r, ylab= "L(d)-r", xlab = "d(m)")
+```
+
+##### Complete Spatial Randomness Test
+
+Hypothesis:
+
+Ho = The distribution of airbnb in River Valley are randomly distributed.
+
+H1= The distribution of airbnb in River Valley are not randomly distributed.
+
+The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+The following code chunk performs the test using envelope() of spatstat package.
+
+```{r eval=FALSE}
+L_RV.csr <- envelope(airbnb0619_rv_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+The following code chunk plots the csr
+
+```{r eval=FALSE}
+plot(L_RV.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+
+#### Rochor
+
+##### Compute L-Function Estimation
+
+The following code chunk compute K-function using Lest() of spatat package.
+
+```{r eval=FALSE}
+L_RC = Lest(airbnb0619_rc_ppp, correction = "Ripley")
+plot(L_RC, . -r ~ r, ylab= "L(d)-r", xlab = "d(m)")
+```
+
+##### Complete Spatial Randomness Test
+
+Hypothesis:
+
+Ho = The distribution of airbnb in Rochor are randomly distributed.
+
+H1= The distribution of airbnb in Rochor are not randomly distributed.
+
+The null hypothesis will be rejected is p-value is smaller than alpha value of 0.001.
+
+The following code chunk performs the test using envelope() of spatstat package.
+
+```{r eval=FALSE}
+L_RC.csr <- envelope(airbnb0619_rc_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+The following code chunk plots the csr
+
+```{r eval=FALSE}
+plot(L_RC.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
