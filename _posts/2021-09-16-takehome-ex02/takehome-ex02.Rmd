@@ -51,9 +51,10 @@ The following code chunk install the following packages:
 - readr to import csv
 - osmdata to get bounding box of a given location name
 - tmaptools to read open street map data
+- ggplot2, ggtheme and plotly to plot interactive Cross-L map
 
 ```{r}
-packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'tidyr', 'readr', 'osmdata', 'tmaptools')
+packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'tidyr', 'readr', 'osmdata', 'tmaptools', 'ggplot2', 'ggthemes', 'plotly')
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
@@ -2469,7 +2470,7 @@ From the statistics above, Private room have the highest density of about 134 un
 
 ### 6.2.2 Cross L-Function
 
-Cross-type L-function computes the estimate of the cross-type K-function, and then applies the square root transformation. We will be looking at the relationship of different room types Airbnb located in the study area (Out), in 2019 and 2021. 
+Cross-type L-function computes the estimate of the cross-type K-function, and then applies the square root transformation. We will be looking at the relationship of different room types Airbnb located in the study area (Out), in 2019 and 2021. We will set.seed at each code chunk so that the output will be the same.
 
 #### 6.2.2.1 Relationship of Private Room and Shared Room Airbnb in 2019
 
@@ -2478,6 +2479,7 @@ Cross-type L-function computes the estimate of the cross-type K-function, and th
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62211)
 airbnb0619_ptsh_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Private room", j="Shared room", correction='border')
 plot(airbnb0619_ptsh_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2497,16 +2499,77 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62212)
 airbnb0619_ptsh_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Private room", j="Shared room", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0619_ptsh_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
 ```
 
-Analysis: The plot above shows that the observed L(r) line is below L(theo) from 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private room Airbnb and Shared room Airbnb in 2019 are spatially independent at 99.9% confident interval.
+```{r}
+title <- "Cross L function"
+
+Lcsr_df <- as.data.frame(airbnb0619_ptsh_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 160m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private room Airbnb and Shared room Airbnb in 2019 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.2 Relationship of Private Room and Entire Home/Apt Airbnb in 2019
 
@@ -2515,6 +2578,7 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62221)
 airbnb0619_ptent_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Private room", j="Entire home/apt", correction='border')
 plot(airbnb0619_ptent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2534,16 +2598,77 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62222)
 airbnb0619_ptent_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Private room", j="Entire home/apt", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0619_ptent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
 ```
 
-Analysis: The plot above shows that the observed L(r) line is below L(theo) from 190m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is statistically not significant. Hence, we reject the null hypothesis that the distribution of Private room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
+```{r}
+title <- "Cross L function"
+
+Lcsr_df <- as.data.frame(airbnb0619_ptent_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 190m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is statistically not significant. Even though the observed L(r) is near 0, the ending observed r is -0.75 at 195m. Hence, we reject the null hypothesis that the distribution of Private room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.3 Relationship of Shared Room and Entire Home/Apt Airbnb in 2019
 
@@ -2552,6 +2677,7 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62231)
 airbnb0619_shent_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Shared room", j="Entire home/apt", correction='border')
 plot(airbnb0619_shent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2571,13 +2697,74 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62232)
 airbnb0619_shent_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Shared room", j="Entire home/apt", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0619_shent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+```{r}
+title <- "Cross L function"
+
+Lcsr_df <- as.data.frame(airbnb0619_shent_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
 ```
 
 Analysis: The plot above shows that the observed L(r) line is below L(theo) from 160m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Shared room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
@@ -2589,6 +2776,7 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62241)
 airbnb0721_ptsh_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Shared room", correction='border')
 plot(airbnb0721_ptsh_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2608,13 +2796,74 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62242)
 airbnb0721_ptsh_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Shared room", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0721_ptsh_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+```{r}
+title <- "Cross L function"
+
+Lcsr_df <- as.data.frame(airbnb0721_ptsh_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
 ```
 
 Analysis: The plot above shows that the observed L(r) line is below L(theo) from 200m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is statistically not significant. Hence, we reject the null hypothesis that the distribution of Private Room Airbnb and Shared Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
@@ -2626,6 +2875,7 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62251)
 airbnb0721_ptent_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Entire home/apt", correction='border')
 plot(airbnb0721_ptent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2645,16 +2895,77 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62252)
 airbnb0721_ptent_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Entire home/apt", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0721_ptent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
 ```
 
-Analysis: The plot above shows that the observed L(r) line is below L(theo) from 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private Room Airbnb and Entire Home/Apt Airbnb in 2021 are spatially independent at 99.9% confident interval.
+```{r}
+title <- "Cross L function"
+
+Lcsr_df <- as.data.frame(airbnb0721_ptent_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from about 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private Room Airbnb and Entire Home/Apt Airbnb in 2021 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.6 Relationship of Private Room and Hotel Room Airbnb in 2021
 
@@ -2663,6 +2974,7 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62261)
 airbnb0721_ptht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Hotel room", correction='border')
 plot(airbnb0721_ptht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2682,16 +2994,77 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62262)
 airbnb0721_ptht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Hotel room", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0721_ptht_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
 ```
 
-Analysis: The plot above shows that the observed L(r) line is below L(theo) from 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+```{r}
+title <- "Cross L function"
+
+Lcsr_df <- as.data.frame(airbnb0721_ptht_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from about 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.7 Relationship of Shared Room and Entire Home/Apt Airbnb in 2021
 
@@ -2700,6 +3073,7 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62271)
 airbnb0721_shent_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Shared room", j="Entire home/apt", correction='border')
 plot(airbnb0721_shent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2719,16 +3093,77 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62272)
 airbnb0721_shent_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Shared room", j="Entire home/apt", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0721_shent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
 ```
 
-Analysis: The plot above shows that the observed L(r) line is above L(theo) from 10 to 120m and is above the higher confidence envelope which means spatial clustering for that distance is statistically significant. Hence, we reject the null hypothesis that the distribution of Shared Room Airbnb and Entire home/apt Airbnb in 2021 are spatially independent at 99.9% confident interval.
+```{r}
+title <- "Cross L function"
+
+Lcsr_df <- as.data.frame(airbnb0721_shent_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
+```
+
+Analysis: The plot above shows that the observed L(r) line is above L(theo) from about 10 to 120m and is above the higher confidence envelope which means spatial clustering for that distance is statistically significant. Hence, we reject the null hypothesis that the distribution of Shared Room Airbnb and Entire home/apt Airbnb in 2021 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.8 Relationship of Shared Room and Hotel Room Airbnb in 2021
 
@@ -2737,6 +3172,7 @@ Analysis: The plot above shows that the observed L(r) line is above L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62281)
 airbnb0721_shht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Shared room", j="Hotel room", correction='border')
 plot(airbnb0721_shht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2756,16 +3192,77 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62282)
 airbnb0721_shht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Shared room", j="Hotel room", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0721_shht_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
 ```
 
-Analysis: The plot above shows that the observed L(r) line is above L(theo) from 10m and is within the higher confidence envelope which means spatial clustering for that distance is statistically not significant. Hence, we do not reject the null hypothesis that the distribution of Shared Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+```{r}
+title <- "Cross L function"
+
+Lcsr_df <- as.data.frame(airbnb0721_shht_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
+```
+
+Analysis: The plot above shows that the observed L(r) line is above L(theo) from around 10m ownwards and is above the higher confidence envelope which means spatial clustering for that distance is statistically significant. Hence, we reject the null hypothesis that the distribution of Shared Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.9 Relationship of Entire Home/Apt and Hotel Room Airbnb in 2021
 
@@ -2774,6 +3271,7 @@ Analysis: The plot above shows that the observed L(r) line is above L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
+set.seed(62291)
 airbnb0721_entht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Entire home/apt", j="Hotel room", correction='border')
 plot(airbnb0721_entht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2793,14 +3291,75 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
+set.seed(62292)
 airbnb0721_entht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Entire home/apt", j="Hotel room", correction='border', nsim=999)
 ```
 
+
 The following code chunk plots the Cross L-Function
 
-```{r}
+```{r eval=FALSE}
 plot(airbnb0721_entht_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
 ```
 
-Analysis: The plot above shows that the observed L(r) line is below L(theo) from 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Entire home/apt Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+```{r}
+title <- "Cross L function"
 
+Lcsr_df <- as.data.frame(airbnb0721_entht_Lcross.csr)
+
+colour=c("#0D657D","#ee770d","#D3D3D3")
+csr_plot <- ggplot(Lcsr_df, aes(r, obs-r))+
+  # plot observed value
+  geom_line(colour=c("#4d4d4d"))+
+  geom_line(aes(r,theo-r), colour="red", linetype = "dashed")+
+  # plot simulation envelopes
+  geom_ribbon(aes(ymin=lo-r,ymax=hi-r),alpha=0.1, colour=c("#91bfdb")) +
+  xlab("Distance r (m)") +
+  ylab("L(r)-r") +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,], sides="b", colour=colour[1])  +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,], sides="b", colour=colour[2]) +
+  geom_rug(data=Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,], sides="b", color=colour[3]) +
+  theme_tufte()+
+  ggtitle(title)
+
+text1<-"Significant clustering"
+text2<-"Significant segregation"
+text3<-"Not significant clustering/segregation"
+
+# the below conditional statement is required to ensure that the labels (text1/2/3) are assigned to the correct traces
+if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){ 
+  if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text3, traces = 4) %>%
+      rangeslider() 
+  }else if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){ 
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      rangeslider() 
+  }else {
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text2, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider() 
+  }
+} else if (nrow(Lcsr_df[Lcsr_df$obs < Lcsr_df$lo,])==0){
+  if (nrow(Lcsr_df[Lcsr_df$obs >= Lcsr_df$lo & Lcsr_df$obs <= Lcsr_df$hi,])==0){
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      rangeslider() 
+  } else{
+    ggplotly(csr_plot, dynamicTicks=T) %>%
+      style(text = text1, traces = 4) %>%
+      style(text = text3, traces = 5) %>%
+      rangeslider()
+  }
+} else{
+  ggplotly(csr_plot, dynamicTicks=T) %>%
+    style(text = text1, traces = 4) %>%
+    style(text = text2, traces = 5) %>%
+    style(text = text3, traces = 6) %>%
+    rangeslider()
+  }
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from about 150m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is not statistically significant. Hence, we reject the null hypothesis that the distribution of Entire home/apt Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
