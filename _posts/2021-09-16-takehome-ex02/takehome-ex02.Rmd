@@ -977,7 +977,7 @@ Analysis: From the raster map above, we can confirm the the south-east area near
 
 The following code chunk plots the KDE map of Airbnb 2019, Hotel, MRTLRT and Tourist Attractions side by side using par functions of graphics package
 
-```{r}
+```{r fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
 plot(kde_airbnb0619SG_bw.km, main = "Airbnb 2019")
 plot(kde_hotelsSG_bw.km, main = "Hotel")
@@ -1100,7 +1100,7 @@ tourism_dc_ppp.km = rescale(tourism_dc_ppp, 1000, "km")
 
 The following code chunk plots airbnb within each area using plot and density functions with sigma set to bw.diggle and kernel set to gaussian.
 
-```{r}
+```{r fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
 plot(density(airbnb0619_kl_ppp.km, 
              sigma=bw.diggle, 
@@ -1173,7 +1173,7 @@ tm_shape(kl_bb_osm) +
   tm_rgb() +
   tm_shape(kde_airbnb0619_kl_bw_raster) + 
   tm_raster("v", palette = "Purples", alpha = 0.7) +
-  tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
+  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 ```
 
 
@@ -1200,7 +1200,7 @@ tm_shape(gl_bb_osm) +
   tm_rgb() +
   tm_shape(kde_airbnb0619_gl_bw_raster) + 
   tm_raster("v", palette = "Purples", alpha = 0.7) +
-  tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
+  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 ```
 
 ###### 5.1.1.6.8.3 Outram
@@ -1225,7 +1225,7 @@ tm_shape(ot_bb_osm) +
   tm_rgb() +
   tm_shape(kde_airbnb0619_ot_bw_raster) + 
   tm_raster("v", palette = "Purples", alpha = 0.7) +
-  tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
+  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 ```
 
 ###### 5.1.1.6.8.4 Downtown Core
@@ -1250,7 +1250,7 @@ tm_shape(dc_bb_osm) +
   tm_rgb() +
   tm_shape(kde_airbnb0619_dc_bw_raster) + 
   tm_raster("v", palette = "Purples", alpha = 0.7) +
-  tm_layout(legend.position = c("right", "bottom"), frame = TRUE)
+  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 ```
 
 Analysis: From the four static raster map above, we can clearly see the exact location with the highest density of Airbnb in each area.
@@ -1261,7 +1261,7 @@ Analysis: From the four static raster map above, we can clearly see the exact lo
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Kallang.
 
-```{r}
+```{r fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
 plot(airbnb0619_kl_ppp.km, main = "Airbnb")
 plot(hotels_kl_ppp.km, main = "Hotel")
@@ -1275,7 +1275,7 @@ Analysis: Even though there are already some hotels available and only one touri
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Geylang.
 
-```{r}
+```{r fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
 plot(airbnb0619_gl_ppp.km, main = "Airbnb")
 plot(hotels_gl_ppp.km, main = "Hotel")
@@ -1289,7 +1289,7 @@ Analysis: Similar to Kallang, even though there are already quite a number of ho
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Outram.
 
-```{r}
+```{r fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
 plot(airbnb0619_ot_ppp.km, main = "Airbnb")
 plot(hotels_ot_ppp.km, main = "Hotel")
@@ -1303,7 +1303,7 @@ Analysis: Even though there are already a few hotels in Outram, there are still 
 
 The following code chunk plots airbnb, hotel, mrt and tourist attraction in Downtown Core.
 
-```{r}
+```{r fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
 plot(airbnb0619_dc_ppp.km, main = "Airbnb")
 plot(hotels_dc_ppp.km, main = "Hotel")
@@ -2248,13 +2248,13 @@ airbnb0619_pte_ot_map <- tm_shape(ot_bb_osm) +
                   tm_rgb() +
                   tm_shape(kde_airbnb0619_pte_ot_bw_raster) + 
                   tm_raster("v", palette = "Purples", alpha = 0.7) +
-                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+                  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 
 airbnb0721_pte_ot_map <- tm_shape(ot_bb_osm) +
                   tm_rgb() + 
                   tm_shape(kde_airbnb0721_pte_ot_bw_raster) + 
                   tm_raster("v", palette = "Purples", alpha = 0.7) +
-                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+                  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 
 tmap_arrange(airbnb0619_pte_ot_map, airbnb0721_pte_ot_map)
 ```
@@ -2271,13 +2271,13 @@ airbnb0619_ent_ot_map <- tm_shape(ot_bb_osm) +
                   tm_rgb() +
                   tm_shape(kde_airbnb0619_ent_ot_bw_raster) + 
                   tm_raster("v", palette = "Purples", alpha = 0.7) +
-                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+                  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 
 airbnb0721_ent_ot_map <- tm_shape(ot_bb_osm) +
                   tm_rgb() + 
                   tm_shape(kde_airbnb0721_ent_ot_bw_raster) + 
                   tm_raster("v", palette = "Purples", alpha = 0.7) +
-                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+                  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 
 tmap_arrange(airbnb0619_ent_ot_map, airbnb0721_ent_ot_map)
 ```
@@ -2294,13 +2294,13 @@ airbnb0619_sh_ot_map <- tm_shape(ot_bb_osm) +
                   tm_rgb() +
                   tm_shape(kde_airbnb0619_sh_ot_bw_raster) + 
                   tm_raster("v", palette = "Purples", alpha = 0.7) +
-                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+                  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 
 airbnb0721_sh_ot_map <- tm_shape(ot_bb_osm) +
                   tm_rgb() + 
                   tm_shape(kde_airbnb0721_sh_ot_bw_raster) + 
                   tm_raster("v", palette = "Purples", alpha = 0.7) +
-                  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+                  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 
 tmap_arrange(airbnb0619_sh_ot_map, airbnb0721_sh_ot_map)
 ```
@@ -2316,7 +2316,491 @@ tm_shape(ot_bb_osm) +
   tm_rgb() + 
   tm_shape(kde_airbnb0721_ht_ot_bw_raster) + 
   tm_raster("v", palette = "Purples", alpha = 0.7) +
-  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+  tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 ```
 
 Analysis: From the static raster map, we can see the new hotel room Airbnb in 2021.
+
+## 6.2 Second-order Multi-type Spatial Point Patterns Analysis
+
+### 6.2.1 Data Wrangling
+
+#### 6.2.1.1 Convert into Factor data type
+
+The following code chunk checks the data type of airbnb0619 and airbnb0619 SpatialPointsDataFrame
+
+```{r}
+str(airbnb0619)
+```
+
+```{r}
+str(airbnb0721)
+```
+
+We can see that both are not in room_type are not in factor data type. 
+
+The following code chunk converts room_type into a factor data type using as.factor functionc of base.
+
+```{r}
+airbnb0619@data$room_type <- as.factor(airbnb0619@data$room_type)
+str(airbnb0619)
+```
+
+```{r}
+airbnb0721@data$room_type <- as.factor(airbnb0721@data$room_type)
+str(airbnb0721)
+```
+
+We can see that the data type for room_type are now Factor above.
+
+#### 6.2.1.2 Converting the SpatialPointsDataFrame into ppp format
+
+1. The following code chunk converts the SpatialPointsDataFrame into ppp format using as(x,"ppp") function
+2. marks room_type using marks function of spatstat package
+3. plots the ppp using plot function
+
+```{r}
+airbnb0619_ppp <- as(airbnb0619, "ppp")
+marks(airbnb0619_ppp) <- airbnb0619_ppp$marks$room_type
+plot(airbnb0619_ppp)
+```
+
+From the plot above, we can see that there are three room types in 2019. They are Entire home/apt, Private room and Shared room.
+
+```{r}
+airbnb0721_ppp <- as(airbnb0721, "ppp")
+marks(airbnb0721_ppp) <- airbnb0721_ppp$marks$room_type
+plot(airbnb0721_ppp)
+```
+
+From the plot above, we can see that there are four room types in 2021. They are Entire home/apt, Hotel room, Private room and Shared room.
+
+#### 6.2.1.3 Examine summary statistics
+
+The following code chunk examines the summary statistics of ppp.
+
+```{r}
+summary(airbnb0619_ppp)
+```
+
+From the statistic above, we can see that Entire home/apt made up 51% of Airbnb in Outram in 2019, followed by Private room with 43% and Shared room with 5%. 
+
+```{r}
+summary(airbnb0721_ppp)
+```
+
+From the statistic above, we can see that Private room Airbnb in Outram in 2021 made up the highest with 48%, followed by Entire home/apt made up 43%, Hotel and Shared room with about 4% each. The number of Entire home/apt decrease significantly from 4264 in 2019 to 1837 in 2021. The number of Airbnb in Outram generally decreased as a whole, except that there are a new hotel room type.
+
+#### 6.2.1.4 Handling Duplicates
+
+The following code chunk handles duplicates using jitter method with rjitter functions of spatstat package.
+
+```{r}
+airbnb0619rt_ppp_jit <- rjitter(airbnb0619_ppp, retry=TRUE, nsim=1, drop=TRUE)
+airbnb0721rt_ppp_jit <- rjitter(airbnb0721_ppp, retry=TRUE, nsim=1, drop=TRUE)
+```
+
+The following code chunk checks for any duplicates
+
+```{r}
+any(duplicated(airbnb0619rt_ppp_jit))
+```
+
+```{r}
+any(duplicated(airbnb0721rt_ppp_jit))
+```
+
+There are no duplicates after jittering.
+
+#### 6.2.1.5 Extract study area and combine with Airbnb
+
+The following code chunk extract the study area and plots it to see if it is the correct area.
+
+```{r}
+ot = mpsz[mpsz@data$PLN_AREA_N == "OUTRAM",]
+plot(ot, main = "Outram")
+```
+
+The following code chunk converts the SpatialPolygonsDataFrame into generic sp format and create the owin object of that area.
+
+```{r}
+ot_sp = as(ot, "SpatialPolygons")
+ot_owin = as(ot_sp, "owin")
+```
+
+The following code chunk combines the airbnb points with study area
+
+```{r}
+airbnb0619rt_ot_ppp = airbnb0619rt_ppp_jit[ot_owin]
+airbnb0721rt_ot_ppp = airbnb0721rt_ppp_jit[ot_owin]
+```
+
+#### 6.2.1.6 Analysing Marked Point Patterns in km
+
+The following code chunk plots the KDE map of each room type in 2019.
+
+```{r}
+plot(density(split(rescale(airbnb0619rt_ot_ppp, 1000))))
+```
+
+From the plot above, we can see that all room types are denser at the central area of Outram in 2019.
+
+The following code chunk plots the KDE map of each room type in 2019.
+
+```{r fig.height=8, fig.width=8}
+plot(density(split(rescale(airbnb0721rt_ot_ppp, 1000))))
+```
+
+From the plot above, we can see that all room types are denser at the central area of Outram in 2021.
+
+The following code chunk reveals the density of each Airbnb room type using intensity function of spatstat package,
+
+```{r}
+intensity(rescale(airbnb0619rt_ot_ppp, 1000))
+```
+
+From the statistics above, Private room have the highest density of about 175 units per square kilometer. Entire home/apt have a density of about 118 units per square kilometer. Shared room have a density of about 49 units per square kilometer.
+
+```{r}
+intensity(rescale(airbnb0721rt_ot_ppp, 1000))
+```
+
+From the statistics above, Private room have the highest density of about 134 units per square kilometer. Entire home/apt have a density of about 85 units per square kilometer. Hotel room have a density of about 53 units per square kilometer. Shared room have a density of about 8 units per square kilometer.
+
+### 6.2.2 Cross L-Function
+
+Cross-type L-function computes the estimate of the cross-type K-function, and then applies the square root transformation. We will be looking at the relationship of different room types Airbnb located in the study area (Out), in 2019 and 2021. 
+
+#### 6.2.2.1 Relationship of Private Room and Shared Room Airbnb in 2019
+
+##### 6.2.2.1.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0619_ptsh_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Private room", j="Shared room", correction='border')
+plot(airbnb0619_ptsh_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 150m as the L(r) is above 0. From 150 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.1.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Private room Airbnb and Shared room Airbnb in 2019 are spatially independent.
+
+H1= The distribution of Private room Airbnb and Shared room Airbnb in 2019 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0619_ptsh_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Private room", j="Shared room", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0619_ptsh_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private room Airbnb and Shared room Airbnb in 2019 are spatially independent at 99.9% confident interval.
+
+#### 6.2.2.2 Relationship of Private Room and Entire Home/Apt Airbnb in 2019
+
+##### 6.2.2.2.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0619_ptent_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Private room", j="Entire home/apt", correction='border')
+plot(airbnb0619_ptent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 140m, and 180 to 190m as the L(r) is above 0. From 140 to 180m, and 190m and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.2.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Private room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent.
+
+H1= The distribution of Private room Airbnb and and Entire home/apt Airbnb in 2019 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0619_ptent_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Private room", j="Entire home/apt", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0619_ptent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 190m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is statistically not significant. Hence, we reject the null hypothesis that the distribution of Private room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
+
+#### 6.2.2.3 Relationship of Shared Room and Entire Home/Apt Airbnb in 2019
+
+##### 6.2.2.3.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0619_shent_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Shared room", j="Entire home/apt", correction='border')
+plot(airbnb0619_shent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 160m as the L(r) is above 0. From 160 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.3.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Shared room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent.
+
+H1= The distribution of Shared room Airbnb and and Entire home/apt Airbnb in 2019 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0619_shent_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Shared room", j="Entire home/apt", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0619_shent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 160m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Shared room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
+
+#### 6.2.2.4 Relationship of Private Room and Shared Room Airbnb in 2021
+
+##### 6.2.2.4.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0721_ptsh_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Shared room", correction='border')
+plot(airbnb0721_ptsh_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 10 to 100m, and 120 to 200m as the L(r) is above 0. From 0 to 10m, 100 to 120m, and 200 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.4.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Private Room Airbnb and Shared Room Airbnb in 2021 are spatially independent.
+
+H1= The distribution of Private Room Airbnb and Shared Room Airbnb in 2021 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0721_ptsh_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Shared room", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0721_ptsh_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 200m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is statistically not significant. Hence, we reject the null hypothesis that the distribution of Private Room Airbnb and Shared Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+
+#### 6.2.2.5 Relationship of Private Room and Entire Home/Apt Airbnb in 2021
+
+##### 6.2.2.5.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0721_ptent_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Entire home/apt", correction='border')
+plot(airbnb0721_ptent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 150m as the L(r) is above 0. From 150 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.5.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Private Room Airbnb and Entire Home/Apt Airbnb in 2021 are spatially independent.
+
+H1= The distribution of Private Room Airbnb and Entire Home/Apt Airbnb in 2021 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0721_ptent_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Entire home/apt", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0721_ptent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private Room Airbnb and Entire Home/Apt Airbnb in 2021 are spatially independent at 99.9% confident interval.
+
+#### 6.2.2.6 Relationship of Private Room and Hotel Room Airbnb in 2021
+
+##### 6.2.2.6.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0721_ptht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Hotel room", correction='border')
+plot(airbnb0721_ptht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 150m as the L(r) is above 0. From 150 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.6.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Private Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent.
+
+H1= The distribution of Private Room Airbnb and Hotel Room Airbnb in 2021 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0721_ptht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Hotel room", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0721_ptht_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Private Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+
+#### 6.2.2.7 Relationship of Shared Room and Entire Home/Apt Airbnb in 2021
+
+##### 6.2.2.7.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0721_shent_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Shared room", j="Entire home/apt", correction='border')
+plot(airbnb0721_shent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 10 to 120m as the L(r) is above 0. From 0 - 10m, and 120 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.7.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Shared Room Airbnb and Entire home/apt Airbnb in 2021 are spatially independent.
+
+H1= The distribution of Shared Room Airbnb and Entire home/apt Airbnb in 2021 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0721_shent_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Shared room", j="Entire home/apt", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0721_shent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is above L(theo) from 10 to 120m and is above the higher confidence envelope which means spatial clustering for that distance is statistically significant. Hence, we reject the null hypothesis that the distribution of Shared Room Airbnb and Entire home/apt Airbnb in 2021 are spatially independent at 99.9% confident interval.
+
+#### 6.2.2.8 Relationship of Shared Room and Hotel Room Airbnb in 2021
+
+##### 6.2.2.8.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0721_shht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Shared room", j="Hotel room", correction='border')
+plot(airbnb0721_shht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are independent spatially from distance 0 to 10m as the L(r) is below 0. From 10 meter and above, there is a sign that the marked spatial point events are not independent spatially as the L(r) is above 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.8.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Shared Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent.
+
+H1= The distribution of Shared Room Airbnb and Hotel Room Airbnb in 2021 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0721_shht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Shared room", j="Hotel room", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0721_shht_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is above L(theo) from 10m and is within the higher confidence envelope which means spatial clustering for that distance is statistically not significant. Hence, we do not reject the null hypothesis that the distribution of Shared Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+
+#### 6.2.2.9 Relationship of Entire Home/Apt and Hotel Room Airbnb in 2021
+
+##### 6.2.2.9.1 Compute Cross L-function
+
+The following code chunk computes Cross L-function using Lcross() of spatstat package.
+
+```{r}
+airbnb0721_entht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Entire home/apt", j="Hotel room", correction='border')
+plot(airbnb0721_entht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
+```
+
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 5 to 150m as the L(r) is above 0. From 0 to 5 meter, and 150m and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+
+##### 6.2.2.9.2 Performing CSR testing on the Cross L-Function
+
+Hypothesis:
+
+H0 = The distribution of Entire home/apt Airbnb and Hotel Room Airbnb in 2021 are spatially independent.
+
+H1= The distribution of Entire home/apt Airbnb and Hotel Room Airbnb in 2021 are NOT at spatially independent.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001 (i.e. at 99.9% confident interval).
+
+The following code chunk performs CSR test by using envelope() of spatstat package will be used.
+
+```{r}
+airbnb0721_entht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Entire home/apt", j="Hotel room", correction='border', nsim=999)
+```
+
+The following code chunk plots the Cross L-Function
+
+```{r}
+plot(airbnb0721_entht_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
+```
+
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 150m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Entire home/apt Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+
