@@ -17,6 +17,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+set.seed(1234)
 ```
 
 # 1 Introduction
@@ -515,7 +516,7 @@ any(duplicated(mrtlrt_ppp))
 sum(multiplicity(mrtlrt_ppp) > 1)
 ```
 
-From the result above, there are no duplicate in mrtlrt_ppp object.
+From the result above, there are no duplicate in mrtlrt_ppp object. The other ppp object have duplicates.
 
 #### 4.3.4.2 Handling duplicates
 
@@ -706,12 +707,11 @@ plot(kde_airbnb0619SG_bw.km, main = "KDE Map")
 plot(airbnb0619SG_ppp.km, main = "Point Map")
 ```
 
-Analysis: From the kde map above, we can see that the south-east region near the central area have higher density of Airbnb in 2019 as shown by the pink spots on kde map and the black patches on the point map. The kde map better visualised the density as compared to the point map because it uses different colour tone to represent the density. For example, purple means no/low number of units per square kilometer, pink represents medium density of about 1000 units per square kilometer, and yellow means high density of about 1500 units per square kilometer. The point map on the other hand cannot determine if an area is denser than the other area since it is only represented in one colour tone, black, and black patches can be seen almost every where in the point map.
+Analysis: From the kde map above, we can see that the south-east region near the central area have higher density of Airbnb in 2019 as shown by the pink spots on kde map and the black patches on the point map. The kde map better visualised the density as compared to the point map because it uses different colour tone to represent the density. For example, purple means 0 - 500 units per square kilometer, pink represents medium density of about 1000 units per square kilometer, and yellow means high density of about 1500 units per square kilometer. The point map on the other hand cannot determine if an area is denser than the other area since it is only represented in one colour tone, black, and black patches can be seen almost every where in the point map.
 
 ##### 5.1.1.1.5 Convert KDE output into grid object in km
 
 The following code chunk converts KDE output into grid object using as.SpatialGridDataFrame.im function of maptools, and plot the grid object using spplot function of raster package.
-
 
 ```{r}
 gridded_kde_airbnb0619SG_bw.km <- as.SpatialGridDataFrame.im(kde_airbnb0619SG_bw.km)
@@ -738,7 +738,7 @@ From the result above, the crs is NA.
 
 2. Plot the raster on OpenstreetMap basemap in interactive mode
 
-3. tmap_mode is set to view to plot interative map
+3. tmap_mode is set to view to plot interactive map
 
 4. tm_shape is the raster layer
 
@@ -814,7 +814,7 @@ Analysis: The above density map shows a clearer visualization of the density of 
 
 6. Plot the raster on OpenstreetMap basemap in interactive mode
 
-7. tmap_mode is set to view to plot interative map
+7. tmap_mode is set to view to plot interactive map
 
 8. tm_shape is the raster layer
 
@@ -844,7 +844,7 @@ tm_shape(kde_hotelsSG_bw_raster) +
 tmap_mode("plot")
 ```
 
-Analysis: From the raster map, we can see that areas such as Gelang and Clarke Quay have highest density of hotels with about 0.00015 to 0.00020 units per square meter. Areas like Rochor and Chinatown have high density of about 0.00005 to 0.00010 units per square meter.
+Analysis: From the raster map, we can see that areas such as Geylang and Clarke Quay have highest density of hotels with about 0.00015 to 0.00020 units per square meter. Areas like Rochor, Chinatown and Kallang have high density of about 0.00005 to 0.00015 units per square meter.
 
 #### 5.1.1.3 MRTLRT
 
@@ -871,7 +871,7 @@ plot(kde_mrtlrtSG_bw.km, main = "KDE Map")
 plot(mrtlrtSG_ppp.km, main="Point Map")
 ```
 
-Analysis: From the kde map above, we can see that the mrt and lrt are available at almost every region. Area with higher density of MRT are North-East, North-West and Central South region with about 2 to 3 units per square kilometer, as shown by the pink orange patch on the kde map. The black patches on the point map also concentrates in these three region. 
+Analysis: From the kde map above, we can see that the mrt and lrt are available at almost every region. Area with higher density of MRT are North-East, North-West and Central South region with about 2 to 4 units per square kilometer, as shown by the pink orange yellow patch on the kde map. The black patches on the point map also concentrates in these three region. 
 
 ##### 5.1.1.3.3 Convert KDE output into grid object in km
 
@@ -882,7 +882,7 @@ gridded_kde_mrtlrtSG_bw.km <- as.SpatialGridDataFrame.im(kde_mrtlrtSG_bw.km)
 spplot(gridded_kde_mrtlrtSG_bw.km)
 ```
 
-Analysis: The above density map shows a clearer visualization of the density of Mrt and Lrt using grid. We can see that the Mrt and Lrt are available almost every region in Singapore as represented by the light blue grid on the map. The north-east, north-west and central south area have higher density of Mrt and Lrt as seen by the pink to yellow grid cluster on the map. There are many regions with 1 units per square meter as shown by blue green. 
+Analysis: The above density map shows a clearer visualization of the density of Mrt and Lrt using grid. We can see that the Mrt and Lrt are available almost every region in Singapore as represented by the light blue grid on the map. The north-east, north-west and central south area have higher density of Mrt and Lrt as seen by the pink to yellow grid cluster on the map, with about 2 to 4 units per square kilometer. There are many regions with 1 units per square kilometer as shown by blue grid. 
 
 ##### 5.1.1.3.4 Plot raster on osm
 
@@ -907,7 +907,7 @@ tm_shape(kde_mrtlrtSG_bw_raster) +
 tmap_mode("plot")
 ```
 
-Analysis: From the raster map above, we can confirm that North-east, North-west and Central south area have higher density of Mrt and Lrt of about 0.000002 to 0.000003 units per square meter, as shown by the purple grid on the map.
+Analysis: From the raster map above, we can confirm that North-east, North-west and Central south area have higher density of Mrt and Lrt of about 0.000002 to 0.000004 units per square meter, as shown by the purple grid on the map.
 
 #### 5.1.1.4 Tourist Attractions
 
@@ -934,7 +934,7 @@ plot(kde_tourismSG_bw.km, main = "KDE Map")
 plot(tourismSG_ppp, main="Point Map")
 ```
 
-Analysis: From the kde map above, we can see that the south-east region near the central area have higher density of tourist attraction as shown on the pink-yellow spots with about 10 - 20 units per square kilometer. In the point map, the black patches also concentrates at the south-east region near central, with some individual attraction in north, west and east as shown by the individual point.
+Analysis: From the kde map above, we can see that the south-east region near the central area have higher density of tourist attraction as shown on the pink-yellow spots with about 10 - 20 units per square kilometer. In the point map, the black patches also concentrates at the south-east region near central, with some attraction in north, west and east as shown by the individual point.
 
 ##### 5.1.1.4.3 Convert KDE output into grid object in km
 
@@ -945,7 +945,7 @@ gridded_kde_tourismSG_bw.km <- as.SpatialGridDataFrame.im(kde_tourismSG_bw.km)
 spplot(gridded_kde_tourismSG_bw.km)
 ```
 
-Analysis: The above density map shows a clearer visualization of the density of tourist attraction in Singapore using grid. We can see that there are a few attractions in the north, west and east as seen by the light blue grid on the map. The south central area have high density of tourist attractions as seen by the pink yellow grid on the map with about 10 to 20 units per square meter.
+Analysis: The above density map shows a clearer visualization of the density of tourist attraction in Singapore using grid. We can see that there are a few attractions in the north, west and east as seen by the light blue grid on the map. The south central area have high density of tourist attractions as seen by the pink yellow grid on the map with about 10 to 25 units per square kilometer.
 
 ##### 5.1.1.4.4 Plot raster on osm
 
@@ -970,7 +970,7 @@ tm_shape(kde_tourismSG_bw_raster) +
 tmap_mode("plot")
 ```
 
-Analysis: From the raster map above, we can confirm the the south-east area near central region have highest density of tourist attraction with about 0.000020 to 0.000025 units per square meter as shown by the dark purple grid on the map.
+Analysis: From the raster map above, we can confirm the the south-east area near central region such as City Hall have highest density of tourist attraction with about 0.000020 to 0.000025 units per square meter as shown by the dark purple grid on the map.
 
 #### 5.1.1.5 Comparison between Airbnb0619, Hotels, MRTLRT and Tourist Attractions
 
@@ -986,7 +986,7 @@ plot(kde_mrtlrtSG_bw.km, main = "Mrt")
 plot(kde_tourismSG_bw.km, main = "Tourist Attraction")
 ```
 
-From the above, we can see that the common area with high density (in red and yellow) of Airbnb, hotel, mrt and tourist attraction are concentrated around the south east area near the central region.
+From the above, we can see that the common area with high density (in red and yellow) of Airbnb, hotel, mrt and tourist attraction are around the south east area near the central region.
 
 #### 5.1.1.6 Comparing Spatial Point Patterns using KDE
 
@@ -1177,8 +1177,6 @@ tm_shape(kl_bb_osm) +
   tm_layout(legend.position = c("right", "bottom"), legend.frame = TRUE)
 ```
 
-
-
 ###### 5.1.1.6.8.2 Geylang
 
 The following code chunk is similar to 5.1.1.6.8.1
@@ -1284,7 +1282,7 @@ plot(mrtlrt_gl_ppp.km, main = "Mrt")
 plot(tourism_gl_ppp.km, main = "Tourist Attraction")
 ```
 
-Analysis: Similar to Kallang, even though there are already quite a number of hotels in Geylang and no tourist attraction, there are still many Airbnb. There are a number of Mrt stations, which may be the reason why there are many Airbnb located in this area.
+Analysis: Similar to Kallang, even though there are already quite a number of hotels in Geylang and only one tourist attraction, there are still many Airbnb. There are 10 Mrt stations, which may be the reason why there are many Airbnb located in this area.
 
 ###### 5.1.1.6.9.3 Outram
 
@@ -1298,7 +1296,7 @@ plot(mrtlrt_ot_ppp.km, main = "Mrt")
 plot(tourism_ot_ppp.km, main = "Tourist Attraction")
 ```
 
-Analysis: Even though there are already a few hotels in Outram, there are still many Airbnb. The accessibility to the few MRT and  tourist attractions can be the reason why Outram have many Airbnb. In addition, we can see that the area with most Airbnbs (black patch) area where the tourist attractions are located.
+Analysis: Even though there are already a few hotels in Outram, there are still many Airbnb. The accessibility to the four MRT and multiple tourist attractions are probably the reason why Outram have many Airbnb. In addition, we can see that the area with most Airbnbs (black patch) area is also where the tourist attractions are located.
 
 ###### 5.1.1.6.9.4 Downtown Core
 
@@ -1312,9 +1310,9 @@ plot(mrtlrt_dc_ppp.km, main = "Mrt")
 plot(tourism_dc_ppp.km, main = "Tourist Attraction")
 ```
 
-Analysis: In Downtown core, there are still many airbnb despite many hotels already available. The accessibility to many MRTs and multiple tourist attractions may be the reason that many airbnb are located in this area.
+Analysis: In Downtown core, there are still many airbnb despite many hotels already available. The accessibility to many MRTs and multiple tourist attractions are probably the reason that many airbnb are located in this area.
 
-Overall, we can conclude that there are no direct relationship between airbnb and hotel as we see that regardless of the number of hotel available in a region, the number of airbnb remained high. Tourist attractions also do not have direct relationship with Airbnb because areas like Kallang and Geylang still have many Airbnb even though they only have one tourist attraction in the area. The accessibility of MRT is one of the possible factor that affects the number of Airbnb in the area. 
+Overall, we can conclude that there are no direct relationship between airbnb and hotel as we see that regardless of the number of hotel available in a region, the number of airbnb remained high. Tourist attractions may have some relationship with Airbnb, however, areas like Kallang and Geylang still have many Airbnb even though they only have one tourist attraction in the area. The accessibility of MRT is one of the possible factor that affects the number of Airbnb in the area, but mrt are easily accessbile almost every in Singapore. Hence, there are no direct relationship between Airbnb and Hotel, Mrt and Tourism respectively.
 
 ## 5.2 Second-order Spatial Point Patterns Analysis
 
@@ -1353,7 +1351,7 @@ clarkevans.test(airbnb0619SG_ppp,
                 nsim=99)
 ```
 
-Analysis: R = 0.36 is less than 1, which means the distribution of airbnb in Singapore are likely clustered. The p-value of 0.01 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Singapore are randomly distributed.
+Analysis: R = 0.36 is less than 1, which means the distribution of Airbnb in Singapore in 2019 are likely clustered. The p-value of 0.01 is smaller than 0.05. Hence, we reject the null hypothesis that the Airbnb point patterns in Singapore are randomly distributed.
 
 ##### 5.2.1.2.2 Clark and Evans Test: Kallang
 
@@ -1370,14 +1368,11 @@ clarkevans.test(airbnb0619_kl_ppp,
                 nsim=999)
 ```
 
-Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Kallang are randomly distributed.
+Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the Airbnb point patterns in Kallang are randomly distributed.
 
 ##### 5.2.1.2.3 Clark and Evans Test: Geylang
 
-1. The following code chunk performs Clark-Evans test of aggregation for airbnb in Geylang using clarkevans.test() of spatstat
-2. The clipping region is set to NULL
-3. The type of alternative for the hypothesis is two.sided
-4. The number of simulations is set to 999
+The following code chunk is similar to 5.2.1.2.2
 
 ```{r}
 clarkevans.test(airbnb0619_gl_ppp,
@@ -1387,14 +1382,11 @@ clarkevans.test(airbnb0619_gl_ppp,
                 nsim=999)
 ```
 
-Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Geylang are randomly distributed.
+Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the Airbnb point patterns in Geylang are randomly distributed.
 
 ##### 5.2.1.2.4 Clark and Evans Test: Outram
 
-1. The following code chunk performs Clark-Evans test of aggregation for airbnb in Outram using clarkevans.test() of spatstat
-2. The clipping region is set to NULL
-3. The type of alternative for the hypothesis is two.sided
-4. The number of simulations is set to 999
+The following code chunk is similar to 5.2.1.2.2
 
 ```{r}
 clarkevans.test(airbnb0619_ot_ppp,
@@ -1404,14 +1396,11 @@ clarkevans.test(airbnb0619_ot_ppp,
                 nsim=999)
 ```
 
-Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Outram are randomly distributed.
+Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the Airbnb point patterns in Outram are randomly distributed.
 
 ##### 5.2.1.2.5 Clark and Evans Test: Downtown Core
 
-1. The following code chunk performs Clark-Evans test of aggregation for airbnb in Downtown Core using clarkevans.test() of spatstat
-2. The clipping region is set to NULL
-3. The type of alternative for the hypothesis is two.sided
-4. The number of simulations is set to 999
+The following code chunk is similar to 5.2.1.2.2
 
 ```{r}
 clarkevans.test(airbnb0619_dc_ppp,
@@ -1423,7 +1412,7 @@ clarkevans.test(airbnb0619_dc_ppp,
 
 Analysis: The p-value of 0.002 is smaller than 0.05. Hence, we reject the null hypothesis that the airbnb point patterns in Downtown Core are randomly distributed.
 
-Overall, we can conclude that airbnb in the four areas are not randomly distributed. For further analysis, we will narrow down to two areas, Downtown Core and Outram, with R value above 0.5 and 0.7 respectively. When R is nearer to 1, the distribution are likely to be random. Hence, we are interested to further analyse the distribution of airbnb within these two region.
+Overall, we can conclude that airbnb in the four areas are not randomly distributed. For further analysis, we will narrow down to two areas, Downtown Core and Outram, with R value above 0.58 and 0.72 respectively. When R is nearer to 1, the distribution are likely to be random. Hence, we are interested to further analyse the distribution of Airbnb within these two region.
 
 ### 5.2.2 G-FUNCTION
 
@@ -1464,7 +1453,7 @@ The following code chunk plots the csr
 plot(G_DC.csr)
 ```
 
-Analysis: The observed G(r) is above the envelopes which means that Airbnb in Downtown Core area are clustered. Hence, we reject the null hypothesis that Airbnb in Downtown Core are randomly distributed at 99.9% confident interval.
+Analysis: The observed G(r) is above the G(theo) and higher convidence envelopes which means that Airbnb in Downtown Core area are clustered. Hence, we reject the null hypothesis that Airbnb in Downtown Core are randomly distributed at 99.9% confident interval.
 
 #### 5.2.2.2 Outram
 
@@ -1501,7 +1490,7 @@ The following code chunk plots the csr
 plot(G_OT.csr)
 ```
 
-Analysis: The observed G(r) is above the envelopes which means that Airbnb in Outram area are clustered. Hence, we reject the null hypothesis that Airbnb in Outram are randomly distributed at 99.9% confident interval.
+Analysis: The observed G(r) is above the G(theo) and higher confidence envelopes which means that Airbnb in Outram area are clustered. Hence, we reject the null hypothesis that Airbnb in Outram are randomly distributed at 99.9% confident interval.
 
 ### 5.2.3 F-FUNCTION
 
@@ -1541,7 +1530,8 @@ The following code chunk plots the csr
 ```{r}
 plot(F_DC.csr)
 ```
-Analysis: The observed F(r) is below the envelopes, which means that Airbnb in Downtown Core are in clustered pattern. Hence, we reject the null hypothesis that Airbnb in Downtown Core are randomly distributed at 99.9% confident interval.
+
+Analysis: The observed F(r) is below F(theo) and the lower confidence envelope, which means that Airbnb in Downtown Core are in clustered pattern. Hence, we reject the null hypothesis that Airbnb in Downtown Core are randomly distributed at 99.9% confident interval.
 
 #### 5.2.3.2 Outram
 
@@ -1578,7 +1568,7 @@ The following code chunk plots the csr
 plot(F_OT.csr)
 ```
 
-Analysis: The observed F(r) is below the envelopes, which means that Airbnb in Outram are in clustered pattern. Hence, we reject the null hypothesis that Airbnb in Outram are randomly distributed at 99.9% confident interval.
+Analysis: The observed F(r) is below F(theo) and the lower confidence envelope, which means that Airbnb in Outram are in clustered pattern. Hence, we reject the null hypothesis that Airbnb in Outram are randomly distributed at 99.9% confident interval.
 
 ### 5.2.4 L-FUNCTION
 
@@ -1619,7 +1609,7 @@ The following code chunk plots the csr
 plot(L_DC.csr, . - r ~ r, xlab="r", ylab="L(r)")
 ```
 
-Analysis: The above L function plots shows that the observed L(r) is greater than L(theo) and envelops, which means clustering. This means Airbnb in Downtown Core clustered. Hence, we reject the null hypothesis that Airbnb in Downtown Core are randomly distributed at 99.9% confident interval.
+Analysis: The above L function plots shows that the observed L(r) is greater than L(theo) and the higher confidence envelope, which means clustering is statistically significant. This means Airbnb in Downtown Core are clustered. Hence, we reject the null hypothesis that Airbnb in Downtown Core are randomly distributed at 99.9% confident interval.
 
 #### 5.2.4.2 Outram
 
@@ -1656,7 +1646,7 @@ The following code chunk plots the csr
 plot(L_OT.csr, . - r ~ r, xlab="r", ylab="L(r)")
 ```
 
-Analysis: The above L function plots shows that the observed L(r) is greater than L(theo) and envelops, which means clustering. This means Airbnb in Outram clustered. Hence, we reject the null hypothesis that Airbnb in Outram are randomly distributed at 99.9% confident interval.
+Analysis: The above L function plots shows that the observed L(r) is greater than L(theo) and the higher confidence envelope, which means clustering is statistically significant. This means Airbnb in Outram are clustered. Hence, we reject the null hypothesis that Airbnb in Outram are randomly distributed at 99.9% confident interval.
 
 # 6 Section B: Impact of COVID-19
 
@@ -1698,7 +1688,7 @@ gridded_kde_airbnb0721SG_bw.km <- as.SpatialGridDataFrame.im(kde_airbnb0721SG_bw
 spplot(gridded_kde_airbnb0721SG_bw.km)
 ```
 
-Analysis: The above density map shows a clearer visualization of the density of Airbnb in 2021 using grid. We can see that the Airbnb are scattered all around as seen by the lighter blue grid on the map. The south-east area near the central have higher density with around 200 - 800 units per square kilometer, represented by the brighter blue and pink grid on the map.
+Analysis: The above density map shows a clearer visualization of the density of Airbnb in 2021 using grid. We can see that the Airbnb are scattered all around as seen by the lighter blue grid on the map in 2021. The south-east area near the central have higher density with around 200 - 800 units per square kilometer, represented by the brighter blue and pink grid on the map.
 
 ##### 6.1.1.2.4 Convert into raster
 
@@ -1734,7 +1724,7 @@ plot(kde_airbnb0619SG_bw.km, main = "Airbnb 2019")
 plot(kde_airbnb0721SG_bw.km, main = "Airbnb 2021")
 ```
 
-From the KDE map, the south-east region still have higher density in 2021. However, we noticed that the density of Airbnb have reduced as seen from the scale. It reduced from range 0-1500 units per square kilometer in 2019 to range 0-1000 units per square kilomete in 2021. We can conclude that Covid-19 did impact the Airbnb listing in Singapore from 2019 to 2021.
+From the KDE map, the south-east region still have higher density of Airbnb in 2021. However, we noticed that the density of Airbnb have reduced as seen from the scale. It reduced from range 0-1500 units per square kilometer in 2019 to range 0-1000 units per square kilometer in 2021. We can conclude that Covid-19 did impact the Airbnb listing in Singapore from 2019 to 2021.
 
 #### 6.1.1.3 Comparison between Airbnb0619 and Airbnb0721 by Room Type
 
@@ -1848,6 +1838,8 @@ any(duplicated(airbnb0721_ht_ppp))
 sum(multiplicity(airbnb0721_ht_ppp) > 1)
 ```
 
+All ppp object except airbnb0619_pte_ppp have duplicates. 
+
 ###### 6.1.1.3.1.6 Handling Duplicates
 
 We will use jittering to handle duplicates so that we will not lose useful points. Jittering adds a small perturbation to the duplicated points so that they do not occupy the exact same space.
@@ -1937,7 +1929,7 @@ airbnb0721SG_ht_ppp = airbnb0721_ht_ppp_jit[sg_owin]
 ###### 6.1.1.3.1.9 KDE
 
 1. The following code chunk computes kernel density using density function of spatstat package.
-2. The code first takes in the ppp object variable in km.
+2. The code first takes in the ppp object variable in m.
 3. bw.diggle automatic bandwidth method to detect a tight cluster
 4. smoothing kernel is set to default gaussian method
 
@@ -2021,7 +2013,7 @@ projection(kde_airbnb0721SG_ht_bw_raster) <- CRS("+init=EPSG:3414")
 
 ##### 6.1.1.3.2 KDE Map Comparison by Room type and Year
 
-The following code chunks plot KDE map of Airbnb 2019 and 2021 by each room types side by side.
+The following code chunks plot KDE map of Airbnb 2019 and 2021 by each room type.
 
 ###### 6.1.1.3.2.1 Private Room
 
@@ -2051,7 +2043,7 @@ tmap_arrange(airbnb0619_pte_map, airbnb0721_pte_map)
 tmap_mode("plot")
 ```
 
-Analysis: In 2019, only Chinatown have high density of private as shown in dark purple. In 2021, Kallang and Jalan Besar are new areas with high density 2021. Chinatown's private room density became lower than Kallang's private room density in 2021.
+Analysis: In 2019, only Chinatown have highest density of private with 0.0008 to 0.0010 units per square m as shown in dark purple. In 2021, Kallang and Jalan Besar are new areas with high density 2021 with 0.0004 to 0.0006 units per square m. Chinatown's private room density became lower than Kallang's private room density in 2021.
 
 ###### 6.1.1.3.2.2 Entire Home/Apt
 
@@ -2073,7 +2065,7 @@ tmap_arrange(airbnb0619_ent_map, airbnb0721_ent_map)
 tmap_mode("plot")
 ```
 
-Analysis: In 2019, area with higher density of entire home room type (shown in darker purples) are Anson and Geylang. In 2021, areas with higher density of entire home room are Geylang, Chinatown, Whampoa, Anson and Katong. 
+Analysis: In 2019, area with higher density of entire home room type (shown in darker purples) are Anson and Geylang with density of 0.0008 to 0.0014 units per square m. In 2021, areas with higher density of entire home room are Geylang, Chinatown, Whampoa, Anson and Katong with density of 0.0002 to 0.0004 units per square m. 
 
 ###### 6.1.1.3.2.3 Shared Room
 
@@ -2095,7 +2087,7 @@ tmap_arrange(airbnb0619_sh_map, airbnb0721_sh_map)
 tmap_mode("plot")
 ```
 
-Analysis: In 2019, area with higher density of shared room type (shown in darker purples) are Clarke Quay. In 2021, areas with higher density of shared room are Rochor, Jalan Besar and Bencoolen.
+Analysis: In 2019, area with higher density of shared room type (shown in darker purples) are Clarke Quay with density of 0.0004 to 0.0005 units per square m. In 2021, areas with higher density of shared room are Rochor, Jalan Besar and Bencoolen with density of 0.00006 to 0.00010 units per square m.
 
 
 ###### 6.1.1.3.2.4 Hotel Room
@@ -2112,7 +2104,7 @@ tm_shape(kde_airbnb0721SG_ht_bw_raster) +
 tmap_mode("plot")
 ```
 
-Analysis: Hotel room is a new room type in 2021. Chinatown is the only area with highest density of Hotel room in 2021.
+Analysis: Hotel room is a new room type in 2021. Chinatown is the only area with highest density of Hotel room with 0.00030 to 0.00035 units per square m in 2021.
 
 Overall, we can see that there are changes in each type of rooms, some area became denser and some became less dense from 2019 to 2021. We will focus specifically on Chinatown because the area is the most happening for majority of the room type and the area have the highest density in Hotel room type. Chinatown subzone is under Outram planning area and therefore we will focus on Outram area.
 
@@ -2260,8 +2252,7 @@ airbnb0721_pte_ot_map <- tm_shape(ot_bb_osm) +
 tmap_arrange(airbnb0619_pte_ot_map, airbnb0721_pte_ot_map)
 ```
 
-Analysis: From the static raster map, we can see that there are lesser purple area in 2021 which means that there are lesser private room Airbnb from 2021 as compared to 2019. 
-
+Analysis: From the static raster map, we can see that there are lesser purple area in 2021 which means that there are lesser private room Airbnb from 2021 as compared to 2019 in Outram area. 
 
 ###### 6.1.1.3.3.6 Entire Home/Apt
 
@@ -2283,7 +2274,7 @@ airbnb0721_ent_ot_map <- tm_shape(ot_bb_osm) +
 tmap_arrange(airbnb0619_ent_ot_map, airbnb0721_ent_ot_map)
 ```
 
-Analysis: From the static raster map, we can see that there are not much changes for the entire home Airbnb in this area from 2019 to 2021.
+Analysis: From the static raster map, we can see that there are not much changes for the entire home Airbnb in Outram area from 2019 to 2021.
 
 
 ###### 6.1.1.3.3.7 Shared Room
@@ -2306,7 +2297,7 @@ airbnb0721_sh_ot_map <- tm_shape(ot_bb_osm) +
 tmap_arrange(airbnb0619_sh_ot_map, airbnb0721_sh_ot_map)
 ```
 
-Analysis: From the static raster map, we can see that there are lesser purple area in 2021 which means that there are lesser shared room Airbnb from 2021 as compared to 2019. 
+Analysis: From the static raster map, we can see that there are lesser purple area in 2021 which means that there are lesser shared room Airbnb from 2021 as compared to 2019 in Outram area. 
 
 ###### 6.1.1.3.3.8 Hotel Room
 
@@ -2336,7 +2327,7 @@ str(airbnb0619)
 
 We can see that the room_type are not in factor data type. 
 
-The following code chunk converts room_type into a factor data type using as.factor functionc of base.
+The following code chunk converts room_type into a factor data type using as.factor function of base R package.
 
 ```{r}
 airbnb0619@data$room_type <- as.factor(airbnb0619@data$room_type)
@@ -2433,17 +2424,17 @@ The following code chunk reveals the density of each Airbnb room type using inte
 intensity(rescale(airbnb0619rt_ot_ppp, 1000))
 ```
 
-From the statistics above, Private room have the highest density of about 175 units per square kilometer. Entire home/apt have a density of about 118 units per square kilometer. Shared room have a density of about 49 units per square kilometer.
+From the statistics above, Private room have the highest density of about 176 units per square kilometer. Entire home/apt have a density of about 118 units per square kilometer. Shared room have a density of about 49 units per square kilometer.
 
 ```{r}
 intensity(rescale(airbnb0721rt_ot_ppp, 1000))
 ```
 
-From the statistics above, Private room have the highest density of about 134 units per square kilometer. Entire home/apt have a density of about 85 units per square kilometer. Hotel room have a density of about 53 units per square kilometer. Shared room have a density of about 8 units per square kilometer.
+From the statistics above, Private room have the highest density of about 134 units per square kilometer. Entire home/apt have a density of about 88 units per square kilometer. Hotel room have a density of about 53 units per square kilometer. Shared room have a density of about 7 units per square kilometer.
 
 ### 6.2.2 Cross L-Function
 
-Cross-type L-function computes the estimate of the cross-type K-function, and then applies the square root transformation. We will be looking at the relationship of different room types Airbnb located in the study area (Out), in 2019 and 2021. We will set.seed at each code chunk so that the output will be the same.
+Cross-type L-function computes the estimate of the cross-type K-function, and then applies the square root transformation. We will be looking at the relationship of different room types Airbnb located in the study area (Out), in 2019 and 2021. We have set.seed(1234) at the global setting so that the output will be the same.
 
 #### 6.2.2.1 Relationship of Private Room and Shared Room Airbnb in 2019
 
@@ -2452,7 +2443,6 @@ Cross-type L-function computes the estimate of the cross-type K-function, and th
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62211)
 airbnb0619_ptsh_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Private room", j="Shared room", correction='border')
 plot(airbnb0619_ptsh_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2472,7 +2462,6 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62212)
 airbnb0619_ptsh_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Private room", j="Shared room", correction='border', nsim=999)
 ```
 
@@ -2547,12 +2536,11 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62221)
 airbnb0619_ptent_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Private room", j="Entire home/apt", correction='border')
 plot(airbnb0619_ptent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
 
-Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 140m as the L(r) is above 0. From 140m and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 150m as the L(r) is above 0. From 150m and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
 
 ##### 6.2.2.2.2 Performing CSR testing on the Cross L-Function
 
@@ -2567,7 +2555,6 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62222)
 airbnb0619_ptent_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Private room", j="Entire home/apt", correction='border', nsim=999)
 ```
 
@@ -2633,7 +2620,7 @@ if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){
   }
 ```
 
-Analysis: The plot above shows that the observed L(r) line is below L(theo) from 160m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is statistically not significant. Hence, we reject the null hypothesis that the distribution of Private room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 165m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is statistically not significant. Hence, we reject the null hypothesis that the distribution of Private room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.3 Relationship of Shared Room and Entire Home/Apt Airbnb in 2019
 
@@ -2642,12 +2629,11 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62231)
 airbnb0619_shent_Lcross <- Lcross(airbnb0619rt_ot_ppp, i="Shared room", j="Entire home/apt", correction='border')
 plot(airbnb0619_shent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
 
-Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 160m as the L(r) is above 0. From 160 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 0 to 150m as the L(r) is above 0. From 150 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
 
 ##### 6.2.2.3.2 Performing CSR testing on the Cross L-Function
 
@@ -2662,15 +2648,10 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62232)
 airbnb0619_shent_Lcross.csr <- envelope(airbnb0619rt_ot_ppp, Lcross, i="Shared room", j="Entire home/apt", correction='border', nsim=999)
 ```
 
 The following code chunk plots the Cross L-Function
-
-```{r eval=FALSE}
-plot(airbnb0619_shent_Lcross.csr, . -r ~ r, xlab="distance(m)", xlim=c(0,500))
-```
 
 ```{r}
 title <- "Cross L function"
@@ -2732,7 +2713,7 @@ if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){
   }
 ```
 
-Analysis: The plot above shows that the observed L(r) line is below L(theo) from 165m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Shared room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from 160m onwards and is beyond the lower confidence envelope which means spatial dispersion for that distance is statistically significant. Hence, we do not reject the null hypothesis that the distribution of Shared room Airbnb and Entire home/apt Airbnb in 2019 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.4 Relationship of Private Room and Shared Room Airbnb in 2021
 
@@ -2741,12 +2722,11 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62241)
 airbnb0721_ptsh_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Shared room", correction='border')
 plot(airbnb0721_ptsh_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
 
-Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 10 to 200m as the L(r) is above 0. From 0 to 10m, and 200 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 20 to 120m, 170m to 200m as the L(r) is above 0. From 0 to 20m, 120m to 170, and 200 meter and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
 
 ##### 6.2.2.4.2 Performing CSR testing on the Cross L-Function
 
@@ -2761,7 +2741,6 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62242)
 airbnb0721_ptsh_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Shared room", correction='border', nsim=999)
 ```
 
@@ -2836,7 +2815,6 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62251)
 airbnb0721_ptent_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Entire home/apt", correction='border')
 plot(airbnb0721_ptent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2856,7 +2834,6 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62252)
 airbnb0721_ptent_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Entire home/apt", correction='border', nsim=999)
 ```
 
@@ -2931,7 +2908,6 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62261)
 airbnb0721_ptht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Private room", j="Hotel room", correction='border')
 plot(airbnb0721_ptht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -2951,7 +2927,6 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62262)
 airbnb0721_ptht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Private room", j="Hotel room", correction='border', nsim=999)
 ```
 
@@ -3026,12 +3001,11 @@ Analysis: The plot above shows that the observed L(r) line is below L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62271)
 airbnb0721_shent_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Shared room", j="Entire home/apt", correction='border')
 plot(airbnb0721_shent_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
 
-Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 10m and above as the L(r) is above 0. From 0 - 10m, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 5m and above as the L(r) is above 0. From 0 - 5m, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
 
 ##### 6.2.2.7.2 Performing CSR testing on the Cross L-Function
 
@@ -3046,7 +3020,6 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62272)
 airbnb0721_shent_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Shared room", j="Entire home/apt", correction='border', nsim=999)
 ```
 
@@ -3112,7 +3085,7 @@ if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){
   }
 ```
 
-Analysis: The plot above shows that the observed L(r) line is above L(theo) from about 10m onwards and is within the higher confidence envelope which means spatial clustering for that distance is statistically not significant. Hence, we do not reject the null hypothesis that the distribution of Shared Room Airbnb and Entire home/apt Airbnb in 2021 are spatially independent at 99.9% confident interval.
+Analysis: The plot above shows that the observed L(r) line is above L(theo) from about 5m onwards and is within the higher confidence envelope which means spatial clustering for that distance is statistically not significant. Hence, we failed to reject the null hypothesis that the distribution of Shared Room Airbnb and Entire home/apt Airbnb in 2021 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.8 Relationship of Shared Room and Hotel Room Airbnb in 2021
 
@@ -3121,7 +3094,6 @@ Analysis: The plot above shows that the observed L(r) line is above L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62281)
 airbnb0721_shht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Shared room", j="Hotel room", correction='border')
 plot(airbnb0721_shht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
@@ -3141,7 +3113,6 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62282)
 airbnb0721_shht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Shared room", j="Hotel room", correction='border', nsim=999)
 ```
 
@@ -3207,7 +3178,7 @@ if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){
   }
 ```
 
-Analysis: The plot above shows that the observed L(r) line is above L(theo) from around 10m ownwards and is within the higher confidence envelope which means spatial clustering for that distance is statistically not significant. Hence, we do not reject the null hypothesis that the distribution of Shared Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+Analysis: The plot above shows that the observed L(r) line is above L(theo) from around 10m ownwards and is within the higher confidence envelope which means spatial clustering for that distance is statistically not significant. Hence, we failed to reject the null hypothesis that the distribution of Shared Room Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
 
 #### 6.2.2.9 Relationship of Entire Home/Apt and Hotel Room Airbnb in 2021
 
@@ -3216,12 +3187,11 @@ Analysis: The plot above shows that the observed L(r) line is above L(theo) from
 The following code chunk computes Cross L-function using Lcross() of spatstat package.
 
 ```{r}
-set.seed(62291)
 airbnb0721_entht_Lcross <- Lcross(airbnb0721rt_ot_ppp, i="Entire home/apt", j="Hotel room", correction='border')
 plot(airbnb0721_entht_Lcross, . -r ~ r, xlab = "distance(m)", xlim=c(0, 500))
 ```
 
-Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 5 to 150m as the L(r) is above 0. From 0 to 5 meter, and 150m and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
+Analysis: The plot above reveals that there is a sign that the marked spatial point events are not independent spatially from distance 5 to 130m as the L(r) is above 0. From 0 to 5 meter, and 130m and above, there is a sign that the marked spatial point events are independent spatially as the L(r) is below 0. Hypothesis test is required to confirm the observation statistically.
 
 ##### 6.2.2.9.2 Performing CSR testing on the Cross L-Function
 
@@ -3236,7 +3206,6 @@ The null hypothesis will be rejected if p-value is smaller than alpha value of 0
 The following code chunk performs CSR test by using envelope() of spatstat package will be used.
 
 ```{r}
-set.seed(62292)
 airbnb0721_entht_Lcross.csr <- envelope(airbnb0721rt_ot_ppp, Lcross, i="Entire home/apt", j="Hotel room", correction='border', nsim=999)
 ```
 
@@ -3303,4 +3272,4 @@ if (nrow(Lcsr_df[Lcsr_df$obs > Lcsr_df$hi,])==0){
   }
 ```
 
-Analysis: The plot above shows that the observed L(r) line is below L(theo) from about 150m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is not statistically significant. Hence, we reject the null hypothesis that the distribution of Entire home/apt Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
+Analysis: The plot above shows that the observed L(r) line is below L(theo) from about 130m onwards and is within the lower confidence envelope which means spatial dispersion for that distance is not statistically significant. Hence, we reject the null hypothesis that the distribution of Entire home/apt Airbnb and Hotel Room Airbnb in 2021 are spatially independent at 99.9% confident interval.
