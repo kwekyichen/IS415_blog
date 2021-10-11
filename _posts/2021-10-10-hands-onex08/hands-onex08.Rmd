@@ -56,7 +56,7 @@ ict <- read_csv ("data/aspatial/Shan-ICT.csv")
 summary(ict)
 ```
 
-New variable with dplyr 
+New variable with dplyr (decimal scaling)
 
 ```{r}
 ict_derived <- ict %>%
@@ -110,7 +110,7 @@ ggplot(data=ict_derived, aes(x=`RADIO_PR`)) +
   geom_boxplot(color="black", fill="light blue")
 ```
 
-Multiple histogram
+Multiple histogram (to see data range)
 
 ```{r}
 radio <- ggplot(data=ict_derived, 
@@ -344,6 +344,8 @@ fviz_gap_stat(gap_stat)
 # Interpreting the dendrograms
 
 draw the dendrogram with border around the selected clusters 
+
+Note that width can change but height cannot...
 
 ```{r}
 plot(hclust_ward, cex = 0.6)
