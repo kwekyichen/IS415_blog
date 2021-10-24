@@ -1,0 +1,431 @@
+---
+title: "Hands-on_Ex10"
+description: |
+  I learned how to calibrate spatial interaction models using GLM() of Base R package.
+author:
+  - name: Kwek Yi Chen
+    url: https://example.com/kwekyichen
+date: 10-24-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+    toc_float: true
+    number_sections: true
+    code_folding: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+# Installing Packages
+
+```{r}
+packages = c('tmap', 'tidyverse',
+             'sp', 'caret',
+             'geojsonio', 'stplanr',
+             'reshape2', 'broom')
+
+for(p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p, character.only = T)
+}
+```
+
+use the order version (i.e. 0.9-8) of sf package instead of the latest version (i.e. 1.0-3) since there is s2 object class issue
+
+```{r}
+library(devtools)
+install_version("sf", version = "0.9-8", repos = "http://cran.us.r-project.org")
+```
+
+launch the library 
+
+```{r}
+library(sf)
+```
+
+# Geospatial Data
+
+download a copy of Greater Capital City Statistical Areas boundary layer from a dropbox depository using geojson_read() of geojsonio package.
+
+```{r}
+Aus <- geojson_read("https://www.dropbox.com/s/0fg80nzcxcsybii/GCCSA_2016_AUST_New.geojson?raw=1", what = "sp")
+```
+
+extract the data
+
+```{r}
+Ausdata <- Aus@data
+```
+
+convert data into a ‘sf’ object and set the coordinate reference system
+
+```{r}
+AusSF <- st_as_sf(Aus) %>% 
+  st_set_crs(4283)
+```
+
+check if all the simple features are valid 
+
+```{r}
+st_is_valid(AusSF)
+```
+
+From above, several invalid features
+
+The following code chunk fix them..
+
+```{r}
+AusSF2 <- st_make_valid(AusSF)
+AusSF2
+```
+
+check again if all the simple features are valid 
+
+```{r}
+st_is_valid(AusSF2)
+```
+
+### Display Boundary layer
+
+Plot the data and check if the boundary layer is correct using qtm() of tmap package..
+
+```{r}
+tmap_mode("plot")
+qtm(AusSF2)
+```
+
+### Display data 
+
+```{r}
+head(AusSF2, 10)
+```
+
+Reorder code order
+
+```{r}
+AusSF1 <- AusSF2[order(AusSF$GCCSA_CODE),]
+head(AusSF1, 10)
+```
+
+### Converting into sp object
+
+```{r}
+Aus <- as(AusSF1, "Spatial")
+```
+
+## Calculating a distance matrix
+
+### Re-projecting to projected coordinate system
+
+The original data unit of measurement is in decimal degree, but it is not appropriate for distance measurement. We will need to re-project the Aus into projected coordinate system using spTransform() of sp package.
+
+```{r}
+AusProj <- spTransform(Aus,"+init=epsg:3112")
+summary(AusProj)
+```
+
+### Computing distance matrix
+
+spDist() of sp package is used to compute the distance matrix.
+
+```{r}
+dist <- spDists(AusProj)
+dist 
+```
+
+### Converting distance matrix into distance pair list
+
+Convert into 3-column distance value list using melt() of reshape2 package
+
+```{r}
+distPair <- melt(dist)
+head(distPair, 10)
+```
+
+### Converting unit of measurement from metres into km
+
+```{r}
+distPair$value <- distPair$value / 1000
+head(distPair, 10)
+```
+
+# Importing Interaction Data
+
+Import migration data
+
+```{r}
+mdata <- read_csv("https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1",col_names = TRUE)
+glimpse(mdata)
+```
+
+## Combined the imported migration data
+
+We need to include thedistance data generated earlier and create a new column of total flows which excludes flows that occur within areas
+
+The following code creates a new total column that excludes intra-zone flow totals by setting it to a small number. 
+
+```{r}
+mdata$FlowNoIntra <- ifelse(mdata$Orig_code == mdata$Dest_code,0,mdata$Flow)
+mdata$offset <- ifelse(mdata$Orig_code == mdata$Dest_code,0.0000000001,1)
+```
+
+join data together with our flow data
+
+```{r}
+mdata$dist <- distPair$value 
+```
+
+set the intra-zonal distances with distance 0 to a small value
+
+```{r}
+mdata$dist <- ifelse(mdata$dist == 0,5,mdata$dist)
+```
+
+```{r}
+glimpse(mdata)
+```
+
+# Visualising with desire line
+
+## Removing intra-zone flows
+
+the following code chunk remove intra-zone flows
+
+```{r}
+mdatasub <- mdata[mdata$Orig_code!=mdata$Dest_code,]
+```
+
+remove all but the origin, destination and flow columns using od2line() function stplanr package
+
+```{r}
+mdatasub_skinny <- mdatasub[,c(2,4,5)]
+travel_network <- od2line(flow = mdatasub_skinny, zones = Aus)
+```
+
+convert the flows to WGS84 projection
+
+```{r}
+travel_networkwgs <- spTransform(travel_network,"+init=epsg:4326" )
+```
+
+convert the flows to WGS84 projection for Aus layer
+
+```{r}
+AusWGS <- spTransform(Aus,"+init=epsg:4326" )
+```
+
+set the line widths to some sensible value according to the flow.
+
+```{r}
+w <- mdatasub_skinny$Flow / max(mdatasub_skinny$Flow) * 10
+```
+
+plot the desire line map
+
+```{r}
+plot(travel_networkwgs, lwd = w)
+plot(AusWGS, add=T)
+```
+
+# Building Spatial Interaction Models
+
+## Unconstrained Spatial Interaction Model
+
+calibrate an unconstrained spatial interaction model by using glm()
+
+```{r}
+uncosim <- glm(Flow ~ log(vi1_origpop)+log(wj3_destmedinc)+log(dist), na.action = na.exclude, family = poisson(link = "log"), data = mdatasub)
+summary(uncosim)
+```
+
+From above, parameter estimates of explanatory variables are significant at alpha value of 0.001.
+
+### Fitting the model
+
+compute the fitted value with fitted function 
+
+```{r}
+mdatasub$fitted <- fitted(uncosim)
+```
+
+alternatives (harder method)
+
+```{r eval=FALSE}
+k <- uncosim$coefficients[1]
+mu <- uncosim$coefficients[2]
+alpha <- uncosim$coefficients[3]
+beta <- -uncosim$coefficients[4]
+
+mdatasub$unconstrainedEst2 <- exp(k+(mu*log(mdatasub$vi1_origpop))+(alpha*log(mdatasub$wj3_destmedinc))-(beta*log(mdatasub$dist)))
+```
+
+### Save the fitted values
+
+```{r}
+mdatasub$fitted <- round(mdatasub$fitted,0)
+mdatasubmat1 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "fitted", margins=c("Orig_code", "Dest_code"))
+mdatasubmat1
+```
+
+Harder method... 
+
+```{r eval=FALSE}
+mdatasub$unconstrainedEst2 <- round(mdatasub$unconstrainedEst2,0)
+sum(mdatasub$unconstrainedEst2)
+
+mdatasubmat2 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "unconstrainedEst2", margins=c("Orig_code", "Dest_code"))
+mdatasubmat2
+```
+
+Original flow
+
+```{r}
+mdatasubmat <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "Flow", margins=c("Orig_code", "Dest_code"))
+mdatasubmat
+```
+
+Visualise the actual flow and estimated flow
+
+```{r}
+ggplot(data=mdatasub, 
+       aes(y = `Flow`, 
+           x = `fitted`))+
+  geom_point(color="black", fill="light blue")
+```
+
+### Assessing the model performance
+
+compute three Goodness-of-Fit statistics with postReSample() of caret package
+
+```{r}
+postResample(mdatasub$Flow,mdatasub$fitted)
+```
+
+## Origin Constrained Spatial Interaction Model
+
+calibrate an origin constrained SIM using glm().
+ 
+```{r}
+origSim <- glm(Flow ~ Orig_code+log(wj3_destmedinc)+log(dist)-1, na.action = na.exclude, family = poisson(link = "log"), data = mdatasub)
+summary(origSim)
+```
+
+fit the model and roundup the estimated values
+
+```{r}
+mdatasub$origSimFitted <- round(fitted(origSim),0)
+```
+
+create pivot table to turn paired list into matrix.
+
+```{r}
+mdatasubmat3 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "origSimFitted", margins=c("Orig_code", "Dest_code"))
+mdatasubmat3
+```
+
+display the actual flow and estimated flow
+
+```{r}
+ggplot(data=mdatasub, 
+       aes(y = `Flow`, 
+           x = `origSimFitted`))+
+  geom_point(color="black", fill="light blue")
+```
+
+compute Goodness-of-fit statistics
+
+```{r}
+postResample(mdatasub$Flow,mdatasub$origSimFitted)
+```
+
+Analysis: R-squared improved from unconstrained 0.324 to 0.435. 
+
+## Destination Constrained Spatial Interaction Model
+
+calibrate a destination constrained SIM
+
+```{r}
+destSim <- glm(Flow ~ Dest_code+log(vi1_origpop)+log(dist)-1, na.action = na.exclude, family = poisson(link = "log"), data = mdatasub)
+summary(destSim)
+```
+
+fit the model and roundup the estimated values
+
+```{r}
+mdatasub$destSimFitted <- round(fitted(destSim),0)
+```
+
+create pivot table to turn paired list into matrix.
+
+```{r}
+mdatasubmat4 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "destSimFitted", margins=c("Orig_code", "Dest_code"))
+mdatasubmat4
+```
+
+display the actual flow and estimated flow 
+
+```{r}
+ggplot(data=mdatasub, 
+       aes(y = `Flow`, 
+           x = `destSimFitted`))+
+  geom_point(color="black", fill="light blue")
+```
+
+compute Goodness-of-fit statistics
+
+```{r}
+postResample(mdatasub$Flow,mdatasub$destSimFitted)
+```
+
+Analysis: R-squared improved from 0.32 in unconstrained to 0.65 in destination constrained model.
+
+## Doubly Constrained Spatial Interaction Model
+
+calibrate a doubly constrained SIM
+
+```{r}
+doubSim <- glm(Flow ~ Orig_code+Dest_code+log(dist), na.action = na.exclude, family = poisson(link = "log"), data = mdatasub)
+summary(doubSim)
+```
+
+fit the model and roundup the estimated values
+
+```{r}
+mdatasub$doubsimFitted <- round(fitted(doubSim),0)
+```
+
+create pivot table to turn paired list into matrix.
+
+```{r}
+mdatasubmat5 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "doubsimFitted", margins=c("Orig_code", "Dest_code"))
+mdatasubmat5
+```
+
+display the actual flow and estimated flow 
+
+```{r}
+ggplot(data=mdatasub, 
+       aes(y = `Flow`, 
+           x = `doubsimFitted`))+
+  geom_point(color="black", fill="light blue")
+```
+
+Analysis: The scatter plot above shows that the fitted values are highly correlated with the actual flow values. This means that the Doubly Constrained Spatial Interaction Model is the best fit model among the four spatial interaction models.
+
+compute Goodness-of-fit statistics
+
+```{r}
+postResample(mdatasub$Flow,mdatasub$doubsimFitted)
+```
+
+Analysis: R-squared improved from 0.32 in unconstained to 0.86 in doubly constrained spatial interaction model. In addition, doubly constrained spatial interaction model has the highest R-squared and smallest RMSE among the four spatial interaction models which shows that it is the best model.
+
+```{r}
+
+```
