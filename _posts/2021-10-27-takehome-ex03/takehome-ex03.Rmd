@@ -59,6 +59,8 @@ token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjc5NTMsInVzZXJfaWQiOjc5N
 -
 -
 
+- Note that after data preparation, the state file for run each may be deleted due to Github's file limit.
+
 
 ## 4. Data Import and Preparation
 
@@ -295,7 +297,7 @@ for (i in 1:nrow(hdbresale_latlononly_CBD_NA3)) {
 }
 ```
 
-The following code chunk write a copy of the csv as of the run state.
+The following code chunk write a copy of the csv as of the run state. 
 
 ```{r eval=FALSE}
 write.csv(hdbresale_latlononly_CBD_NA3, "data/newaspatial/hdbresale_PROXCBD_fifthrun.csv", row.names = FALSE)
