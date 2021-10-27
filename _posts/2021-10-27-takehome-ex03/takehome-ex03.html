@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"NULL"}
+  {"type":"character","attributes":{},"value":["data/aspatial/resale-flat-prices-based-on-registration-date-from-jan-2017-onwards.csv","data/independentvar/extracted/BusStops.json","data/independentvar/extracted/BusStops.xml","data/independentvar/extracted/child-care-services-geojson.geojson","data/independentvar/extracted/child-care-services-kml.kml","data/independentvar/extracted/ELDERCARE.dbf","data/independentvar/extracted/ELDERCARE.prj","data/independentvar/extracted/ELDERCARE.sbn","data/independentvar/extracted/ELDERCARE.sbx","data/independentvar/extracted/ELDERCARE.shp","data/independentvar/extracted/ELDERCARE.shp.xml","data/independentvar/extracted/ELDERCARE.shx","data/independentvar/extracted/hawker-centres-geojson.geojson","data/independentvar/extracted/hawker-centres-kml.kml","data/independentvar/extracted/kindergartens-geojson.geojson","data/independentvar/extracted/kindergartens-kml.kml","data/independentvar/extracted/metadata-child-care-services.txt","data/independentvar/extracted/metadata-hawker-centres.txt","data/independentvar/extracted/metadata-kindergartens.txt","data/independentvar/extracted/metadata-parks.txt","data/independentvar/extracted/metadata-supermarkets.txt","data/independentvar/extracted/parks-geojson.geojson","data/independentvar/extracted/parks-kml.kml","data/independentvar/extracted/Singapore+Schools-2021-10-21.csv","data/independentvar/extracted/supermarkets-geojson.geojson","data/independentvar/extracted/supermarkets-kml.kml","data/independentvar/raw/BusStops.zip","data/independentvar/raw/child-care-services.zip","data/independentvar/raw/eldercare-services.zip","data/independentvar/raw/hawker-centres.zip","data/independentvar/raw/kindergartens.zip","data/independentvar/raw/parks.zip","data/independentvar/raw/pre-schools-location.zip","data/independentvar/raw/supermarkets.zip","data/newaspatial/hdbresale_latlong.csv","data/newaspatial/hdbresale_latlongm.csv","data/newaspatial/hdbresale_latlongonly.csv","data/newaspatial/hdbresale_PROXCBD_fifthrun.csv","data/newaspatial/hdbresale_PROXCBD_firstrun.csv","data/newaspatial/hdbresale_PROXCBD_fourthrun.csv","data/newaspatial/hdbresale_PROXCBD_secondrun.csv","data/newaspatial/hdbresale_PROXCBD_thirdrun.csv","data/newaspatial/hdbresale_proxcbd1.csv","data/newaspatial/hdbresale_proxcbd2.csv","data/newaspatial/hdbresale_proxcbd3.csv","data/newaspatial/hdbresale_proxcbd4.csv","data/newaspatial/hdbresale_proxcbd5.csv","data/newaspatial/hdbresale_proxcbdfinal.csv","takehome-ex03_files/anchor-4.2.2/anchor.min.js","takehome-ex03_files/bowser-1.9.3/bowser.min.js","takehome-ex03_files/distill-2.2.21/template.v2.js","takehome-ex03_files/header-attrs-2.10/header-attrs.js","takehome-ex03_files/jquery-1.11.3/jquery.min.js","takehome-ex03_files/popper-2.6.0/popper.min.js","takehome-ex03_files/tippy-6.2.7/tippy-bundle.umd.min.js","takehome-ex03_files/tippy-6.2.7/tippy-light-border.css","takehome-ex03_files/tippy-6.2.7/tippy.css","takehome-ex03_files/tippy-6.2.7/tippy.umd.min.js","takehome-ex03_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1478,6 +1478,510 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 
 <div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#introduction">1. Introduction</a></li>
+<li><a href="#setting-up-the-environment">2. Setting Up the Environment</a>
+<ul>
+<li><a href="#installing-packages">Installing Packages</a></li>
+<li><a href="#onemapsgapi-token-authorization">onemapsgapi Token Authorization</a></li>
+</ul></li>
+<li><a href="#data">3. Data</a></li>
+<li><a href="#data-import-and-preparation">4. Data Import and Preparation</a>
+<ul>
+<li><a href="#hdb-resales-data">4.1 HDB Resales Data</a></li>
+<li><a href="#proximity-to-cbd">4.2 Proximity to CBD</a></li>
+<li><a href="#promixty-to">4.3 Promixty to</a></li>
+<li><a href="#promixty-to-1">4.4 Promixty to</a></li>
+<li><a href="#promixty-to-2">4.5 Promixty to</a></li>
+<li><a href="#promixty-to-3">4.6 Promixty to</a></li>
+<li><a href="#promixty-to-4">4.7 Promixty to</a></li>
+<li><a href="#promixty-to-5">4.8 Promixty to</a></li>
+</ul></li>
+</ul>
+</nav>
+</div>
+<h2 id="introduction">1. Introduction</h2>
+<h2 id="setting-up-the-environment">2. Setting Up the Environment</h2>
+<h3 id="installing-packages">Installing Packages</h3>
+<p>The following code chunk install the following packages:</p>
+<p>dplyr stringr: stringsub</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'readr'</span>, <span class='st'>'tmap'</span>, <span class='st'>'sf'</span>, <span class='st'>'onemapsgapi'</span>, <span class='st'>'httr'</span>, <span class='st'>'dplyr'</span>, <span class='st'>'stringr'</span>, <span class='st'>'jsonlite'</span>, <span class='st'>'tidyr'</span><span class='op'>)</span>
+<span class='kw'>for</span> <span class='op'>(</span><span class='va'>p</span> <span class='kw'>in</span> <span class='va'>packages</span><span class='op'>)</span><span class='op'>{</span>
+  <span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>p</span>, character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
+    <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
+    <span class='op'>}</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>p</span>,character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h3 id="onemapsgapi-token-authorization">onemapsgapi Token Authorization</h3>
+<p>First, we set up the token for onemapsgapi. The code is not shown because the information is sensitive.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>token</span> <span class='op'>&lt;-</span> <span class='st'>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjc5NTMsInVzZXJfaWQiOjc5NTMsImVtYWlsIjoieWljaGVuLmt3ZWsuMjAxOUBzY2lzLnNtdS5lZHUuc2ciLCJmb3JldmVyIjpmYWxzZSwiaXNzIjoiaHR0cDpcL1wvb20yLmRmZS5vbmVtYXAuc2dcL2FwaVwvdjJcL3VzZXJcL3Nlc3Npb24iLCJpYXQiOjE2MzUxMjY5NTcsImV4cCI6MTYzNTU1ODk1NywibmJmIjoxNjM1MTI2OTU3LCJqdGkiOiJmZTAzNzU1OTc4OTI3YWQ5YzY1ZGUwOGE3N2JkYWQ0MCJ9.j9Vy1gwkKjomWfcdVVnUsNjE2OOLze0NJzxplurz-_8"</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h2 id="data">3. Data</h2>
+<ul>
+<li>HDB Resale Data. It is in csv format from data.gov.sg</li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+<h2 id="data-import-and-preparation">4. Data Import and Preparation</h2>
+<h3 id="hdb-resales-data">4.1 HDB Resales Data</h3>
+<p>The following code chunk uses read_csv function of readr package to import the hdb resales data and display the data.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/aspatial/resale-flat-prices-based-on-registration-date-from-jan-2017-onwards.csv"</span><span class='op'>)</span>
+<span class='va'>hdbresale</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The data contains multiple rows but our focus is only on four-room flat with transaction period from 1st January 2019 to 30th September 2020.</p>
+<p>The following code chunk filter the four-room flat data from Jan 2019 to September 2020 using filter function of base package.</p>
+<p>Then, we created a new column using mutate function of dplyr package for the following column:</p>
+<ol type="1">
+<li>address column that combines the block and street name (paste function of base package concatenate the strings, as.character converts the string to character type)</li>
+<li>story_range_lower and storey_range_upper column that split the storey_range (str_sub function of stringr)</li>
+<li>remaining_lease_year column from the remaining_lease string (str_sub function of stringr)</li>
+<li>we selected all the columns</li>
+<li>display the data.</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_filtered</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale</span> <span class='op'>%&gt;%</span>
+                <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>month</span> <span class='op'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019-01"</span>, <span class='st'>"2019-02"</span>, <span class='st'>"2019-03"</span>, <span class='st'>"2019-04"</span>, <span class='st'>"2019-05"</span>, <span class='st'>"2019-06"</span>, <span class='st'>"2019-07"</span>, <span class='st'>"2019-08"</span>, <span class='st'>"2019-09"</span>, <span class='st'>"2019-10"</span>, <span class='st'>"2019-11"</span>, <span class='st'>"2019-12"</span>,<span class='st'>"2020-01"</span>, <span class='st'>"2020-02"</span>, <span class='st'>"2020-03"</span>, <span class='st'>"2020-04"</span>, <span class='st'>"2020-05"</span>, <span class='st'>"2020-06"</span>, <span class='st'>"2020-07"</span>, <span class='st'>"2020-08"</span>, <span class='st'>"2020-09"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>flat_type</span> <span class='op'>==</span> <span class='st'>"4 ROOM"</span><span class='op'>)</span>
+
+<span class='va'>hdbresale_new</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale_filtered</span> <span class='op'>%&gt;%</span>
+                  <span class='fu'>mutate</span><span class='op'>(</span><span class='va'>hdbresale_filtered</span>, address <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>block</span><span class='op'>)</span>,<span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>street_name</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                  <span class='fu'>mutate</span><span class='op'>(</span><span class='va'>hdbresale_filtered</span>, storey_range_lower <span class='op'>=</span> <span class='fu'>str_sub</span><span class='op'>(</span><span class='va'>storey_range</span>, <span class='fl'>0</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                  <span class='fu'>mutate</span><span class='op'>(</span><span class='va'>hdbresale_filtered</span>, storey_range_upper <span class='op'>=</span> <span class='fu'>str_sub</span><span class='op'>(</span><span class='va'>storey_range</span>, <span class='op'>-</span><span class='fl'>3</span>, <span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                  <span class='fu'>mutate</span><span class='op'>(</span><span class='va'>hdbresale_filtered</span>, remaining_lease_year <span class='op'>=</span> <span class='fu'>str_sub</span><span class='op'>(</span><span class='va'>remaining_lease</span>, <span class='fl'>0</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                  <span class='fu'>select</span><span class='op'>(</span><span class='va'>month</span>, <span class='va'>town</span>, <span class='va'>address</span>, <span class='va'>block</span>, <span class='va'>street_name</span>, <span class='va'>flat_type</span>, <span class='va'>storey_range</span>, <span class='va'>storey_range_lower</span>, <span class='va'>storey_range_upper</span>, <span class='va'>floor_area_sqm</span>, <span class='va'>flat_model</span>, <span class='va'>lease_commence_date</span>, <span class='va'>remaining_lease</span>, <span class='va'>remaining_lease_year</span>, <span class='va'>resale_price</span><span class='op'>)</span>
+
+<span class='va'>hdbresale_new</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>We can see that from Jan 2019 to September 2020, there are 15901 transactions for four-room flat in Singapore.</p>
+<p>Get lat long with address</p>
+<p>The follow code chunk:</p>
+<ol type="1">
+<li>iterate through every rows of data in hdbresale_new table</li>
+<li>for each row, we will get the address and set the onemapsgapi url</li>
+<li>we will next get encode the url with URLencode function</li>
+<li>get the result of the encode_url with GET function of httr package</li>
+<li>extract the content from the getcoordinate request. as argument is set as “parsed”</li>
+<li>if there are at least one result, we extract the latitude and longitude and assign it to the column respectively</li>
+</ol>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>hdbresale_new</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>address</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale_new</span><span class='op'>[</span><span class='va'>i</span>,<span class='st'>'address'</span><span class='op'>]</span>
+  
+  <span class='va'>url</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>'https://developers.onemap.sg/commonapi/search?searchVal='</span>, <span class='va'>address</span>, <span class='st'>'&amp;returnGeom=Y&amp;getAddrDetails=Y&amp;pageNum=1'</span><span class='op'>)</span>
+  <span class='va'>encoded_url</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/URLencode.html'>URLencode</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>
+  
+  <span class='va'>getcoordinate</span> <span class='op'>&lt;-</span> <span class='fu'>GET</span><span class='op'>(</span><span class='va'>encoded_url</span><span class='op'>)</span>
+  
+  <span class='va'>jsonParsed</span> <span class='op'>&lt;-</span> <span class='fu'>content</span><span class='op'>(</span><span class='va'>getcoordinate</span>,as<span class='op'>=</span><span class='st'>"parsed"</span><span class='op'>)</span>
+  
+  <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>jsonParsed</span><span class='op'>$</span><span class='va'>results</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>hdbresale_new</span><span class='op'>[</span><span class='va'>i</span>,<span class='st'>'LATITUDE'</span><span class='op'>]</span> <span class='op'>=</span> <span class='va'>jsonParsed</span><span class='op'>$</span><span class='va'>results</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>LATITUDE</span>
+    <span class='va'>hdbresale_new</span><span class='op'>[</span><span class='va'>i</span>,<span class='st'>'LONGITUDE'</span><span class='op'>]</span> <span class='op'>=</span> <span class='va'>jsonParsed</span><span class='op'>$</span><span class='va'>results</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>LONGITUDE</span>
+  <span class='op'>}</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Check if any rows with missing lat long</p>
+<p>The following code chunk use is.na function of base package and sum to calculate the total number of NA is there is any.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>hdbresale_new</span><span class='op'>$</span><span class='va'>LATITUDE</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>There are 26 rows with missing lat long. We will take a look at which areas are the affected rows</p>
+<p>The following code chunk filters the rows with missing latlong</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresaleNA</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale_new</span> <span class='op'>%&gt;%</span>
+                 <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>hdbresale_new</span><span class='op'>$</span><span class='va'>LATITUDE</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>hdbresaleNA</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>From the above, we can see that the common location with missing lat long is ST. GEORGE.</p>
+<p>We will next assign the lat long to these rows as long as the address is “ST. GEORGE” if there are any result</p>
+<p>Similar to previous, this time we set the address as default “ST.GEORGE” and assign to each row as long as there is result</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>hdbresaleNA</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>address</span> <span class='op'>=</span> <span class='st'>"ST. GEORGE"</span>
+  <span class='va'>url</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>'https://developers.onemap.sg/commonapi/search?searchVal='</span>, <span class='va'>address</span>, <span class='st'>'&amp;returnGeom=Y&amp;getAddrDetails=Y&amp;pageNum=1'</span><span class='op'>)</span>
+  <span class='va'>encoded_url</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/URLencode.html'>URLencode</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>
+  
+  <span class='va'>getcoordinate</span> <span class='op'>&lt;-</span> <span class='fu'>GET</span><span class='op'>(</span><span class='va'>encoded_url</span><span class='op'>)</span>
+  
+  <span class='va'>jsonParsed</span> <span class='op'>&lt;-</span> <span class='fu'>content</span><span class='op'>(</span><span class='va'>getcoordinate</span>,as<span class='op'>=</span><span class='st'>"parsed"</span><span class='op'>)</span>
+  
+  <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>jsonParsed</span><span class='op'>$</span><span class='va'>results</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>hdbresaleNA</span><span class='op'>[</span><span class='va'>i</span>,<span class='st'>'LATITUDE'</span><span class='op'>]</span> <span class='op'>=</span> <span class='va'>jsonParsed</span><span class='op'>$</span><span class='va'>results</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>LATITUDE</span>
+    <span class='va'>hdbresaleNA</span><span class='op'>[</span><span class='va'>i</span>,<span class='st'>'LONGITUDE'</span><span class='op'>]</span> <span class='op'>=</span> <span class='va'>jsonParsed</span><span class='op'>$</span><span class='va'>results</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>LONGITUDE</span>
+  <span class='op'>}</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk check if there are still any missing value</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresaleNA</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>There are no missing value. However, the lat long for the 26 points are all the same.</p>
+<p>In order to avoid having overlapping points, we use jitter function so that the lat long are distinct</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresaleNA</span><span class='op'>$</span><span class='va'>LATITUDE</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/jitter.html'>jitter</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>hdbresaleNA</span><span class='op'>$</span><span class='va'>LATITUDE</span><span class='op'>)</span>, factor <span class='op'>=</span> <span class='fl'>0.00123</span><span class='op'>)</span>
+<span class='va'>hdbresaleNA</span><span class='op'>$</span><span class='va'>LONGITUDE</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/jitter.html'>jitter</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>hdbresaleNA</span><span class='op'>$</span><span class='va'>LONGITUDE</span><span class='op'>)</span>, factor <span class='op'>=</span> <span class='fl'>0.00123</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Check the data again</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresaleNA</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>We can see that the lat long are different.</p>
+<p>The following code chunk filters the rows with latlong using drop_na function of tidyr to drop rows with missing LATITUDE values</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresaleNOTNA</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale_new</span> <span class='op'>%&gt;%</span>
+                      <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>LATITUDE</span><span class='op'>)</span>
+<span class='va'>hdbresaleNOTNA</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk combines hdbresaleNA and hdbresaleNOTNA using rbind function of base package.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_latlong</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span><span class='va'>hdbresaleNA</span>, <span class='va'>hdbresaleNOTNA</span><span class='op'>)</span>
+<span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>hdbresale_latlong</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>We have 15901 rows which is same as the number of rows of the initial dataset.</p>
+<p>The following code chunk converts the dataset with latlong decimal degree to metres coordinates, and transform the crs to Singapore’s projection, 3414.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_latlongm</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>hdbresale_latlong</span>,
+                    coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"LONGITUDE"</span>, 
+                               <span class='st'>"LATITUDE"</span><span class='op'>)</span>,
+                    crs<span class='op'>=</span><span class='fl'>4326</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>st_transform</span><span class='op'>(</span>crs <span class='op'>=</span> <span class='fl'>3414</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk plots the points to see if the data is correct using functions of tmap package.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"view"</span><span class='op'>)</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hdbresale_latlongm</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Export as csv</p>
+<p>The following code chunk export data with sf as csv so that we do not have to re-run the time-consuming process above again.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/write.table.html'>write.csv</a></span><span class='op'>(</span><span class='va'>hdbresale_latlong</span>, <span class='st'>"data/newaspatial/hdbresale_latlongonly.csv"</span>, row.names <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>Import hdbresales csv with Latlong, and convert to singapore crs.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_latlononly</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/newaspatial/hdbresale_latlongonly.csv"</span><span class='op'>)</span>
+
+<span class='va'>hdbresale_latlongtogeo</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>hdbresale_latlononly</span>,
+                    coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"LONGITUDE"</span>, 
+                               <span class='st'>"LATITUDE"</span><span class='op'>)</span>,
+                    crs<span class='op'>=</span><span class='fl'>4326</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>st_transform</span><span class='op'>(</span>crs <span class='op'>=</span> <span class='fl'>3414</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk plots the points to check if the imported data is plotted correctly.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"view"</span><span class='op'>)</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hdbresale_latlongtogeo</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h3 id="proximity-to-cbd">4.2 Proximity to CBD</h3>
+<p>Since CBD is a huge area, we will first define the lat long for CBD, taken from Google. (Latitude : 1.2801, Longitude : 103.8509)</p>
+<p>The following code chunk: 1) iterate through every single rows in the data 2) the start lat long, end lat long and the routeType are defined. In this analysis, we will be using routeType “drive” 3) the url will be set and the space in url will be removed using gsub function of base package 4) get the result of the url with GET function of httr package 5) extract the content from the getproximitytocdb request. as argument is set as “parsed” 6) if there are at least one result, we extract the total distance, convert it to km by dividing it by 1000, and assign it to the PROX_CBD column.</p>
+<p>This process repeated a few times. This is because the onemapsgapi may return NA value for certain rows due to the request limit. Note that the first data was hdbresale_latlononly, and it was replaced by the current hdbresale_latlononly_CBD_NA_2 because of the repetition of this process.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'>for</span> <span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>hdbresale_latlononly_CBD_NA3</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>startlat</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale_latlononly_CBD_NA3</span><span class='op'>[</span><span class='va'>i</span>,<span class='st'>'LATITUDE'</span><span class='op'>]</span>
+  <span class='va'>startlong</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale_latlononly_CBD_NA3</span><span class='op'>[</span><span class='va'>i</span>,<span class='st'>'LONGITUDE'</span><span class='op'>]</span>
+  
+  <span class='va'>start</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span><span class='op'>(</span><span class='st'>' '</span>, <span class='st'>''</span>, <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='va'>startlat</span>, <span class='st'>','</span>,  <span class='va'>startlong</span><span class='op'>)</span><span class='op'>)</span>
+  
+  <span class='va'>end</span> <span class='op'>=</span> <span class='st'>'1.2801,103.8509'</span>
+  <span class='va'>routeType</span> <span class='op'>=</span> <span class='st'>'drive'</span>
+  
+  <span class='va'>url</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span><span class='op'>(</span><span class='st'>' '</span>, <span class='st'>''</span>, <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>'https://developers.onemap.sg/privateapi/routingsvc/route?start='</span>, <span class='va'>start</span>, <span class='st'>'&amp;end='</span>, <span class='va'>end</span>, <span class='st'>'&amp;routeType='</span>, <span class='va'>routeType</span>, <span class='st'>'&amp;token='</span>, <span class='va'>token</span><span class='op'>)</span><span class='op'>)</span>
+  
+  <span class='va'>getproximitytocbd</span> <span class='op'>&lt;-</span> <span class='fu'>GET</span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>
+  
+  <span class='va'>jsonParsed</span> <span class='op'>&lt;-</span> <span class='fu'>content</span><span class='op'>(</span><span class='va'>getproximitytocbd</span>,as<span class='op'>=</span><span class='st'>"parsed"</span><span class='op'>)</span>
+  
+  <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>jsonParsed</span><span class='op'>$</span><span class='va'>route_summary</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>hdbresale_latlononly_CBD_NA3</span><span class='op'>[</span><span class='va'>i</span>,<span class='st'>'PROX_CBD'</span><span class='op'>]</span> <span class='op'>=</span> <span class='va'>jsonParsed</span><span class='op'>$</span><span class='va'>route_summary</span><span class='op'>$</span><span class='va'>total_distance</span><span class='op'>/</span><span class='fl'>1000</span>
+  <span class='op'>}</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk write a copy of the csv as of the run state.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/write.table.html'>write.csv</a></span><span class='op'>(</span><span class='va'>hdbresale_latlononly_CBD_NA3</span>, <span class='st'>"data/newaspatial/hdbresale_PROXCBD_fifthrun.csv"</span>, row.names <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk filter the rows with distance NA, and repeat the above code chunk to obtain distance for remaining rows with NA value.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_latlononly_CBD_NA4</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale_latlononly_CBD_NA3</span> <span class='op'>%&gt;%</span>
+                              <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>hdbresale_latlononly_CBD_NA3</span><span class='op'>$</span><span class='va'>PROX_CBD</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>hdbresale_latlononly_CBD_NA4</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk filter the rows with valid distance value and write a copy of the csv in the file path</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_latlononly_CBD_NONA5</span> <span class='op'>&lt;-</span> <span class='va'>hdbresale_latlononly_CBD_NA3</span> <span class='op'>%&gt;%</span>
+                                  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>PROX_CBD</span><span class='op'>)</span>
+<span class='va'>hdbresale_latlononly_CBD_NONA5</span>
+
+<span class='fu'><a href='https://rdrr.io/r/utils/write.table.html'>write.csv</a></span><span class='op'>(</span><span class='va'>hdbresale_latlononly_CBD_NONA5</span>, <span class='st'>"data/newaspatial/hdbresale_proxcbd5.csv"</span>, row.names <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk rbind all the dataset after getting the PROX_CBD of every row.</p>
+<p>Data to bind includes:</p>
+<ul>
+<li>hdbresale_latlononly_CBD_NONA1, hdbresale_latlononly_CBD_NONA2, hdbresale_latlononly_CBD_NONA3, hdbresale_latlononly_CBD_NONA4 and hdbresale_latlononly_CBD_NONA5</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_PROXCBD</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>rbind</a></span><span class='op'>(</span><span class='va'>hdbresale_latlononly_CBD_NONA1</span>, <span class='va'>hdbresale_latlononly_CBD_NONA2</span>, <span class='va'>hdbresale_latlononly_CBD_NONA3</span>, <span class='va'>hdbresale_latlononly_CBD_NONA4</span>, <span class='va'>hdbresale_latlononly_CBD_NONA5</span><span class='op'>)</span>
+
+<span class='va'>hdbresale_PROXCBD</span>
+
+<span class='fu'><a href='https://rdrr.io/r/utils/write.table.html'>write.csv</a></span><span class='op'>(</span><span class='va'>hdbresale_PROXCBD</span>, <span class='st'>"data/newaspatial/hdbresale_proxcbdfinal.csv"</span>, row.names <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_cbd</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/newaspatial/hdbresale_proxcbdfinal.csv"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_cbd</span>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>hdbresale_cbd</span><span class='op'>$</span><span class='va'>PROX_CBD</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hdbresale_latlongtogeowithcbdprox</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>hdbresale_cbd</span>,
+                                      coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"LONGITUDE"</span>, 
+                                                 <span class='st'>"LATITUDE"</span><span class='op'>)</span>,
+                                      crs<span class='op'>=</span><span class='fl'>4326</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+                                      <span class='fu'>st_transform</span><span class='op'>(</span>crs <span class='op'>=</span> <span class='fl'>3414</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<p>The following code chunk plots the points to check if the imported data is plotted correctly.</p>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"view"</span><span class='op'>)</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hdbresale_latlongtogeowithcbdprox</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</details>
+</div>
+<h3 id="promixty-to">4.3 Promixty to</h3>
+<h3 id="promixty-to-1">4.4 Promixty to</h3>
+<h3 id="promixty-to-2">4.5 Promixty to</h3>
+<h3 id="promixty-to-3">4.6 Promixty to</h3>
+<h3 id="promixty-to-4">4.7 Promixty to</h3>
+<h3 id="promixty-to-5">4.8 Promixty to</h3>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

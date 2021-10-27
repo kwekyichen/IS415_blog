@@ -16,8 +16,358 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, eval = FALSE)
 ```
 
 
+## 1. Introduction
 
+
+
+## 2. Setting Up the Environment
+
+### Installing Packages
+
+The following code chunk install the following packages:
+
+dplyr
+stringr: stringsub
+
+```{r}
+packages = c('readr', 'tmap', 'sf', 'onemapsgapi', 'httr', 'dplyr', 'stringr', 'jsonlite', 'tidyr')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+    }
+  library(p,character.only = T)
+}
+```
+
+### onemapsgapi Token Authorization
+
+First, we set up the token for onemapsgapi. The code is not shown because the information is sensitive.
+
+```{r echo=FALSE}
+token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjc5NTMsInVzZXJfaWQiOjc5NTMsImVtYWlsIjoieWljaGVuLmt3ZWsuMjAxOUBzY2lzLnNtdS5lZHUuc2ciLCJmb3JldmVyIjpmYWxzZSwiaXNzIjoiaHR0cDpcL1wvb20yLmRmZS5vbmVtYXAuc2dcL2FwaVwvdjJcL3VzZXJcL3Nlc3Npb24iLCJpYXQiOjE2MzUxMjY5NTcsImV4cCI6MTYzNTU1ODk1NywibmJmIjoxNjM1MTI2OTU3LCJqdGkiOiJmZTAzNzU1OTc4OTI3YWQ5YzY1ZGUwOGE3N2JkYWQ0MCJ9.j9Vy1gwkKjomWfcdVVnUsNjE2OOLze0NJzxplurz-_8"
+```
+
+## 3. Data
+
+- HDB Resale Data. It is in csv format from data.gov.sg
+- 
+- 
+-
+-
+
+
+## 4. Data Import and Preparation
+
+### 4.1 HDB Resales Data
+
+The following code chunk uses read_csv function of readr package to import the hdb resales data and display the data.
+
+```{r eval=FALSE}
+hdbresale <- read_csv("data/aspatial/resale-flat-prices-based-on-registration-date-from-jan-2017-onwards.csv")
+hdbresale
+```
+
+The data contains multiple rows but our focus is only on four-room flat with transaction period from 1st January 2019 to 30th September 2020.
+
+The following code chunk filter the four-room flat data from Jan 2019 to September 2020 using filter function of base package.
+
+Then, we created a new column using mutate function of dplyr package for the following column:
+
+1) address column that combines the block and street name (paste function of base package concatenate the strings, as.character converts the string to character type)
+2) story_range_lower and storey_range_upper column that split the storey_range (str_sub function of stringr)
+3) remaining_lease_year column from the remaining_lease string (str_sub function of stringr)
+4) we selected all the columns
+5) display the data.
+
+```{r eval=FALSE}
+hdbresale_filtered <- hdbresale %>%
+                filter(month %in% c("2019-01", "2019-02", "2019-03", "2019-04", "2019-05", "2019-06", "2019-07", "2019-08", "2019-09", "2019-10", "2019-11", "2019-12","2020-01", "2020-02", "2020-03", "2020-04", "2020-05", "2020-06", "2020-07", "2020-08", "2020-09")) %>%
+                filter(flat_type == "4 ROOM")
+
+hdbresale_new <- hdbresale_filtered %>%
+                  mutate(hdbresale_filtered, address = paste(as.character(block),as.character(street_name))) %>%
+                  mutate(hdbresale_filtered, storey_range_lower = str_sub(storey_range, 0, 2)) %>%
+                  mutate(hdbresale_filtered, storey_range_upper = str_sub(storey_range, -3, -1)) %>%
+                  mutate(hdbresale_filtered, remaining_lease_year = str_sub(remaining_lease, 0, 2)) %>%
+                  select(month, town, address, block, street_name, flat_type, storey_range, storey_range_lower, storey_range_upper, floor_area_sqm, flat_model, lease_commence_date, remaining_lease, remaining_lease_year, resale_price)
+
+hdbresale_new
+```
+
+We can see that from Jan 2019 to September 2020, there are 15901 transactions for four-room flat in Singapore.
+
+Get lat long with address
+
+The follow code chunk:
+
+1) iterate through every rows of data in hdbresale_new table
+2) for each row, we will get the address and set the onemapsgapi url
+3) we will next get encode the url with URLencode function
+4) get the result of the encode_url with GET function of httr package
+5) extract the content from the getcoordinate request. as argument is set as "parsed"
+6) if there are at least one result, we extract the latitude and longitude and assign it to the column respectively
+
+
+```{r eval=FALSE}
+for (i in 1:nrow(hdbresale_new)) {
+  address <- hdbresale_new[i,'address']
+  
+  url = paste('https://developers.onemap.sg/commonapi/search?searchVal=', address, '&returnGeom=Y&getAddrDetails=Y&pageNum=1')
+  encoded_url <- URLencode(url)
+  
+  getcoordinate <- GET(encoded_url)
+  
+  jsonParsed <- content(getcoordinate,as="parsed")
+  
+  if (length(jsonParsed$results) > 0) {
+    hdbresale_new[i,'LATITUDE'] = jsonParsed$results[[1]]$LATITUDE
+    hdbresale_new[i,'LONGITUDE'] = jsonParsed$results[[1]]$LONGITUDE
+  }
+}
+```
+
+Check if any rows with missing lat long
+
+The following code chunk use is.na function of base package and sum to calculate the total number of NA is there is any.
+
+```{r eval=FALSE}
+sum(is.na(hdbresale_new$LATITUDE))
+```
+
+There are 26 rows with missing lat long. We will take a look at which areas are the affected rows
+
+The following code chunk filters the rows with missing latlong 
+
+```{r eval=FALSE}
+hdbresaleNA <- hdbresale_new %>%
+                 filter(is.na(hdbresale_new$LATITUDE))
+hdbresaleNA
+```
+
+From the above, we can see that the common location with missing lat long is ST. GEORGE. 
+
+We will next assign the lat long to these rows as long as the address is "ST. GEORGE" if there are any result
+
+Similar to previous, this time we set the address as default "ST.GEORGE" and assign to each row as long as there is result
+
+```{r eval=FALSE}
+for (i in 1:nrow(hdbresaleNA)) {
+  address = "ST. GEORGE"
+  url = paste('https://developers.onemap.sg/commonapi/search?searchVal=', address, '&returnGeom=Y&getAddrDetails=Y&pageNum=1')
+  encoded_url <- URLencode(url)
+  
+  getcoordinate <- GET(encoded_url)
+  
+  jsonParsed <- content(getcoordinate,as="parsed")
+  
+  if (length(jsonParsed$results) > 0) {
+    hdbresaleNA[i,'LATITUDE'] = jsonParsed$results[[1]]$LATITUDE
+    hdbresaleNA[i,'LONGITUDE'] = jsonParsed$results[[1]]$LONGITUDE
+  }
+}
+```
+
+The following code chunk check if there are still any missing value
+
+```{r eval=FALSE}
+hdbresaleNA
+```
+
+There are no missing value. However, the lat long for the 26 points are all the same.
+
+In order to avoid having overlapping points, we use jitter function so that the lat long are distinct
+
+```{r eval=FALSE}
+hdbresaleNA$LATITUDE <- jitter(as.numeric(hdbresaleNA$LATITUDE), factor = 0.00123)
+hdbresaleNA$LONGITUDE <- jitter(as.numeric(hdbresaleNA$LONGITUDE), factor = 0.00123)
+```
+
+Check the data again
+
+```{r eval=FALSE}
+hdbresaleNA
+```
+
+We can see that the lat long are different.
+
+The following code chunk filters the rows with latlong using drop_na function of tidyr to drop rows with missing LATITUDE values
+
+```{r eval=FALSE}
+hdbresaleNOTNA <- hdbresale_new %>%
+                      drop_na(LATITUDE)
+hdbresaleNOTNA
+```
+
+The following code chunk combines hdbresaleNA and hdbresaleNOTNA using rbind function of base package.
+
+```{r eval=FALSE}
+hdbresale_latlong <- rbind(hdbresaleNA, hdbresaleNOTNA)
+glimpse(hdbresale_latlong)
+```
+
+We have 15901 rows which is same as the number of rows of the initial dataset. 
+
+The following code chunk converts the dataset with latlong decimal degree to metres coordinates, and transform the crs to Singapore's projection, 3414.
+
+```{r eval=FALSE}
+hdbresale_latlongm <- st_as_sf(hdbresale_latlong,
+                    coords = c("LONGITUDE", 
+                               "LATITUDE"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
+```
+
+The following code chunk plots the points to see if the data is correct using functions of tmap package.
+
+```{r eval=FALSE}
+tmap_mode("view")
+tm_shape(hdbresale_latlongm)+
+  tm_dots()
+tmap_mode("plot")
+```
+
+Export as csv
+
+The following code chunk export data with sf as csv so that we do not have to re-run the time-consuming process above again.
+
+```{r eval=FALSE}
+write.csv(hdbresale_latlong, "data/newaspatial/hdbresale_latlongonly.csv", row.names = FALSE)
+```
+
+Import hdbresales csv with Latlong, and convert to singapore crs.
+
+```{r eval=FALSE}
+hdbresale_latlononly <- read_csv("data/newaspatial/hdbresale_latlongonly.csv")
+
+hdbresale_latlongtogeo <- st_as_sf(hdbresale_latlononly,
+                    coords = c("LONGITUDE", 
+                               "LATITUDE"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
+```
+
+The following code chunk plots the points to check if the imported data is plotted correctly. 
+
+```{r eval=FALSE}
+tmap_mode("view")
+tm_shape(hdbresale_latlongtogeo)+
+  tm_dots()
+tmap_mode("plot")
+```
+
+### 4.2 Proximity to CBD
+
+Since CBD is a huge area, we will first define the lat long for CBD, taken from Google. (Latitude : 1.2801, Longitude : 103.8509)
+
+The following code chunk:
+1) iterate through every single rows in the data
+2) the start lat long, end lat long and the routeType are defined. In this analysis, we will be using routeType "drive"
+3) the url will be set and the space in url will be removed using gsub function of base package
+4) get the result of the url with GET function of httr package
+5) extract the content from the getproximitytocdb request. as argument is set as "parsed"
+6) if there are at least one result, we extract the total distance, convert it to km by dividing it by 1000, and assign it to the PROX_CBD column.
+
+This process repeated a few times. This is because the onemapsgapi may return NA value for certain rows due to the request limit. Note that the first data was hdbresale_latlononly, and it was replaced by the current hdbresale_latlononly_CBD_NA_2 because of the repetition of this process.
+
+```{r}
+for (i in 1:nrow(hdbresale_latlononly_CBD_NA3)) {
+  startlat <- hdbresale_latlononly_CBD_NA3[i,'LATITUDE']
+  startlong <- hdbresale_latlononly_CBD_NA3[i,'LONGITUDE']
+  
+  start = gsub(' ', '', paste(startlat, ',',  startlong))
+  
+  end = '1.2801,103.8509'
+  routeType = 'drive'
+  
+  url = gsub(' ', '', paste('https://developers.onemap.sg/privateapi/routingsvc/route?start=', start, '&end=', end, '&routeType=', routeType, '&token=', token))
+  
+  getproximitytocbd <- GET(url)
+  
+  jsonParsed <- content(getproximitytocbd,as="parsed")
+  
+  if (length(jsonParsed$route_summary) > 0) {
+    hdbresale_latlononly_CBD_NA3[i,'PROX_CBD'] = jsonParsed$route_summary$total_distance/1000
+  }
+}
+```
+
+The following code chunk write a copy of the csv as of the run state.
+
+```{r eval=FALSE}
+write.csv(hdbresale_latlononly_CBD_NA3, "data/newaspatial/hdbresale_PROXCBD_fifthrun.csv", row.names = FALSE)
+```
+
+The following code chunk filter the rows with distance NA, and repeat the above code chunk to obtain distance for remaining rows with NA value.
+
+```{r eval=FALSE}
+hdbresale_latlononly_CBD_NA4 <- hdbresale_latlononly_CBD_NA3 %>%
+                              filter(is.na(hdbresale_latlononly_CBD_NA3$PROX_CBD))
+hdbresale_latlononly_CBD_NA4
+```
+
+The following code chunk filter the rows with valid distance value and write a copy of the csv in the file path
+
+```{r eval=FALSE}
+hdbresale_latlononly_CBD_NONA5 <- hdbresale_latlononly_CBD_NA3 %>%
+                                  drop_na(PROX_CBD)
+hdbresale_latlononly_CBD_NONA5
+
+write.csv(hdbresale_latlononly_CBD_NONA5, "data/newaspatial/hdbresale_proxcbd5.csv", row.names = FALSE)
+```
+
+The following code chunk rbind all the dataset after getting the PROX_CBD of every row.
+
+Data to bind includes:
+
+- hdbresale_latlononly_CBD_NONA1, hdbresale_latlononly_CBD_NONA2, hdbresale_latlononly_CBD_NONA3, hdbresale_latlononly_CBD_NONA4 and hdbresale_latlononly_CBD_NONA5
+
+```{r eval=FALSE}
+hdbresale_PROXCBD <- rbind(hdbresale_latlononly_CBD_NONA1, hdbresale_latlononly_CBD_NONA2, hdbresale_latlononly_CBD_NONA3, hdbresale_latlononly_CBD_NONA4, hdbresale_latlononly_CBD_NONA5)
+
+hdbresale_PROXCBD
+
+write.csv(hdbresale_PROXCBD, "data/newaspatial/hdbresale_proxcbdfinal.csv", row.names = FALSE)
+```
+
+```{r}
+hdbresale_cbd <- read_csv("data/newaspatial/hdbresale_proxcbdfinal.csv")
+```
+
+```{r}
+hdbresale_cbd
+sum(is.na(hdbresale_cbd$PROX_CBD))
+```
+
+```{r}
+hdbresale_latlongtogeowithcbdprox <- st_as_sf(hdbresale_cbd,
+                                      coords = c("LONGITUDE", 
+                                                 "LATITUDE"),
+                                      crs=4326) %>%
+                                      st_transform(crs = 3414)
+```
+
+The following code chunk plots the points to check if the imported data is plotted correctly. 
+
+```{r}
+tmap_mode("view")
+tm_shape(hdbresale_latlongtogeowithcbdprox)+
+  tm_dots()
+tmap_mode("plot")
+```
+
+
+### 4.3 Promixty to
+
+### 4.4 Promixty to
+
+### 4.5 Promixty to
+
+### 4.6 Promixty to
+
+### 4.7 Promixty to
+
+### 4.8 Promixty to

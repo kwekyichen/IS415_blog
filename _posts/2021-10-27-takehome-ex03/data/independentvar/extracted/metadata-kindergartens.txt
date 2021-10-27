@@ -1,0 +1,37 @@
+# Metadata for Kindergartens
+---
+Identifier: '17d94d20-ff91-4d02-a6cc-beee73baad62'
+Name: 'kindergartens'
+Title: 'Kindergartens'
+Description: 'To identify the location of ECDA-registered kindergartens'
+Topics:
+  - 'Society'
+Keywords:
+  - 'Kindergartens'
+  - 'OneMap'
+  - 'ecda'
+Publisher:
+  Name: 'Early Childhood Development Agency'
+  Admin 1:
+    Name: 'Nur Aisyah Rapii'
+    Department: 'EARLY CHILDHOOD DEVELOPMENT AGENCY'
+    Email: 'Nur_Aisyah_RAPII@ecda.gov.sg'
+Sources:
+  - 'Early Childhood Development Agency'
+Source Url: 'http://www.onemap.sg/API/Help/'
+License: 'https://data.gov.sg/open-data-licence'
+Frequency: 'Ad-hoc'
+Last Updated: '2020-08-19T00:04:07.993813'
+Resources:
+  -
+    Identifier: '9efb984f-05e5-4a23-acd9-1f6fc3082f3a'
+    Title: 'Kindergartens (KML)'
+    Url: 'https://geo.data.gov.sg/kindergartens/2020/08/13/kml/kindergartens.kml'
+    Format: 'KML'
+    Last Updated: '2020-08-12T16:00:00'
+  -
+    Identifier: 'ed4245c9-8696-4dad-a300-fecea3e90403'
+    Title: 'Kindergartens (GEOJSON)'
+    Url: 'https://geo.data.gov.sg/kindergartens/2020/08/13/geojson/kindergartens.geojson'
+    Format: 'GeoJSON'
+    Last Updated: '2020-08-12T16:00:00'
