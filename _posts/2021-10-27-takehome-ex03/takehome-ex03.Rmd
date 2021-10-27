@@ -1,0 +1,23 @@
+---
+title: "Take Home Exercise 03"
+description: |
+  Building a hedonic pricing models to explain factors affecting the resale prices of Singapore public housing.
+author:
+  - name: Kwek Yi Chen
+    url: https://kwekyichen-is415.netlify.app/posts/2021-10-27-takehome-ex03/
+date: 10-27-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+    toc_float: true
+    number_sections: true
+    code_folding: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
