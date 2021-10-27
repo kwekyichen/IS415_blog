@@ -34,7 +34,7 @@ dplyr
 stringr: stringsub
 
 ```{r}
-packages = c('readr', 'tmap', 'sf', 'onemapsgapi', 'httr', 'dplyr', 'stringr', 'jsonlite', 'tidyr')
+packages = c('readr', 'tmap', 'sf', 'onemapsgapi', 'httr', 'dplyr', 'stringr', 'jsonlite', 'tidyr', 'sp', 'geojsonio')
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
@@ -275,7 +275,7 @@ The following code chunk:
 
 This process repeated a few times. This is because the onemapsgapi may return NA value for certain rows due to the request limit. Note that the first data was hdbresale_latlononly, and it was replaced by the current hdbresale_latlononly_CBD_NA_2 because of the repetition of this process.
 
-```{r}
+```{r eval=FALSE}
 for (i in 1:nrow(hdbresale_latlononly_CBD_NA3)) {
   startlat <- hdbresale_latlononly_CBD_NA3[i,'LATITUDE']
   startlong <- hdbresale_latlononly_CBD_NA3[i,'LONGITUDE']
@@ -335,16 +335,16 @@ hdbresale_PROXCBD
 write.csv(hdbresale_PROXCBD, "data/newaspatial/hdbresale_proxcbdfinal.csv", row.names = FALSE)
 ```
 
-```{r}
+```{r eval=FALSE}
 hdbresale_cbd <- read_csv("data/newaspatial/hdbresale_proxcbdfinal.csv")
 ```
 
-```{r}
+```{r eval=FALSE}
 hdbresale_cbd
 sum(is.na(hdbresale_cbd$PROX_CBD))
 ```
 
-```{r}
+```{r eval=FALSE}
 hdbresale_latlongtogeowithcbdprox <- st_as_sf(hdbresale_cbd,
                                       coords = c("LONGITUDE", 
                                                  "LATITUDE"),
@@ -354,22 +354,188 @@ hdbresale_latlongtogeowithcbdprox <- st_as_sf(hdbresale_cbd,
 
 The following code chunk plots the points to check if the imported data is plotted correctly. 
 
-```{r}
+```{r eval=FALSE}
 tmap_mode("view")
 tm_shape(hdbresale_latlongtogeowithcbdprox)+
   tm_dots()
 tmap_mode("plot")
 ```
 
+### 4.3 Promixty to Eldercare
 
-### 4.3 Promixty to
+Import Eldercare data
 
-### 4.4 Promixty to
+The following code chunk import eldercare shapefile data using st_read.
 
-### 4.5 Promixty to
+```{r eval=FALSE}
+eldercare_sf <- st_read(dsn = "data/independentvar/extracted", layer="ELDERCARE")
+```
 
-### 4.6 Promixty to
+Calculate distances
 
-### 4.7 Promixty to
+The following code chunk:
 
-### 4.8 Promixty to
+- get the geometry from hdb and elderlycare sf
+- retrieve coordinates in matrix form using st_coordinates function of sf package
+- calculate the Great Circle distances (longlat set to TRUE) between hdb and elderlycare
+
+```{r eval=FALSE}
+hdb_df <- hdbresale_latlongtogeowithcbdprox$geometry
+hdb <- st_coordinates(hdb_df)
+
+
+elderlycare_df <- eldercare_sf$geometry
+elderlycare <- st_coordinates(elderlycare_df)
+
+dist_hdb_elderlycare <- spDists(hdb, elderlycare, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_elderlycare, "data/newaspatial/hdbtoeldercare.csv", row.names = FALSE)
+```
+
+Get min distances
+
+The following code chunk:
+
+- converts dist_hdb_elderlycare into df
+- get the nearest Elderlycare distance for each hdb row using rowwise function of dplyr to check through a row and create a Min column using mutate function of dplyr package
+- create PROX_EDLDERCARE and filter all the min value converted into km.
+
+```{r eval=FALSE}
+
+dist_hdb_elderlycare_df <- data.frame(dist_hdb_elderlycare)
+
+dist_hdb_elderlycare_min <- dist_hdb_elderlycare_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X133)))
+
+PROX_ELDERLYCARE <- dist_hdb_elderlycare_min$Min/1000
+```
+
+Combine data
+
+The following code chunk combines PROX_ELDERLYCARE with the most updated data, hdbresales_cdb, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdbresale_cbd, PROX_ELDERLYCARE)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated1.csv", row.names = FALSE)
+```
+
+### 4.4 Promixty to Hawker Centre
+
+```{r eval=FALSE}
+hawkercentre_sf <- st_read("data/independentvar/extracted/hawker-centres-geojson.geojson") %>%
+                    st_transform(crs = 3414)
+```
+
+```{r eval=FALSE}
+tmap_mode("view")
+tm_shape(hawkercentre_sf)+
+  tm_dots()
+tmap_mode("plot")
+```
+
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
+
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
+
+hawkercentre_df <- hawkercentre_sf$geometry
+hawkercentre <- st_coordinates(hawkercentre_df)
+hawkercentre <- hawkercentre[,c(1,2)]
+
+dist_hdb_hawkercentre <- spDists(hdb, hawkercentre, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_hawkercentre, "data/newaspatial/hdbtohawker.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+
+dist_hdb_hawkercentre_df <- data.frame(dist_hdb_hawkercentre)
+
+dist_hdb_hawkercentre_min <- dist_hdb_hawkercentre_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X125)))
+
+PROX_HAWKER <- dist_hdb_hawkercentre_min$Min/1000
+```
+
+Combine data
+
+The following code chunk combines PROX_HAWKER with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_HAWKER)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated2.csv", row.names = FALSE)
+```
+
+### 4.5 Promixty to MRT
+
+```{r eval=FALSE}
+mrtlrt_sf <- st_read(dsn = "data/geospatial", layer="MRTLRTStnPtt")
+```
+
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
+
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
+
+mrtlrt_df <- mrtlrt_sf$geometry
+mrtlrt <- st_coordinates(mrtlrt_df)
+
+dist_hdb_mrtlrt <- spDists(hdb, mrtlrt, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_mrtlrt, "data/newaspatial/hdbtomrtlrt.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+
+dist_hdb_mrtlrt_df <- data.frame(dist_hdb_mrtlrt)
+
+dist_hdb_mrtlrt_min <- dist_hdb_mrtlrt_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X185)))
+
+PROX_MRTLRT <- dist_hdb_mrtlrt_min$Min/1000
+```
+
+Combine data
+
+The following code chunk combines PROX_MRTLRT with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_MRTLRT)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated3.csv", row.names = FALSE)
+```
+
+
+### 4.6 Promixty to Park
+
+### 4.7 Promixty to Supermarket
+
+### 4.8 Numbers of kindergartens within 350m
+
+### 4.9 Numbers of childcare centres within 350m
+
+### 4.10 Numbers of bus stop within 350m
+
+### 4.11 Numbers of primary school within 1km
+
