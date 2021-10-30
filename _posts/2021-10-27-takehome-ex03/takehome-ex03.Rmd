@@ -16,7 +16,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, eval = FALSE)
+knitr::opts_chunk$set(echo = FALSE, eval=FALSE)
 ```
 
 
@@ -32,9 +32,13 @@ The following code chunk install the following packages:
 
 dplyr
 stringr: stringsub
+ggpubr: ggarrange
+dummies: create dummy var
+olsrr: ols_regress
+spdep: dnearneight()
 
 ```{r}
-packages = c('readr', 'tmap', 'sf', 'onemapsgapi', 'httr', 'dplyr', 'stringr', 'jsonlite', 'tidyr', 'sp', 'geojsonio')
+packages = c('readr', 'tmap', 'sf', 'onemapsgapi', 'httr', 'dplyr', 'stringr', 'jsonlite', 'tidyr', 'sp', 'dummies', 'geojsonio', 'ggplot2', 'ggpubr', 'GWmodel', 'corrplot', 'olsrr', 'spdep')
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
@@ -62,7 +66,7 @@ token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjc5NTMsInVzZXJfaWQiOjc5N
 - Note that after data preparation, the state file for run each may be deleted due to Github's file limit.
 
 
-## 4. Data Import and Preparation
+## 4. Data Preparation
 
 ### 4.1 HDB Resales Data
 
@@ -482,7 +486,7 @@ write.csv(hdb_updated, "data/newaspatial/hdbupdated2.csv", row.names = FALSE)
 ### 4.5 Promixty to MRT
 
 ```{r eval=FALSE}
-mrtlrt_sf <- st_read(dsn = "data/geospatial", layer="MRTLRTStnPtt")
+mrtlrt_sf <- st_read(dsn = "data/independentvar/extracted", layer="MRTLRTStnPtt")
 ```
 
 ```{r eval=FALSE}
@@ -526,16 +530,863 @@ hdb_updated <- cbind(hdb_updated, PROX_MRTLRT)
 write.csv(hdb_updated, "data/newaspatial/hdbupdated3.csv", row.names = FALSE)
 ```
 
+```{r eval=FALSE}
+hdb_updated <- read_csv("data/newaspatial/hdbupdated3.csv")
+```
 
-### 4.6 Promixty to Park
+
+### 4.6 Promixty to Parks
+
+```{r eval=FALSE}
+parks_sf <- st_read("data/independentvar/extracted/parks-geojson.geojson") %>%
+                    st_transform(crs = 3414)
+```
+
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
+
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
+
+parks_df <- parks_sf$geometry
+parks <- st_coordinates(parks_df)
+parks <- parks[,c(1,2)]
+
+dist_hdb_parks <- spDists(hdb, parks, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_parks, "data/newaspatial/hdbtoparks.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+dist_hdb_parks_df <- data.frame(dist_hdb_parks)
+
+dist_hdb_parks_min <- dist_hdb_parks_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X350)))
+
+PROX_PARKS <- dist_hdb_parks_min$Min/1000
+```
+
+Combine data
+
+The following code chunk combines PROX_MRTLRT with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_PARKS)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated4.csv", row.names = FALSE)
+```
 
 ### 4.7 Promixty to Supermarket
 
-### 4.8 Numbers of kindergartens within 350m
+```{r eval=FALSE}
+supermarkets_sf <- st_read("data/independentvar/extracted/supermarkets-geojson.geojson") %>%
+                    st_transform(crs = 3414)
+```
 
-### 4.9 Numbers of childcare centres within 350m
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
 
-### 4.10 Numbers of bus stop within 350m
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
 
-### 4.11 Numbers of primary school within 1km
+supermarkets_df <- supermarkets_sf$geometry
+supermarkets <- st_coordinates(supermarkets_df)
+supermarkets <- supermarkets[,c(1,2)]
 
+dist_hdb_supermarkets <- spDists(hdb, supermarkets, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_supermarkets, "data/newaspatial/hdbtosupermarkets.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+dist_hdb_supermarkets_df <- data.frame(dist_hdb_supermarkets)
+
+dist_hdb_supermarkets_min <- dist_hdb_supermarkets_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X526)))
+
+PROX_SUPERMARKETS <- dist_hdb_supermarkets_min$Min/1000
+```
+
+Combine data
+
+The following code chunk combines PROX_MRTLRT with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_SUPERMARKETS)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated5.csv", row.names = FALSE)
+```
+
+
+### 4.8 Promixty to CHAS clinics
+
+```{r eval=FALSE}
+clinics_sf <- st_read("data/independentvar/extracted/chas-clinics-geojson.geojson") %>%
+                    st_transform(crs = 3414)
+```
+
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
+
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
+
+clinics_df <- clinics_sf$geometry
+clinics <- st_coordinates(clinics_df)
+clinics <- clinics[,c(1,2)]
+
+dist_hdb_clinics <- spDists(hdb, clinics, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_clinics, "data/newaspatial/hdbtoclinics.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+dist_hdb_clinics_df <- data.frame(dist_hdb_clinics)
+
+dist_hdb_clinics_min <- dist_hdb_clinics_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X1167)))
+
+PROX_CLINICS <- dist_hdb_clinics_min$Min/1000
+```
+
+Combine data
+
+The following code chunk combines PROX_MRTLRT with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_CLINICS)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated6.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+hdb_updated <- read_csv("data/newaspatial/hdbupdated6.csv")
+```
+
+
+### 4.9 Promixty to Kindergartens and Number of Kindergartens within 350m
+
+```{r eval=FALSE}
+kindergartens_sf <- st_read("data/independentvar/extracted/kindergartens-geojson.geojson") %>%
+                    st_transform(crs = 3414)
+```
+
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
+
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
+
+kindergartens_df <- kindergartens_sf$geometry
+kindergartens <- st_coordinates(kindergartens_df)
+kindergartens <- kindergartens[,c(1,2)]
+
+dist_hdb_kindergartens <- spDists(hdb, kindergartens, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_kindergartens, "data/newaspatial/hdbtokindergartens.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+dist_hdb_kindergartens_df <- data.frame(dist_hdb_kindergartens)
+
+dist_hdb_kindergartens_min <- dist_hdb_kindergartens_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X448)))
+
+PROX_KINDERGARTENS <- dist_hdb_kindergartens_min$Min/1000
+```
+
+```{r eval=FALSE}
+dist_hdb_kindergartens_df$num_within_350m <- rowSums(dist_hdb_kindergartens_df <= 350)
+
+NUM_KINDERGARDEN_350M <- dist_hdb_kindergartens_df$num_within_350m
+```
+
+Combine data
+
+The following code chunk combines PROX_MRTLRT with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_KINDERGARTENS, NUM_KINDERGARDEN_350M)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated7.csv", row.names = FALSE)
+```
+
+
+### 4.10  Promixty to childcare centres and Numbers of childcare centres within 350m
+
+```{r eval=FALSE}
+childcare_sf <- st_read("data/independentvar/extracted/child-care-services-geojson.geojson") %>%
+                    st_transform(crs = 3414)
+```
+
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
+
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
+
+childcare_df <- childcare_sf$geometry
+childcare <- st_coordinates(childcare_df)
+childcare <- childcare[,c(1,2)]
+
+dist_hdb_childcare <- spDists(hdb, childcare, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_childcare, "data/newaspatial/hdbtochilcare.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+dist_hdb_childcare_df <- data.frame(dist_hdb_childcare)
+
+dist_hdb_childcare_min <- dist_hdb_childcare_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X1545)))
+
+PROX_CHILDCARE <- dist_hdb_childcare_min$Min/1000
+```
+
+```{r eval=FALSE}
+dist_hdb_childcare_df$num_within_350m <- rowSums(dist_hdb_childcare_df <= 350)
+
+NUM_CHILDCARE_350M <- dist_hdb_childcare_df$num_within_350m
+```
+
+Combine data
+
+The following code chunk combines PROX_MRTLRT with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_CHILDCARE, NUM_CHILDCARE_350M)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated8.csv", row.names = FALSE)
+```
+
+### 4.11 Promixty to bus stop and Numbers of bus stop within 350m
+
+```{r eval=FALSE}
+busstop_sf <- st_read(dsn = "data/independentvar/extracted", layer="BusStop")
+```
+
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
+
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
+
+busstop_df <- busstop_sf$geometry
+busstop <- st_coordinates(busstop_df)
+busstop <- busstop[,c(1,2)]
+
+dist_hdb_busstop <- spDists(hdb, busstop, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_busstop, "data/newaspatial/hdbtobusstop.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+dist_hdb_busstop_df <- data.frame(dist_hdb_busstop)
+
+dist_hdb_busstop_min <- dist_hdb_busstop_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X5156)))
+
+PROX_BUSSTOP <- dist_hdb_busstop_min$Min/1000
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_busstop_min, "data/newaspatial/hdbtobusstop_min.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+dist_hdb_busstop_df$num_within_350m <- rowSums(dist_hdb_busstop_df <= 350)
+```
+
+```{r eval=FALSE}
+NUM_BUSSTOP_350M <- dist_hdb_busstop_df$num_within_350m
+```
+
+Combine data
+
+The following code chunk combines PROX_MRTLRT with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_BUSSTOP, NUM_BUSSTOP_350M)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated9.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+hdb_updated <- read_csv("data/newaspatial/hdbupdated9.csv")
+```
+
+### 4.12 Numbers of primary school within 1km
+
+```{r eval=FALSE}
+schools_df <- read_csv("data/independentvar/extracted/Singapore+Schools-2021-10-21.csv")
+```
+
+Filter Primary school
+
+```{r eval=FALSE}
+primary_schools_df <- schools_df %>% filter(grepl('PRIMARY SCHOOL', Name))
+```
+
+Get Address for Primary School
+
+```{r eval=FALSE}
+for (i in 1:nrow(primary_schools_df)) {
+  postalcode <- primary_schools_df[i,'Zip/Postal Code']
+  
+  url = paste('https://developers.onemap.sg/commonapi/search?searchVal=', postalcode, '&returnGeom=Y&getAddrDetails=Y&pageNum=1')
+  encoded_url <- URLencode(url)
+  
+  getcoordinate <- GET(encoded_url)
+  
+  jsonParsed <- content(getcoordinate,as="parsed")
+  
+  if (length(jsonParsed$results) > 0) {
+    primary_schools_df[i,'LATITUDE'] = jsonParsed$results[[1]]$LATITUDE
+    primary_schools_df[i,'LONGITUDE'] = jsonParsed$results[[1]]$LONGITUDE
+  }
+}
+```
+
+```{r eval=FALSE}
+primary_schools_df[100,'LATITUDE'] = '1.3038033016307733'
+primary_schools_df[100,'LONGITUDE'] = '103.84619018095628'
+```
+
+
+```{r eval=FALSE}
+primary_schools_df_selected <- primary_schools_df %>% select('Name', 'Address', 'Zip/Postal Code', 'LATITUDE', 'LONGITUDE')
+```
+
+```{r eval=FALSE}
+write.csv(primary_schools_df_selected, "data/newaspatial/primaryschoollatlong.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+primary_schools_sf <- st_as_sf(primary_schools_df_selected,
+                    coords = c("LONGITUDE", 
+                               "LATITUDE"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
+```
+
+
+```{r eval=FALSE}
+hdb_updated_geometry <- st_as_sf(hdb_updated,
+                          coords = c("LONGITUDE", 
+                                     "LATITUDE"),
+                          crs=4326) %>%
+                          st_transform(crs = 3414)
+
+hdb_df <- hdb_updated_geometry$geometry
+hdb <- st_coordinates(hdb_df)
+
+prisch_df <- primary_schools_sf$geometry
+prisch <- st_coordinates(prisch_df)
+prisch <- prisch[,c(1,2)]
+
+dist_hdb_prisch <- spDists(hdb, prisch, longlat=TRUE)
+```
+
+```{r eval=FALSE}
+write.csv(dist_hdb_prisch, "data/newaspatial/hdbtoprisch.csv", row.names = FALSE)
+```
+
+```{r eval=FALSE}
+dist_hdb_prisch_df <- data.frame(dist_hdb_prisch)
+
+dist_hdb_prisch_min <- dist_hdb_prisch_df %>% rowwise() %>% mutate(Min = min(c_across(X1:X156)))
+
+PROX_PRISCH <- dist_hdb_prisch_min$Min/1000
+```
+
+```{r eval=FALSE}
+dist_hdb_prisch_df$num_within_1km <- rowSums(dist_hdb_prisch_df <= 1000)
+
+NUM_PRISCH_1KM <- dist_hdb_prisch_df$num_within_1km
+```
+
+Combine data
+
+The following code chunk combines PROX_MRTLRT with the most updated data, hdb_updated, via cbind function of base package.
+
+```{r eval=FALSE}
+hdb_updated <- cbind(hdb_updated, PROX_PRISCH, NUM_PRISCH_1KM)
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated, "data/newaspatial/hdbupdated10.csv", row.names = FALSE)
+```
+
+### 4.13 hdb final
+
+The following code chunk creates dummy variable for storey_range column using dummy function of dummies package.
+
+```{r eval=FALSE}
+hdb_updated1 <- cbind(hdb_updated, dummy(hdb_updated$storey_range, sep = "_")) 
+```
+
+The following code chunk replace the dummy's column name from "hdb_updated_01 TO 03" format to "01TO03" format using gsub function of base package.
+
+```{r eval=FALSE}
+names(hdb_updated1) = gsub("hdb_updated_", "", names(hdb_updated1))/
+names(hdb_updated1) = gsub(" ", "", names(hdb_updated1))
+```
+
+```{r eval=FALSE}
+write.csv(hdb_updated1, "data/newaspatial/hdbupdated11.csv", row.names = FALSE)
+```
+
+The following code chunk then select all the require column in hdb_final using select function
+
+```{r eval=FALSE}
+hdb_final <- hdb_updated1 %>%
+            select(address, storey_range, LATITUDE, LONGITUDE, resale_price, floor_area_sqm, remaining_lease_year, PROX_CBD, PROX_ELDERLYCARE, PROX_HAWKER, PROX_MRTLRT, PROX_PARKS, PROX_SUPERMARKETS, PROX_CLINICS, NUM_KINDERGARDEN_350M, NUM_CHILDCARE_350M, NUM_BUSSTOP_350M, NUM_PRISCH_1KM, `01TO03`, `04TO06`, `07TO09`, `10TO12`, `13TO15`, `16TO18`, `19TO21`, `22TO24`, `25TO27`, `28TO30`, `31TO33`, `34TO36`, `37TO39`, `40TO42`, `43TO45`, `46TO48`, `49TO51`)
+```
+
+The following code chunk save hdb_final as csv using write.csv function
+
+```{r eval=FALSE}
+write.csv(hdb_final, "data/aspatial/hdb_final1.csv", row.names = FALSE)
+```
+
+## 5 Data Import
+
+### 5.1 Geospatial Data
+
+The following code chunk import MP14_SUBZONE_WEB_PL using st_read function of sf package.
+
+```{r}
+mpsz = st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+```
+
+The following code chunk update the EPSG code 3414 using st_transform of sf package and retrieve coordinate using st_crs of sf package
+
+```{r}
+mpsz_svy21 <- st_transform(mpsz, 3414)
+st_crs(mpsz_svy21)
+```
+
+We can see that the EPSG is 3414 which is correct.
+
+### 5.2 Aspatial data
+
+hdb_final
+
+The following code chunk read hdb_final csv file as tibble data frame using read_csv function and glimpse to display the data 
+
+```{r}
+hdb_final <- read_csv("data/aspatial/hdb_final.csv")
+glimpse(hdb_final)
+```
+
+We can see that there are 15901 rows of data with 35 columns. The coordinate is in LATITUDE and LONGITUDE format.
+
+### 5.3 Convert aspatial df to sf
+
+The following code chunk converts hdb_final dataframe into sf dataframe using st_as_sf function of sf package. The coordinate is then converted into svy21 EPSG:3414 FROM WGS84 usign st_transform function.
+
+```{r}
+hdb_final_sf <- st_as_sf(hdb_final,
+                            coords = c("LONGITUDE", "LATITUDE"),
+                            crs=4326) %>%
+                  st_transform(crs=3414)
+head(hdb_final_sf)
+```
+
+## 6 EDA
+
+### 6.1 Statistical Graph
+
+Resale Price
+
+The following code chunk plots the distribution of resale_price using ggplot function of ggplot2 package.
+
+```{r}
+ggplot(data=hdb_final_sf, aes(x= `resale_price`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+```
+
+From the above, we can see a normal distribution. Majority of the four room hdb were transacted for about $300000 to 400000.
+
+Other variables
+
+Next, we are interested to see the distribution of other variables.
+
+The following code chunk plots the distribution of other variables using ggplot function of ggplot2 package and arrange them in columns of 3 using ggarrange function of ggpubr package.
+
+```{r}
+floor_area_sqm <- ggplot(data=hdb_final_sf, aes(x= `floor_area_sqm`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+remaining_lease_year <- ggplot(data=hdb_final_sf, aes(x= `remaining_lease_year`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_CBD <- ggplot(data=hdb_final_sf, aes(x= `PROX_CBD`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_ELDERLYCARE <- ggplot(data=hdb_final_sf, aes(x= `PROX_ELDERLYCARE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_HAWKER <- ggplot(data=hdb_final_sf, aes(x= `PROX_HAWKER`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_MRTLRT <- ggplot(data=hdb_final_sf, aes(x= `PROX_MRTLRT`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_PARKS <- ggplot(data=hdb_final_sf, aes(x= `PROX_PARKS`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_SUPERMARKETS <- ggplot(data=hdb_final_sf, aes(x= `PROX_SUPERMARKETS`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+PROX_CLINICS <- ggplot(data=hdb_final_sf, aes(x= `PROX_CLINICS`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+ggarrange(floor_area_sqm, remaining_lease_year, PROX_CBD, PROX_ELDERLYCARE, PROX_HAWKER, PROX_MRTLRT, PROX_PARKS, PROX_SUPERMARKETS, PROX_CLINICS, ncol = 3, nrow = 3)
+
+```
+
+From the above, we can see that most of the variables are normally distributed except remaining_lease_year. Majority of the transacted four-room hdb has remaining_lease_year of above 90 years.
+
+### 6.2 Statiscal Point Map
+
+Resale Price
+
+The following code chunk plots the resale price on an interactive mode with OpenStreetMap basemap using function of tmap package.
+
+```{r}
+tmap_mode("view")
+tm_shape(hdb_final_sf) +  
+  tm_dots(col = "resale_price",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14)) +
+tm_basemap("OpenStreetMap")
+tmap_mode("plot")
+```
+
+From the interactive map, we can see that hdb in central and south area tends to have higher resale price (darker red points).
+
+## 7 Hedonic Pricing Model
+
+### 7.1 Multiple Linear Regression Model
+
+#### 7.1.1 Relationship between Independent variables
+
+```{r fig.width=8, fig.height=8}
+corrplot(cor(hdb_final[, 6:35]), diag = FALSE, order = "AOE",
+         tl.pos = "td", tl.cex = 0.7, number.cex=0.5, method = "number", type = "upper")
+```
+
+From the scatterplot above, we can see that NUM_BUSSTOP_350M is highly correlated to NUM_CHILDCARE_350M and NUM_KINDERGARDEN_350M with correlation coefficient of 0.93 and 0.84 respective. NUM_CHILDCARE_350M and NUM_KINDERGARDEN_350M are also highly correlated with correlation coefficient of 0.84. Hence, we should only include one out of three of them in the subsequent model building. Hence, NUM_BUSSTOP_350M and NUM_KINDERGARDEN_350M will be excluded.
+
+#### 7.1.2 Hedonic pricing model using multiple linear regression method
+
+The following code chunk builds a multiple linear regression model using lm function of stats package.
+
+Note that `49TO51` dummy variable is excluded since because we should only have n-1 dummy variable. It will have a strong correlation with other independent variable if we were to include it.
+
+```{r}
+hdb_final_mlr <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + PROX_MRTLRT + PROX_PARKS + PROX_SUPERMARKETS + PROX_CLINICS + NUM_CHILDCARE_350M + NUM_PRISCH_1KM + `01TO03` + `04TO06` + `07TO09` + `10TO12` + `13TO15` + `16TO18` + `19TO21` + `22TO24` + `25TO27` + `28TO30` + `31TO33` + `34TO36` + `37TO39` + `40TO42` + `43TO45` + `46TO48`, data=hdb_final_sf)
+
+summary(hdb_final_mlr)
+```
+
+From the above, we can see that there are some independent variables that are statistically not significant. Variables such as PROX_MRTLRT, PROX_SUPERMARKETS, PROX_CLINICS, NUM_PRISCH_1KM, 43TO45 and 46TO48 have p-value above 0.05 and are not statistically significant. We will exclude these variable when we calibrate the revised model.
+
+The code chunk calibrate the revised model using lm function with variables that are not statistically significant removed. Ordinary leasst squares regression is then done by running ols_regress function of olsrr package.
+
+```{r}
+hdb_final_mlr1 <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + PROX_PARKS + NUM_CHILDCARE_350M + `01TO03` + `04TO06` + `07TO09` + `10TO12` + `13TO15` + `16TO18` + `19TO21` + `22TO24` + `25TO27` + `28TO30` + `31TO33` + `34TO36` + `37TO39` + `40TO42`, data=hdb_final_sf)
+
+ols_regress(hdb_final_mlr1)
+```
+
+#### 7.1.3 Checks for multicolinearity
+
+The following code chunk test for sign of multicolinearity using ols_vif_tol function of olsrr package.
+
+```{r}
+summary(hdb_final_mlr1)
+```
+
+```{r eval=FALSE}
+ols_vif_tol(hdb_final_mlr1)
+```
+
+#### 7.1.4 Test for Non-Linearity
+
+```{r}
+ols_plot_resid_fit(hdb_final_mlr1)
+```
+
+#### 7.1.5 Test for Normality Assumption
+
+```{r}
+ols_plot_resid_hist(hdb_final_mlr1)
+```
+
+
+#### 7.1.6 Testing for Spatial Autocorrelation
+
+```{r}
+mlr.output <- as.data.frame(hdb_final_mlr1$residuals)
+```
+
+```{r}
+hdb_final_res_sf <- cbind(hdb_final_sf, hdb_final_mlr1$residuals) %>%
+                        rename(`MLR_RES` = `hdb_final_mlr1.residuals`)
+```
+
+```{r}
+hdb_final_sp <- as_Spatial(hdb_final_res_sf)
+hdb_final_sp
+```
+
+```{r}
+tmap_mode("view")
+tm_shape(hdb_final_res_sf) +  
+  tm_dots(col = "MLR_RES",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14)) +
+tm_basemap("OpenStreetMap")
+tmap_mode("plot")
+```
+
+```{r}
+nb <- dnearneigh(coordinates(hdb_final_sp), 0, 1500, longlat = FALSE)
+summary(nb)
+```
+
+```{r}
+nb_lw <- nb2listw(nb, style = 'W')
+summary(nb_lw)
+```
+
+
+```{r}
+lm.morantest(hdb_final_mlr1, nb_lw)
+```
+
+
+## 8 Building Hedonic Pricing Models using GWmodel
+
+### 8.1 Fixed Bandwidth GWR model
+
+#### 8.1.1 Computing fixed bandwidth
+
+Notice that the dummy variables name have an addition "X" at the front in hdb_final_sp
+
+```{r eval=FALSE}
+bw.fixed <- bw.gwr(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+PROX_PARKS + NUM_CHILDCARE_350M + `X01TO03` + `X04TO06` + `X07TO09` + `X10TO12` + `X13TO15` + `X16TO18` + `X19TO21` + `X22TO24` +
+`X25TO27` + `X28TO30` + `X31TO33` + `X34TO36` + `X37TO39` + `X40TO42`, data=hdb_final_sp, approach="CV", kernel="gaussian", adaptive=FALSE, longlat=FALSE)
+```
+
+#### 8.1.2 GWModel method - fixed bandwith
+
+```{r eval=FALSE}
+gwr.fixed <- gwr.basic(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+PROX_PARKS + NUM_CHILDCARE_350M + `X01TO03` + `X04TO06` + `X07TO09` + `X10TO12` + `X13TO15` + `X16TO18` + `X19TO21` + `X22TO24` +
+`X25TO27` + `X28TO30` + `X31TO33` + `X34TO36` + `X37TO39` + `X40TO42`, data=hdb_final_sp, bw=bw.fixed, kernel="gaussian", adaptive=FALSE, longlat=FALSE)
+```
+
+```{r}
+gwr.fixed
+```
+
+
+### 8.2 Adaptive Bandwidth GWR model
+
+#### 8.2.1 Computing adaptive bandwidth
+
+Notice that the dummy variables name have an addition "X" at the front in hdb_final_sp
+
+```{r eval=FALSE}
+bw.adaptive <- bw.gwr(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+PROX_PARKS + NUM_CHILDCARE_350M + `X01TO03` + `X04TO06` + `X07TO09` + `X10TO12` + `X13TO15` + `X16TO18` + `X19TO21` + `X22TO24` +
+`X25TO27` + `X28TO30` + `X31TO33` + `X34TO36` + `X37TO39` + `X40TO42`, data=hdb_final_sp, approach="CV", kernel="gaussian", adaptive=TRUE, longlat=FALSE)
+```
+
+#### 8.2.2 GWModel method - adaptive bandwith
+
+```{r eval=FALSE}
+gwr.adaptive <- gwr.basic(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
+PROX_PARKS + NUM_CHILDCARE_350M + `X01TO03` + `X04TO06` + `X07TO09` + `X10TO12` + `X13TO15` + `X16TO18` + `X19TO21` + `X22TO24` +
+`X25TO27` + `X28TO30` + `X31TO33` + `X34TO36` + `X37TO39` + `X40TO42`, data=hdb_final_sp, bw=bw.adaptive, kernel="gaussian", adaptive=TRUE, longlat=FALSE)
+```
+
+```{r}
+gwr.adaptive
+```
+
+
+## 9 Visualising GWR Output
+
+### 9.1 Converting SDF into sf data.frame
+
+```{r eval=FALSE}
+hdb_final_sf.adaptive <- st_as_sf(gwr.adaptive$SDF) %>%
+  st_transform(crs=3414)
+```
+
+```{r eval=FALSE}
+hdb_final_sf.adaptive.svy21 <- st_transform(hdb_final_sf.adaptive, 3414)
+hdb_final_sf.adaptive.svy21  
+```
+
+```{r eval=FALSE}
+gwr.adaptive.output <- as.data.frame(gwr.adaptive$SDF)
+hdb_final_sf.adaptive <- cbind(hdb_final_res_sf, as.matrix(gwr.adaptive.output))
+```
+
+```{r eval=FALSE}
+glimpse(hdb_final_sf.adaptive)
+```
+
+```{r}
+hdb_final_sf.fixed <- st_as_sf(gwr.fixed$SDF) %>%
+  st_transform(crs=3414)
+```
+
+```{r}
+hdb_final_sf.fixed.svy21 <- st_transform(hdb_final_sf.fixed, 3414)
+hdb_final_sf.fixed.svy21  
+```
+
+```{r}
+gwr.fixed.output <- as.data.frame(gwr.fixed$SDF)
+hdb_final_sf.fixed <- cbind(hdb_final_res_sf, as.matrix(gwr.fixed.output))
+```
+
+```{r}
+glimpse(hdb_final_sf.fixed)
+```
+
+
+### 9.2 Visualing LOCAL R2
+
+```{r}
+tmap_mode("view")
+tm_shape(mpsz_svy21)+
+  tm_polygons(alpha = 0.1) +
+  tmap_options(check.and.fix = TRUE) +
+tm_shape(hdb_final_sf.fixed) +  
+  tm_dots(col = "Local_R2",
+          border.col = "gray60",
+          border.lwd = 1) +
+  tm_view(set.zoom.limits = c(11,14))
+tmap_mode("plot")
+```
+
+```{r eval=FALSE}
+STOREY01TO03 <- ggplot(data=hdb_final.sf, aes(x= `01TO03`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY04TO06 <- ggplot(data=hdb_final.sf, aes(x= `04TO06`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY07TO09 <- ggplot(data=hdb_final.sf, aes(x= `07TO09`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY10TO12 <- ggplot(data=hdb_final.sf, aes(x= `10TO12`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY13TO15 <- ggplot(data=hdb_final.sf, aes(x= `13TO15`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY16TO18 <- ggplot(data=hdb_final.sf, aes(x= `16TO18`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY19TO21 <- ggplot(data=hdb_final.sf, aes(x= `19TO21`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY22TO24 <- ggplot(data=hdb_final.sf, aes(x= `22TO24`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY25TO27 <- ggplot(data=hdb_final.sf, aes(x= `25TO27`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY28TO30 <- ggplot(data=hdb_final.sf, aes(x= `28TO30`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY31TO33 <- ggplot(data=hdb_final.sf, aes(x= `31TO33`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY34TO36 <- ggplot(data=hdb_final.sf, aes(x= `34TO36`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY37TO39 <- ggplot(data=hdb_final.sf, aes(x= `37TO39`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY40TO42 <- ggplot(data=hdb_final.sf, aes(x= `40TO42`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY43TO45 <- ggplot(data=hdb_final.sf, aes(x= `43TO45`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY46TO48 <- ggplot(data=hdb_final.sf, aes(x= `46TO48`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY49TO51 <- ggplot(data=hdb_final.sf, aes(x= `49TO51`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+NUM_KINDERGARDEN_350M <- ggplot(data=hdb_final.sf, aes(x= `NUM_KINDERGARDEN_350M`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+NUM_CHILDCARE_350M <- ggplot(data=hdb_final.sf, aes(x= `NUM_CHILDCARE_350M`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+NUM_BUSSTOP_350M <- ggplot(data=hdb_final.sf, aes(x= `NUM_BUSSTOP_350M`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+NUM_PRISCH_1KM <- ggplot(data=hdb_final.sf, aes(x= `NUM_PRISCH_1KM`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+STOREY01TO03, STOREY04TO06, STOREY07TO09, STOREY10TO12, STOREY13TO15, STOREY16TO18, STOREY19TO21, STOREY22TO24, STOREY25TO27, STOREY28TO30, STOREY31TO33, STOREY34TO36, STOREY37TO39, STOREY40TO42, STOREY43TO45, STOREY46TO48, STOREY49TO51
+
+NUM_KINDERGARDEN_350M, NUM_CHILDCARE_350M, NUM_BUSSTOP_350M, NUM_PRISCH_1KM
+```
