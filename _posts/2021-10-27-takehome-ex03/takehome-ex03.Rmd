@@ -365,7 +365,7 @@ tm_shape(hdbresale_latlongtogeowithcbdprox)+
 tmap_mode("plot")
 ```
 
-### 4.3 Promixty to Eldercare
+### 4.3 Proximity to Eldercare
 
 Import Eldercare data
 
@@ -427,7 +427,7 @@ hdb_updated <- cbind(hdbresale_cbd, PROX_ELDERLYCARE)
 write.csv(hdb_updated, "data/newaspatial/hdbupdated1.csv", row.names = FALSE)
 ```
 
-### 4.4 Promixty to Hawker Centre
+### 4.4 Proximity to Hawker Centre
 
 ```{r eval=FALSE}
 hawkercentre_sf <- st_read("data/independentvar/extracted/hawker-centres-geojson.geojson") %>%
@@ -483,7 +483,7 @@ hdb_updated <- cbind(hdb_updated, PROX_HAWKER)
 write.csv(hdb_updated, "data/newaspatial/hdbupdated2.csv", row.names = FALSE)
 ```
 
-### 4.5 Promixty to MRT
+### 4.5 Proximity to MRT
 
 ```{r eval=FALSE}
 mrtlrt_sf <- st_read(dsn = "data/independentvar/extracted", layer="MRTLRTStnPtt")
@@ -535,7 +535,7 @@ hdb_updated <- read_csv("data/newaspatial/hdbupdated3.csv")
 ```
 
 
-### 4.6 Promixty to Parks
+### 4.6 Proximity to Parks
 
 ```{r eval=FALSE}
 parks_sf <- st_read("data/independentvar/extracted/parks-geojson.geojson") %>%
@@ -583,7 +583,7 @@ hdb_updated <- cbind(hdb_updated, PROX_PARKS)
 write.csv(hdb_updated, "data/newaspatial/hdbupdated4.csv", row.names = FALSE)
 ```
 
-### 4.7 Promixty to Supermarket
+### 4.7 Proximity to Supermarket
 
 ```{r eval=FALSE}
 supermarkets_sf <- st_read("data/independentvar/extracted/supermarkets-geojson.geojson") %>%
@@ -632,7 +632,7 @@ write.csv(hdb_updated, "data/newaspatial/hdbupdated5.csv", row.names = FALSE)
 ```
 
 
-### 4.8 Promixty to CHAS clinics
+### 4.8 Proximity to CHAS clinics
 
 ```{r eval=FALSE}
 clinics_sf <- st_read("data/independentvar/extracted/chas-clinics-geojson.geojson") %>%
@@ -685,7 +685,7 @@ hdb_updated <- read_csv("data/newaspatial/hdbupdated6.csv")
 ```
 
 
-### 4.9 Promixty to Kindergartens and Number of Kindergartens within 350m
+### 4.9 Proximity to Kindergartens and Number of Kindergartens within 350m
 
 ```{r eval=FALSE}
 kindergartens_sf <- st_read("data/independentvar/extracted/kindergartens-geojson.geojson") %>%
@@ -740,7 +740,7 @@ write.csv(hdb_updated, "data/newaspatial/hdbupdated7.csv", row.names = FALSE)
 ```
 
 
-### 4.10  Promixty to childcare centres and Numbers of childcare centres within 350m
+### 4.10  Proximity to childcare centres and Numbers of childcare centres within 350m
 
 ```{r eval=FALSE}
 childcare_sf <- st_read("data/independentvar/extracted/child-care-services-geojson.geojson") %>%
@@ -794,7 +794,7 @@ hdb_updated <- cbind(hdb_updated, PROX_CHILDCARE, NUM_CHILDCARE_350M)
 write.csv(hdb_updated, "data/newaspatial/hdbupdated8.csv", row.names = FALSE)
 ```
 
-### 4.11 Promixty to bus stop and Numbers of bus stop within 350m
+### 4.11 Proximity to bus stop and Numbers of bus stop within 350m
 
 ```{r eval=FALSE}
 busstop_sf <- st_read(dsn = "data/independentvar/extracted", layer="BusStop")
@@ -991,7 +991,7 @@ The following code chunk save hdb_final as csv using write.csv function
 write.csv(hdb_final, "data/aspatial/hdb_final1.csv", row.names = FALSE)
 ```
 
-## 5 Data Import
+## 5. Data Import
 
 ### 5.1 Geospatial Data
 
@@ -1023,6 +1023,29 @@ glimpse(hdb_final)
 
 We can see that there are 15901 rows of data with 35 columns. The coordinate is in LATITUDE and LONGITUDE format.
 
+```{r}
+hdb_final <- hdb_final %>% 
+                rename(
+                  storey01TO03 = `01TO03`,
+                  storey04TO06 = `04TO06`,
+                  storey07TO09 = `07TO09`,
+                  storey10TO12 = `10TO12`,
+                  storey13TO15 = `13TO15`,
+                  storey16TO18 = `16TO18`,
+                  storey19TO21 = `19TO21`,
+                  storey22TO24 = `22TO24`,
+                  storey25TO27 = `25TO27`,
+                  storey28TO30 = `28TO30`,
+                  storey31TO33 = `31TO33`,
+                  storey34TO36 = `34TO36`,
+                  storey37TO39 = `37TO39`,
+                  storey40TO42 = `40TO42`,
+                  storey43TO45 = `43TO45`,
+                  storey46TO48 = `46TO48`,
+                  storey49TO51 = `49TO51`
+                  )
+```
+
 ### 5.3 Convert aspatial df to sf
 
 The following code chunk converts hdb_final dataframe into sf dataframe using st_as_sf function of sf package. The coordinate is then converted into svy21 EPSG:3414 FROM WGS84 usign st_transform function.
@@ -1035,7 +1058,7 @@ hdb_final_sf <- st_as_sf(hdb_final,
 head(hdb_final_sf)
 ```
 
-## 6 EDA
+## 6. EDA
 
 ### 6.1 Statistical Graph
 
@@ -1109,7 +1132,7 @@ tmap_mode("plot")
 
 From the interactive map, we can see that hdb in central and south area tends to have higher resale price (darker red points).
 
-## 7 Hedonic Pricing Model
+## 7. Hedonic Pricing Model
 
 ### 7.1 Multiple Linear Regression Model
 
@@ -1129,17 +1152,17 @@ The following code chunk builds a multiple linear regression model using lm func
 Note that `49TO51` dummy variable is excluded since because we should only have n-1 dummy variable. It will have a strong correlation with other independent variable if we were to include it.
 
 ```{r}
-hdb_final_mlr <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + PROX_MRTLRT + PROX_PARKS + PROX_SUPERMARKETS + PROX_CLINICS + NUM_CHILDCARE_350M + NUM_PRISCH_1KM + `01TO03` + `04TO06` + `07TO09` + `10TO12` + `13TO15` + `16TO18` + `19TO21` + `22TO24` + `25TO27` + `28TO30` + `31TO33` + `34TO36` + `37TO39` + `40TO42` + `43TO45` + `46TO48`, data=hdb_final_sf)
+hdb_final_mlr <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + PROX_MRTLRT + PROX_PARKS + PROX_SUPERMARKETS + PROX_CLINICS + NUM_CHILDCARE_350M + NUM_PRISCH_1KM + storey01TO03 + storey04TO06 + storey07TO09 + storey10TO12 + storey13TO15 + storey16TO18 + storey19TO21 + storey22TO24 + storey25TO27 + storey28TO30 + storey31TO33 + storey34TO36 + storey37TO39 + storey40TO42 + storey43TO45 + storey46TO48, data=hdb_final_sf)
 
 summary(hdb_final_mlr)
 ```
 
-From the above, we can see that there are some independent variables that are statistically not significant. Variables such as PROX_MRTLRT, PROX_SUPERMARKETS, PROX_CLINICS, NUM_PRISCH_1KM, 43TO45 and 46TO48 have p-value above 0.05 and are not statistically significant. We will exclude these variable when we calibrate the revised model.
+From the above, we can see that there are some independent variables that are statistically not significant. Variables such as PROX_MRTLRT, PROX_SUPERMARKETS, PROX_CLINICS, NUM_PRISCH_1KM, storey43TO45 and storey46TO48 have p-value above 0.05 and are not statistically significant. We will exclude these variable when we calibrate the revised model.
 
-The code chunk calibrate the revised model using lm function with variables that are not statistically significant removed. Ordinary leasst squares regression is then done by running ols_regress function of olsrr package.
+The code chunk calibrate the revised model using lm function with variables that are not statistically significant removed. Ordinary least squares regression is then done by running ols_regress function of olsrr package.
 
 ```{r}
-hdb_final_mlr1 <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + PROX_PARKS + NUM_CHILDCARE_350M + `01TO03` + `04TO06` + `07TO09` + `10TO12` + `13TO15` + `16TO18` + `19TO21` + `22TO24` + `25TO27` + `28TO30` + `31TO33` + `34TO36` + `37TO39` + `40TO42`, data=hdb_final_sf)
+hdb_final_mlr1 <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + PROX_PARKS + NUM_CHILDCARE_350M + storey01TO03 + storey04TO06 + storey07TO09 + storey10TO12 + storey13TO15 + storey16TO18 + storey19TO21 + storey22TO24 + storey25TO27 + storey28TO30 + storey31TO33 + storey34TO36 + storey37TO39 + storey40TO42, data=hdb_final_sf)
 
 ols_regress(hdb_final_mlr1)
 ```
@@ -1156,28 +1179,38 @@ summary(hdb_final_mlr1)
 ols_vif_tol(hdb_final_mlr1)
 ```
 
+There are some independent variables with VIF value above 10 which means that there are sign of multicollinearity. Hence we would want to calibrate the model again by removing independent variables with VIF above 10.
+
+```{r}
+hdb_final_mlr2 <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER + PROX_PARKS + NUM_CHILDCARE_350M + storey31TO33 + storey34TO36 + storey37TO39 + storey40TO42, data=hdb_final_sf)
+```
+
+```{r}
+ols_regress(hdb_final_mlr2)
+```
+
 #### 7.1.4 Test for Non-Linearity
 
 ```{r}
-ols_plot_resid_fit(hdb_final_mlr1)
+ols_plot_resid_fit(hdb_final_mlr2)
 ```
 
 #### 7.1.5 Test for Normality Assumption
 
 ```{r}
-ols_plot_resid_hist(hdb_final_mlr1)
+ols_plot_resid_hist(hdb_final_mlr2)
 ```
 
 
 #### 7.1.6 Testing for Spatial Autocorrelation
 
 ```{r}
-mlr.output <- as.data.frame(hdb_final_mlr1$residuals)
+mlr.output <- as.data.frame(hdb_final_mlr2$residuals)
 ```
 
 ```{r}
-hdb_final_res_sf <- cbind(hdb_final_sf, hdb_final_mlr1$residuals) %>%
-                        rename(`MLR_RES` = `hdb_final_mlr1.residuals`)
+hdb_final_res_sf <- cbind(hdb_final_sf, hdb_final_mlr2$residuals) %>%
+                        rename(`MLR_RES` = `hdb_final_mlr2.residuals`)
 ```
 
 ```{r}
@@ -1206,32 +1239,28 @@ nb_lw <- nb2listw(nb, style = 'W')
 summary(nb_lw)
 ```
 
-
 ```{r}
-lm.morantest(hdb_final_mlr1, nb_lw)
+lm.morantest(hdb_final_mlr2, nb_lw)
 ```
 
-
-## 8 Building Hedonic Pricing Models using GWmodel
+## 8. Building Hedonic Pricing Models using GWmodel
 
 ### 8.1 Fixed Bandwidth GWR model
 
 #### 8.1.1 Computing fixed bandwidth
 
-Notice that the dummy variables name have an addition "X" at the front in hdb_final_sp
+longlat set to TRUE since the data preparation also use great circle distances.
 
 ```{r eval=FALSE}
 bw.fixed <- bw.gwr(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
-PROX_PARKS + NUM_CHILDCARE_350M + `X01TO03` + `X04TO06` + `X07TO09` + `X10TO12` + `X13TO15` + `X16TO18` + `X19TO21` + `X22TO24` +
-`X25TO27` + `X28TO30` + `X31TO33` + `X34TO36` + `X37TO39` + `X40TO42`, data=hdb_final_sp, approach="CV", kernel="gaussian", adaptive=FALSE, longlat=FALSE)
+PROX_PARKS + NUM_CHILDCARE_350M + storey31TO33 + storey34TO36 + storey37TO39 + storey40TO42, data=hdb_final_sp, approach="CV", kernel="gaussian", adaptive=FALSE, longlat=TRUE)
 ```
 
 #### 8.1.2 GWModel method - fixed bandwith
 
 ```{r eval=FALSE}
 gwr.fixed <- gwr.basic(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
-PROX_PARKS + NUM_CHILDCARE_350M + `X01TO03` + `X04TO06` + `X07TO09` + `X10TO12` + `X13TO15` + `X16TO18` + `X19TO21` + `X22TO24` +
-`X25TO27` + `X28TO30` + `X31TO33` + `X34TO36` + `X37TO39` + `X40TO42`, data=hdb_final_sp, bw=bw.fixed, kernel="gaussian", adaptive=FALSE, longlat=FALSE)
+PROX_PARKS + NUM_CHILDCARE_350M + storey31TO33 + storey34TO36 + storey37TO39 + storey40TO42, data=hdb_final_sp, bw=bw.fixed, kernel="gaussian", adaptive=FALSE, longlat=TRUE)
 ```
 
 ```{r}
@@ -1247,16 +1276,14 @@ Notice that the dummy variables name have an addition "X" at the front in hdb_fi
 
 ```{r eval=FALSE}
 bw.adaptive <- bw.gwr(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
-PROX_PARKS + NUM_CHILDCARE_350M + `X01TO03` + `X04TO06` + `X07TO09` + `X10TO12` + `X13TO15` + `X16TO18` + `X19TO21` + `X22TO24` +
-`X25TO27` + `X28TO30` + `X31TO33` + `X34TO36` + `X37TO39` + `X40TO42`, data=hdb_final_sp, approach="CV", kernel="gaussian", adaptive=TRUE, longlat=FALSE)
+PROX_PARKS + NUM_CHILDCARE_350M + storey31TO33 + storey34TO36 + storey37TO39 + storey40TO42, data=hdb_final_sp, approach="CV", kernel="gaussian", adaptive=TRUE, longlat=TRUE)
 ```
 
 #### 8.2.2 GWModel method - adaptive bandwith
 
 ```{r eval=FALSE}
 gwr.adaptive <- gwr.basic(formula = resale_price ~ floor_area_sqm + remaining_lease_year + PROX_CBD + PROX_ELDERLYCARE + PROX_HAWKER +
-PROX_PARKS + NUM_CHILDCARE_350M + `X01TO03` + `X04TO06` + `X07TO09` + `X10TO12` + `X13TO15` + `X16TO18` + `X19TO21` + `X22TO24` +
-`X25TO27` + `X28TO30` + `X31TO33` + `X34TO36` + `X37TO39` + `X40TO42`, data=hdb_final_sp, bw=bw.adaptive, kernel="gaussian", adaptive=TRUE, longlat=FALSE)
+PROX_PARKS + NUM_CHILDCARE_350M + storey31TO33 + storey34TO36 + storey37TO39 + storey40TO42, data=hdb_final_sp, bw=bw.adaptive, kernel="gaussian", adaptive=TRUE, longlat=TRUE)
 ```
 
 ```{r}
@@ -1264,7 +1291,7 @@ gwr.adaptive
 ```
 
 
-## 9 Visualising GWR Output
+## 9. Visualising GWR Output
 
 ### 9.1 Converting SDF into sf data.frame
 
