@@ -153,7 +153,7 @@ mapex <- st_bbox(hexagons)
 
 create high cartographic quality accessibility to eldercare centre
 
-```{r fig.height=6, fig.width=6}
+```{r fig.height=6, fig.width=6, cache=TRUE, eval=TRUE}
 tmap_mode("plot")
 tm_shape(hexagon_Hansen,
          bbox = mapex) + 
@@ -226,7 +226,7 @@ hexagon_KD2SFCA <- bind_cols(hexagons, acc_KD2SFCA)
 
 mapex is reused for bbox
 
-```{r}
+```{r cache=TRUE, eval=TRUE}
 tmap_mode("plot")
 tm_shape(hexagon_KD2SFCA,
          bbox = mapex) + 
@@ -293,7 +293,7 @@ hexagon_SAM <- bind_cols(hexagons, acc_SAM)
 
 ## Visualising SAM’s accessibility
 
-```{r}
+```{r cache=TRUE, eval=TRUE}
 tmap_mode("plot")
 tm_shape(hexagon_SAM,
          bbox = mapex) + 
