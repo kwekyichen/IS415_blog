@@ -1671,7 +1671,7 @@ Import hdb_final_sf_fixed file for visualization
 The following code chunk imports hdb_final_sf_fixed file using read_csv function.
 
 ```{r}
-hdb_final_sf_fixed <- read_csv("data/aspatial/hdb_final_sf_fixed3.csv")
+hdb_final_sf_fixed <- read_csv("data/aspatial/hdb_final_sf_fixed.csv")
 ```
 
 The following code chunk:
