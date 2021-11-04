@@ -1353,7 +1353,7 @@ tm_shape(hdb_final_sf) +
 tmap_mode("plot")
 ```
 
-From the interactive map, we can see that hdb in central and south area tends to have higher resale price (darker red points) while hdb in the west have lower resale price as seen that there are more light yellow dots in the west.
+From the interactive map, we can see that hdb in central and south area tends to have higher resale price ranging from 500000 to 1186888 (darker red points) while hdb in the west and north have lower resale price ranging from 218000 to 340000 as seen that there are more light yellow points in the west and north.
 
 ## 7. Hedonic Pricing Model
 
@@ -1407,7 +1407,7 @@ From the above, the adjusted R-squared for the revised multiple linear regressio
 
 The following code chunk test for sign of multicolinearity using ols_vif_tol function of olsrr package.
 
-```{r eval=FALSE}
+```{r}
 ols_vif_tol(hdb_final_mlr1)
 ```
 
@@ -1509,7 +1509,7 @@ tm_shape(hdb_final_res_sf) +
 tmap_mode("plot")
 ```
 
-From the above interactive plot, we can see that the residuals are not randomly distributed as there are many of the same color in some area. This means that there is a sign of spatial autocorrelation.
+From the above interactive plot, we can see that the residuals are not randomly distributed as the residual points seems to be clustered, with many of the same colour near each other. This means that there is a sign of spatial autocorrelation.
 
 Moran’s I test
 
@@ -1693,15 +1693,7 @@ The following code chunk display the columns of hdb_final_sf_fixed1 sf object us
 glimpse(hdb_final_sf_fixed1)
 ```
 
-From the above, we can see the gwr outputs such as Local_R2, residuals, coefficient standard error, and observed and predicted y values. We will visualise them in the next section. 
-
-The following code chunk checks the statistics of the predicted value yhat using summary function
-
-```{r}
-summary(hdb_final_sf_fixed1$yhat)
-```
-
-From the summary statistics, the lowest predicted price for 4-room hdb flat is 236602 and the highest predicted price is 1077240. The average is 433767. 
+From the above, we can see the gwr outputs such as Local_R2, residuals, coefficient standard error, and observed and predicted y values. We will visualise some of them in the next section. 
 
 ### 9.2 Visualization and Summary Statistics
 
@@ -1817,7 +1809,6 @@ summary(hdb_final_sf_fixed1$yhat)
 
 From the summary statistics, the lowest predicted price for 4-room hdb flat is 236602 and the highest predicted price is 1077240. The average is 433767. This shows that there are only some 4 hdb flats with extremely high predicted price of over 1000000 as seen in the large difference between the third quartile and max resale price.
 
-
 #### 9.2.3 Standardized Residual
 
 Visualization
@@ -1832,7 +1823,9 @@ tm_shape(hdb_final_sf_fixed1) +
   tm_dots(col = "Stud_residual",
           border.col = "gray60",
           border.lwd = 1) +
-  tm_layout(legend.text.size = 1)
+  tm_layout(legend.text.size = 0.8,
+            title="Standardized Residual",
+            title.size = 0.8)
 ```
 
 From the residual map, we can see that majority of the points are yellow or light green which means that the standardized residual is between -5 to 0, or between 0 to 5. We couldn't really determine the range because the bin is huge. Hence, we will need to see the summary statistic.
