@@ -1563,6 +1563,7 @@ In this section, we will build the Hedonic Pricing Models using Fixed and Adapti
 The following code chunk determines the optimal fixed bandwidth for the model using bw.gwr function of GWmodel package.
 
 The following are the arguments: 
+
 - Approach set as Cross-validation ("CV")
 - Weighting function set as Guassian
 - Adaptive set as False since we are computing fixed bandwidth
