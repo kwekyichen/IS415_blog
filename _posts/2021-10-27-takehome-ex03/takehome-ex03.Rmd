@@ -67,7 +67,7 @@ Next, we set up the token for onemapsgapi. The code is not shown because the inf
 
 ## 3. Data
 
-- HDB Resale data is a list of hdb resale transacted prices in Singaporefrom Jan 2017 onwards. It is in csv format from Data.gov.sg.
+- HDB Resale data is a list of hdb resale transacted prices in Singapore from Jan 2017 onwards. It is in csv format from Data.gov.sg.
 - Eldercare data is a list of eldercare in Singapore. It is in shapefile format from Data.gov.sg.
 - Hawker Centre data is a list of hawker centres in Singapore. It is in geojson format from Data.gov.sg.
 - MRT data is a list of MRT/LRT in Singapore. It is in shapefile format from Datamall.lta.gov.sg.
@@ -342,9 +342,9 @@ hdbresale_latlononly_CBD_NA4 <- hdbresale_latlononly_CBD_NA3 %>%
 hdbresale_latlononly_CBD_NA4
 ```
 
-After a few iteration, hdbresale_latlononly_CBD_NA4 no long have any data which means all rows have PROX_CBD distance.
+After a few iteration, hdbresale_latlononly_CBD_NA4 no longer have any data which means all rows have PROX_CBD distance.
 
-#### 4.2.3 Extract rows without missing distance and write as csv to back up
+#### 4.2.4 Extract rows without missing distance and write as csv to back up
 
 The following code chunk filter the rows with valid distance value and write a copy of the csv in the file path
 
@@ -356,7 +356,7 @@ hdbresale_latlononly_CBD_NONA5
 write.csv(hdbresale_latlononly_CBD_NONA5, "data/newaspatial/hdbresale_proxcbd5.csv", row.names = FALSE)
 ```
 
-#### 4.2.4 Combine PROX_CBD data with valid distance
+#### 4.2.5 Combine PROX_CBD data with valid distance
 
 The following code chunk rbind all the dataset after getting the PROX_CBD of every row from the repetitive steps of 4.2.1 - 4.2.3. The final data with PROX_CBD is written as csv for backup
 
@@ -372,7 +372,7 @@ PROX_CBD
 write.csv(PROX_CBD, "data/newaspatial/hdbresale_proxcbdfinal.csv", row.names = FALSE)
 ```
 
-#### 4.2.5 Combine data with hdb_updated 
+#### 4.2.6 Combine data with hdb_updated 
 
 The following code chunk combines PROX_CBD with the updated data, hdb_updated using cbind function of base package which combines column.
 
@@ -426,8 +426,8 @@ write.csv(dist_hdb_elderlycare, "data/newaspatial/hdbtoeldercare.csv", row.names
 
 The following code chunk:
 
-- converts dist_hdb_elderlycare into df
-- get the nearest Elderlycare distance for each hdb row using rowwise function of dplyr to check through a row and get the min across the row with X133 column, and create a Min column using mutate function of dplyr package. 
+- converts dist_hdb_elderlycare into dataframe
+- get the nearest Elderlycare distance for each hdb row using rowwise function of dplyr to check through a row and get the min across the row with X133 column using c_across function of dplyr, and create a Min column using mutate function of dplyr package. 
 - create PROX_EDLDERCARE and filter all the min value converted into km.
 
 ```{r eval=FALSE}
@@ -469,7 +469,7 @@ There are 125 rows of Hawker Centre.
 
 #### 4.4.2 Calculate distances
 
-The following code chunk is similar to 4.3.2. The only difference is that we only use the hawkercentre's first and second column (X and Y coordinate) since the st_coordinates also include the Z coodinate column in the data.
+The following code chunk is similar to 4.3.2. The only difference is that we only use the hawkercentre's first and second column (X and Y coordinate) since the st_coordinates also include the Z coordinate column in the data.
 
 ```{r eval=FALSE}
 hdb_updated_geometry <- st_as_sf(hdb_updated,
@@ -518,6 +518,8 @@ hdb_updated <- cbind(hdb_updated, PROX_HAWKER)
 ```
 
 #### 4.4.6 Write as csv to backup
+
+The following code chunk is similar to 4.3.6
 
 ```{r eval=FALSE}
 write.csv(hdb_updated, "data/newaspatial/hdbupdated2.csv", row.names = FALSE)
@@ -601,6 +603,8 @@ The following code chunk import and assign the projection crs of Singapore 3414.
 parks_sf <- st_read("data/independentvar/extracted/parks-geojson.geojson") %>%
                     st_transform(crs = 3414)
 ```
+
+There are 350 rows of parks. 
 
 #### 4.6.2 Calculate distances
 
@@ -879,7 +883,7 @@ The following code chunk is similar to 4.4.6
 write.csv(hdb_updated, "data/newaspatial/hdbupdated7.csv", row.names = FALSE)
 ```
 
-### 4.10  Proximity to childcare centres and Numbers of childcare centres within 350m
+### 4.10  Proximity to Childcare centres and Numbers of Childcare centre within 350m
 
 #### 4.10.1 Import childcare centres data
 
@@ -959,7 +963,7 @@ The following code chunk is similar to 4.4.6
 write.csv(hdb_updated, "data/newaspatial/hdbupdated8.csv", row.names = FALSE)
 ```
 
-### 4.11 Proximity to bus stop and Numbers of bus stop within 350m
+### 4.11 Proximity to Bus stop and Numbers of Bus stop within 350m
 
 #### 4.11.1 Import bus stops data
 
@@ -1037,7 +1041,7 @@ The following code chunk is similar to 4.4.6
 write.csv(hdb_updated, "data/newaspatial/hdbupdated9.csv", row.names = FALSE)
 ```
 
-### 4.12 Numbers of primary school within 1km
+### 4.12 Proximity to Primary school and Numbers of Primary school within 1km
 
 #### 4.12.1 Import school data
 
@@ -1080,6 +1084,8 @@ for (i in 1:nrow(primary_schools_df)) {
 ```
 
 #### 4.12.4 Check NA
+
+The following code chunk checks if there are any rows with missing Latitude.
 
 ```{r eval=FALSE}
 sum(is.na(primary_schools_df$LATITUDE))
@@ -1151,13 +1157,13 @@ prisch <- prisch[,c(1,2)]
 dist_hdb_prisch <- spDists(hdb, prisch, longlat=FALSE)
 ```
 
-#### 4.12.8 Write as csv to backup
+#### 4.12.10 Write as csv to backup
 
 ```{r eval=FALSE}
 write.csv(dist_hdb_prisch, "data/newaspatial/hdbtoprisch.csv", row.names = FALSE)
 ```
 
-#### 4.12.9 Get min distances for each row
+#### 4.12.11 Get min distances for each row
 
 The following code chunk is similar to 4.4.4
 
@@ -1169,7 +1175,7 @@ dist_hdb_prisch_min <- dist_hdb_prisch_df %>% rowwise() %>% mutate(Min = min(c_a
 PROX_PRISCH <- dist_hdb_prisch_min$Min/1000
 ```
 
-#### 4.12.10 Count the number of point below 1km in each row
+#### 4.12.12 Count the number of point below 1km in each row
 
 The following code chunk is similar to 4.9.5. The only difference is that we are counting the number of point below 1km.
 
@@ -1179,7 +1185,7 @@ dist_hdb_prisch_df$num_within_1km <- rowSums(dist_hdb_prisch_df <= 1000)
 NUM_PRISCH_1KM <- dist_hdb_prisch_df$num_within_1km
 ```
 
-#### 4.12.11 Combine data with hdb_updated
+#### 4.12.13 Combine data with hdb_updated
 
 The following code chunk is similar to 4.9.6
 
@@ -1187,7 +1193,7 @@ The following code chunk is similar to 4.9.6
 hdb_updated <- cbind(hdb_updated, PROX_PRISCH, NUM_PRISCH_1KM)
 ```
 
-#### 4.12.12 Write as csv to backup
+#### 4.12.14 Write as csv to backup
 
 ```{r eval=FALSE}
 write.csv(hdb_updated, "data/newaspatial/hdbupdated10.csv", row.names = FALSE)
@@ -1208,14 +1214,14 @@ names(hdb_updated1) = gsub("hdb_updated_", "storey_", names(hdb_updated1))
 names(hdb_updated1) = gsub(" ", "", names(hdb_updated1))
 ```
 
-The following code chunk then select all the require column in hdb_final using select function
+The following code chunk then select all the require column in hdb_updated1 using select function and assign it to hdb_final data frame.
 
 ```{r eval=FALSE}
 hdb_final <- hdb_updated1 %>%
             select(address, storey_range, LATITUDE, LONGITUDE, resale_price, floor_area_sqm, remaining_lease_year, PROX_CBD, PROX_ELDERLYCARE, PROX_HAWKER, PROX_MRTLRT, PROX_PARKS, PROX_SUPERMARKETS, PROX_CLINICS, NUM_KINDERGARDEN_350M, NUM_CHILDCARE_350M, NUM_BUSSTOP_350M, NUM_PRISCH_1KM, `storey_01TO03`, `storey_04TO06`, `storey_07TO09`, `storey_10TO12`, `storey_13TO15`, `storey_16TO18`, `storey_19TO21`, `storey_22TO24`, `storey_25TO27`, `storey_28TO30`, `storey_31TO33`, `storey_34TO36`, `storey_37TO39`, `storey_40TO42`, `storey_43TO45`, `storey_46TO48`, `storey_49TO51`)
 ```
 
-The following code chunk save hdb_final as csv using write.csv function
+The following code chunk writes hdb_final simple feature dataframe as csv using write.csv function
 
 ```{r eval=FALSE}
 write.csv(hdb_final, "data/aspatial/hdb_final.csv", row.names = FALSE)
@@ -1261,7 +1267,7 @@ The following code chunk Checks if there are any missing values in the data usin
 sum(is.na(hdb_final))
 ```
 
-There are no missing values in the dataset.
+There are no missing values in the data.
 
 ### 5.3 Convert aspatial data frame to simple feature data frame
 
@@ -1275,7 +1281,7 @@ hdb_final_sf <- st_as_sf(hdb_final,
 head(hdb_final_sf)
 ```
 
-## 6. EDD
+## 6. EDA
 
 ### 6.1 Statistical Graph
 
@@ -1290,9 +1296,9 @@ ggplot(data=hdb_final_sf, aes(x= `resale_price`)) +
 
 From the above, we can see a normal distribution. Majority of the four room hdb were transacted for about $300000 to 400000.
 
-#### 6.1.2 Other variables
+#### 6.1.2 Independent variables
 
-Next, we are interested to see the distribution of other variables.
+Next, we are interested to see the distribution of independent variables.
 
 The following code chunk plots multiple distribution of other variables using ggplot function of ggplot2 package and arrange them in columns of 3 using ggarrange function of ggpubr package. Note that NUM_KINDERGARTENS_350M, NUM_CHILDCARE_350M, NUM_BUSSTOPS_350M and NUM_PRISCH_1KM are not plotted because the data is in count.
 
@@ -1327,7 +1333,7 @@ PROX_CLINICS <- ggplot(data=hdb_final_sf, aes(x= `PROX_CLINICS`)) +
 ggarrange(floor_area_sqm, remaining_lease_year, PROX_CBD, PROX_ELDERLYCARE, PROX_HAWKER, PROX_MRTLRT, PROX_PARKS, PROX_SUPERMARKETS, PROX_CLINICS, ncol = 3, nrow = 3)
 ```
 
-From the above, we can see that most of variables are normally distributed. The remaining lease year seems to be normally distributed but the only exception is that it has a high count of transacted four-room hdb with remaining_lease_year of above 90 years. There is no need for any transformation since the variables are normally distributed.
+From the above, we can see that most of variables are normally distributed. The remaining lease year seems to be normally distributed but the only exception is that it has a high count of transacted four-room hdb with remaining_lease_year of above 90 years. There is no need for any transformation since the independent variables are normally distributed.
 
 ### 6.2 Statiscal Point Map
 
@@ -1367,6 +1373,7 @@ The following code chunk:
 
 - compute correlation using cor function of stats package for 6th column variable (floor_area_sqm) to the last column variable (storey49TO51) of hdb_final.
 - visualise the correlation matrix using corrplot function of corrplot package
+- The order argument is set to AOE which orders the variables using angular order of the eigenvectors methods
 - t1.cex is set to 0.7 so that the variables are more visible, number.cex is set to 0.5 so that the number within each box will not exceed the box.
 
 ```{r fig.width=8, fig.height=8}
@@ -1374,7 +1381,7 @@ corrplot(cor(hdb_final[, 6:35]), diag = FALSE, order = "AOE",
          tl.pos = "td", tl.cex = 0.7, number.cex=0.5, method = "number", type = "upper")
 ```
 
-From the scatterplot above, we can see that the independent variable are not highly correlated to each other. Hence, we can include all of them in the subsequent model building.
+From the scatterplot above, we can see that the independent variables are not highly correlated to each other. Hence, we can include all of them in the subsequent model building.
 
 #### 7.1.2 Hedonic pricing model using multiple linear regression method
 
@@ -1450,7 +1457,7 @@ The following code chunk checks the linear relationsihp assumption using ols_plo
 ols_plot_resid_fit(hdb_final_mlr2)
 ```
 
-From the above, most of the data point are scattered near the 0 line. Around the middle area with fitted value 0.00006, there are slightly more data points with residual above 0. In general, we can conclude that the relationships between the dependent variable and independent variables are linear.
+From the above, most of the data point are scattered near the 0 line. Around the middle area with fitted value of 0.00006, there are slightly more data points with residual above 0. In general, we can conclude that the relationships between the dependent variable and independent variables are linear.
 
 #### 7.1.5 Test for Normality Assumption
 
@@ -1483,7 +1490,7 @@ hdb_final_res_sf <- cbind(hdb_final_sf, mlr.output) %>%
                         rename(`MLR_RES` = `hdb_final_mlr2.residuals`)
 ```
 
-convert hdb_final_res_sf into SpatialPointsDataFrame
+Convert hdb_final_res_sf into SpatialPointsDataFrame
 
 The following code chunk converts hdb_final_res_sf into SpatialPointsDataFrame using as_Spatial function of sf package.
 
@@ -1492,7 +1499,7 @@ hdb_final_sp <- as_Spatial(hdb_final_res_sf)
 hdb_final_sp
 ```
 
-Distribution of residuals
+Visualise the distribution of residuals
 
 The following code chunk plots the distribution of residuals on an interactive map with mpsz_svy21 layer.
 
@@ -1509,15 +1516,15 @@ tm_shape(hdb_final_res_sf) +
 tmap_mode("plot")
 ```
 
-From the above interactive plot, we can see that the residuals are not randomly distributed as the residual points seems to be clustered, with many of the same colour near each other. This means that there is a sign of spatial autocorrelation.
+From the above interactive plot, we can see that the residuals are not randomly distributed as the residual points seems to be clustered, with many of the same colour points near each other. This means that there is a sign of spatial autocorrelation.
 
-Moran’s I test
+Perform Moran’s I test
 
 We can perform Moran’s I test to check if there is sign of spatial autocorrelation.
 
 Compute distance-based weight matrix
 
-The following code chunk first compute the distance-based weight matrix by using dnearneigh function of spdep. The lower distance bound is set to 0m, upper distance bound set to 1500m, and longlat set to FALSE which means euclidean distance.
+The following code chunk first compute the distance-based weight matrix by using dnearneigh function of spdep. The lower distance bound is set to 0m, upper distance bound set to 1500m, and longlat set to FALSE which means euclidean distance will be calculated.
 
 ```{r}
 nb <- dnearneigh(coordinates(hdb_final_sp), 0, 1500, longlat = FALSE)
@@ -1537,17 +1544,17 @@ summary(nb_lw)
 
 Perform Moran’s I test
 
-The following code chunk performs Moran’s I test using lm.morantest function of spdep package. It compares the multiple linear regression and the spatial weight.
+The following code chunk performs Moran’s I test using lm.morantest function of spdep package. It compares the multiple linear regression model and the spatial weight.
 
 ```{r}
 lm.morantest(hdb_final_mlr2, nb_lw)
 ```
 
-From the above, the p-value is lower than 2.2e-16, which is lesser than alpha value of 0.05. Therefore, we reject the null hypothesis that residual are randomly distributed. In addition, the Observed Global Moran I test is 0.38 and it is greater than 0. This means that the residual resembles a clustering distribution.
+From the above, the p-value is lower than 2.2e-16, which is lesser than alpha value of 0.05. Therefore, we reject the null hypothesis that residual are randomly distributed. In addition, the Observed Global Moran I test is 0.38 and it is greater than 0. We can conclude that the residual resembles a clustering distribution.
 
 ## 8. Building Hedonic Pricing Models using GWmodel
 
-In this section, we will build the Hedonic Pricing Models using Fixed and Adaptive GWR model, with the sames variable of the revised multiple linear regression model, hdb_final_mlr2. 
+In this section, we will build the Hedonic Pricing Models using Fixed and Adaptive GWR model, with the same variables in the revised multiple linear regression model, hdb_final_mlr2. 
 
 ### 8.1 Fixed Bandwidth GWR model
 
@@ -1555,7 +1562,7 @@ In this section, we will build the Hedonic Pricing Models using Fixed and Adapti
 
 The following code chunk determines the optimal fixed bandwidth for the model using bw.gwr function of GWmodel package.
 
-The following are the arguements: 
+The following are the arguments: 
 - Approach set as Cross-validation ("CV")
 - Weighting function set as Guassian
 - Adaptive set as False since we are computing fixed bandwidth
@@ -1567,7 +1574,7 @@ PROX_MRTLRT + PROX_PARKS + PROX_SUPERMARKETS + NUM_KINDERGARDEN_350M + NUM_CHILD
 NUM_PRISCH_1KM + storey_31TO33 + storey_34TO36 + storey_37TO39 + storey_40TO42, data=hdb_final_sp, approach="CV", kernel="gaussian", adaptive=FALSE, longlat=FALSE)
 ```
 
-The output of the above code chunk will shown in screenshot format using the code chunk below because the run time is very long.
+The output of the above code chunk will shown in screenshot format due to the long run time.
 
 ![bw.fixed Screenshot](data/screenshots/bwfixed.jpg)
 
@@ -1595,7 +1602,7 @@ The output of the above code chunk will shown in screenshot format using the cod
 
 ![bw.fixed GWR Screenshot3](data/screenshots/gwrfixed3.jpg)
 
-From the fixed bandwidth GWR model, the adjusted R-square value is 0.941, higher than the revised multiple linear regression models with adjusted R-square value of 0.681.
+From the fixed bandwidth GWR model, the adjusted R-square value is 0.941, higher than the revised multiple linear regression model with adjusted R-square value of 0.681.
 
 ### 8.2 Adaptive Bandwidth GWR model
 
@@ -1609,7 +1616,7 @@ PROX_MRTLRT + PROX_PARKS + PROX_SUPERMARKETS + NUM_KINDERGARDEN_350M + NUM_CHILD
 NUM_PRISCH_1KM + storey_31TO33 + storey_34TO36 + storey_37TO39 + storey_40TO42, data=hdb_final_sp, approach="CV", kernel="gaussian", adaptive=TRUE, longlat=FALSE)
 ```
 
-The output of the above code chunk will shown in screenshot format using the code chunk below due to the long run time.
+The output of the above code chunk will shown in screenshot format due to the long run time.
 
 ![bw.adaptive Screenshot](data/screenshots/bwadaptive.jpg)
 
@@ -1635,9 +1642,9 @@ The output of the above code chunk will shown in screenshot format using the cod
 
 ![bw.adaptive GWR Screenshot2](data/screenshots/gwradaptive2.jpg)
 
-From the adaptive bandwidth GWR model, the adjusted R-square value is 0.914, higher than the revised multiple linear regression models with adjusted R-square value of 0.681, but lower than the fixed bandwidth GWR Model with adjusted R-square value of 0.941.
+From the adaptive bandwidth GWR model, the adjusted R-square value is 0.914, higher than the revised multiple linear regression model with adjusted R-square value of 0.681, but lower than the fixed bandwidth GWR Model with adjusted R-square value of 0.941.
 
-Comparing Multiple Linear Regression Model, Fixed Bandwidth GWR model and GWModel Adaptive Bandwidth GWR model, Fixed Bandwidth GWR model has the best adjusted R-square of 0.941. Hence, we will be using it to visualise GWR output in the next section.
+Comparing Revised multiple linear regression model, fixed bandwidth GWR model and adaptive bandwidth GWR model, the fixed bandwidth GWR model has the best adjusted R-square of 0.941. Hence, we will use it to visualise GWR output in the next section.
 
 ## 9. Visualising GWR Output
 
@@ -1660,7 +1667,7 @@ The following code chunk display the columns in hdb_final_sf_fixed sf object usi
 glimpse(hdb_final_sf_fixed)
 ```
 
-We will write the hdb_final_sf_fixed files into csv using st_write function of sf package and convert GEOMETRY into X and Y column using the layer_options argument
+We will write the hdb_final_sf_fixed files into csv using st_write function of sf package and convert the geometry into X and Y column using the layer_options argument
 
 ```{r eval=FALSE}
 st_write(hdb_final_sf_fixed, "data/aspatial/hdb_final_sf_fixed.csv", layer_options = "GEOMETRY=AS_XY")
@@ -1674,9 +1681,11 @@ The following code chunk imports hdb_final_sf_fixed file using read_csv function
 hdb_final_sf_fixed <- read_csv("data/aspatial/hdb_final_sf_fixed.csv")
 ```
 
+Convert to simple feature data frame
+
 The following code chunk:
 
-- convert the csv file into sf data frame using st_as_sf
+- converts hdb_final_sf_fixed data frame into sf data frame using st_as_sf
 - X and Y column as coords argument
 - crs set to 3414
 
@@ -1687,13 +1696,13 @@ hdb_final_sf_fixed1 <- st_as_sf(hdb_final_sf_fixed,
                           crs=3414)
 ```
 
-The following code chunk display the columns of hdb_final_sf_fixed1 sf object using glimpse function of pillar package
+The following code chunk display the columns of hdb_final_sf_fixed1 simple feature object using glimpse function of pillar package
 
 ```{r}
 glimpse(hdb_final_sf_fixed1)
 ```
 
-From the above, we can see the gwr outputs such as Local_R2, residuals, coefficient standard error, and observed and predicted y values. We will visualise some of them in the next section. 
+From the above, there are 15091 rows. We can also see the gwr outputs such as Local_R2, residuals, coefficient standard error, observed and predicted y values. We will visualise some of them in the next section. 
 
 ### 9.2 Visualization and Summary Statistics
 
@@ -1716,24 +1725,24 @@ tm_shape(hdb_final_sf_fixed1) +
 tmap_mode("plot")
 ```
 
-From the Local_R2 map, we can see that in general, the fixed GWR model predicts well as shown by many red points on the map. Region such as North-east and East are predicted poorly by the fixed GWR model as there are a few yellow points and quite a number of orange point in these two region, and this means that the Local_R2 value is low and range from 0.2 to 0.4, and 0.6 to 0.8 respectively. We would want to analyse these region further.
+From the Local_R2 map, we can see that in general, the fixed GWR model predicts well as shown by many red points on the map. Region such as North-east and East are predicted poorly by the fixed GWR model as there are a few yellow points and some orange points in these two region, and this means that the Local_R2 value is low and ranges from 0.2 to 0.4, and 0.6 to 0.8 respectively. We would want to analyse these region further.
 
 Summary statistics
 
-The following code chunk checks the statistics of Local_R2 using summary function
+The following code chunk checks the summary statistics of Local_R2 using summary function
 
 ```{r}
 summary(hdb_final_sf_fixed1$Local_R2)
 ```
 
-From the summary statistics, the min is 0.2329 and the max is 1. The 1st quartile and median is already 0.8321 and 0.915 respectively which is high. The mean is also high at 0.8661. This shows that the Local_R2 are high in general and have some low values as seen from the large difference between the min and first quartile.
+From the summary statistics, the min is 0.2329 and the max is 1. The 1st quartile and median is already 0.8321 and 0.915 respectively which closer to 1. The mean is also close to 1 at 0.8661. This shows that the Local_R2 are generally high, but have some low values as seen from the large difference between the min and first quartile, 0.2329 to 0.8321 respectively.
 
 
 ##### 9.2.1.1 Local_R2 by planning area
 
 North-east
 
-The following code chunk plots an interactive map within the north-east planning area.
+The following code chunk plots an interactive map within the North-east planning area.
 
 ```{r}
 tmap_mode("view")
@@ -1767,7 +1776,7 @@ tm_shape(hdb_final_sf_fixed1) +
 tmap_mode("plot")
 ```
 
-In the east planning area, there are two areas with many yellow and orange points. If we toggle the mpsz_svy21 layer off and turn OpenStreetMap on, we can see that these areas are Tampines North, Tampines East, and around Pasir Ris Dr 12.
+In the east planning area, there are two areas with many yellow and orange points. If we toggle the mpsz_svy21 layer off and turn OpenStreetMap on, we can see that the poorly predicted areas are Tampines North, Tampines East, and around Pasir Ris Dr 12.
 
 #### 9.2.2 Observed and Predicted Y
 
@@ -1801,19 +1810,19 @@ From the comparison, we can see that it looks the same in general which means th
 
 Summary statistics
 
-The following code chunk checks the statistics of the predicted value yhat using summary function
+The following code chunk checks the summary statistics of the predicted value yhat using summary function
 
 ```{r}
 summary(hdb_final_sf_fixed1$yhat)
 ```
 
-From the summary statistics, the lowest predicted price for 4-room hdb flat is 236602 and the highest predicted price is 1077240. The average is 433767. This shows that there are only some 4 hdb flats with extremely high predicted price of over 1000000 as seen in the large difference between the third quartile and max resale price.
+From the summary statistics, the lowest predicted price for 4-room hdb flat is 236602 and the highest predicted price is 1077240. The average is 433767. This shows that there are only some 4 hdb flats with extremely high predicted price of over 1000000 as seen in the large difference between the third quartile and max resale price, 465594 and 1077240 respectively.
 
 #### 9.2.3 Standardized Residual
 
 Visualization
 
-The following code chunk plots the spatial point map of standardized Residual.
+The following code chunk plots the spatial point map of standardized residual.
 
 ```{r}
 tm_shape(mpsz_svy21)+
@@ -1828,7 +1837,7 @@ tm_shape(hdb_final_sf_fixed1) +
             title.size = 0.8)
 ```
 
-From the residual map, we can see that majority of the points are yellow or light green which means that the standardized residual is between -5 to 0, or between 0 to 5. We couldn't really determine the range because the bin is huge. Hence, we will need to see the summary statistic.
+From the residual map, we can see that majority of the points are yellow or light green which means that the standardized residual is between -5 to 0, or between 0 to 5. However, we cannot really determine the range because the bin of 5 is huge. Hence, we will need to see the summary statistic.
 
 Summary statistics
 
@@ -1838,4 +1847,4 @@ The following code chunk checks the statistics of the standardized residual usin
 summary(hdb_final_sf_fixed1$Stud_residual)
 ```
 
-From the summary statistics, the min is beyond -1 and the max is beyond 1 and they are outliers because of the huge difference from the 1st quartile and 3rd quartile respectively. However, the mean and median is almost near 0 which shows that majority of the prediction by the fixed GWR model are accurate with a low residual. 
+From the summary statistics, the min is beyond -1 and the max is beyond 1. They are outliers because there is a huge difference from the min to 1st quartile, and 3rd quartile to max respectively. However, the mean and median residual value are low and almost near to 0, which shows that the prediction by the fixed GWR model in general are accurate. 
